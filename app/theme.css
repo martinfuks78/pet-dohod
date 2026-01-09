@@ -1,0 +1,35 @@
+@theme {
+  /* Barvy inspirované knihami Čtyři dohody */
+  --color-primary-50: #fef5e7;
+  --color-primary-100: #fce4bd;
+  --color-primary-200: #fad393;
+  --color-primary-300: #f8c169;
+  --color-primary-400: #f6af3f;
+  --color-primary-500: #f49d15;
+  --color-primary-600: #c37e11;
+  --color-primary-700: #925e0d;
+  --color-primary-800: #613f09;
+  --color-primary-900: #301f04;
+
+  --color-earth-50: #f5f1ed;
+  --color-earth-100: #e6ddd2;
+  --color-earth-200: #d7c9b7;
+  --color-earth-300: #c8b59c;
+  --color-earth-400: #b9a181;
+  --color-earth-500: #aa8d66;
+  --color-earth-600: #887152;
+  --color-earth-700: #66553d;
+  --color-earth-800: #443828;
+  --color-earth-900: #221c14;
+
+  --color-sage-50: #f0f4f0;
+  --color-sage-100: #d9e4d9;
+  --color-sage-200: #c2d4c2;
+  --color-sage-300: #abc4ab;
+  --color-sage-400: #94b494;
+  --color-sage-500: #7da47d;
+  --color-sage-600: #648364;
+  --color-sage-700: #4b624b;
+  --color-sage-800: #324132;
+  --color-sage-900: #192119;
+}
