@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createRegistration, getAllRegistrations } from '../../../lib/db'
+import { sendRegistrationConfirmation, sendAdminNotification } from '../../../lib/email'
 
 export async function POST(request) {
   try {
@@ -27,7 +28,31 @@ export async function POST(request) {
 
     console.log('Nova registrace:', registration)
 
-    // TODO: Odeslání emailu s potvrzením (další krok)
+    // Odeslání emailů (pokud je RESEND_API_KEY nastavený)
+    if (process.env.RESEND_API_KEY) {
+      try {
+        // Potvrzení účastníkovi
+        await sendRegistrationConfirmation({
+          ...data,
+          id: registration.id,
+          createdAt: new Date().toISOString(),
+        })
+
+        // Notifikace adminovi
+        await sendAdminNotification({
+          ...data,
+          id: registration.id,
+          createdAt: new Date().toISOString(),
+        })
+
+        console.log('Emails sent successfully')
+      } catch (emailError) {
+        // Email error neblokuje registraci - pouze logujeme
+        console.error('Email send failed:', emailError)
+      }
+    } else {
+      console.log('RESEND_API_KEY not set, skipping email send')
+    }
 
     return NextResponse.json({
       success: true,
