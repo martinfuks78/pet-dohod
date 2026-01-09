@@ -201,11 +201,11 @@ export default function AdminPage() {
                     <tr key={registration.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="font-medium text-gray-900">
-                          {registration.firstName} {registration.lastName}
+                          {registration.first_name} {registration.last_name}
                         </div>
-                        {registration.registrationType === 'pair' && registration.partnerFirstName && (
+                        {registration.registration_type === 'pair' && registration.partner_first_name && (
                           <div className="text-sm text-gray-500">
-                            + {registration.partnerFirstName} {registration.partnerLastName}
+                            + {registration.partner_first_name} {registration.partner_last_name}
                           </div>
                         )}
                       </td>
@@ -223,16 +223,16 @@ export default function AdminPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm">
-                          <div className="font-medium text-gray-900">{registration.workshopDate}</div>
+                          <div className="font-medium text-gray-900">{registration.workshop_date}</div>
                           <div className="text-gray-500 flex items-center gap-1">
                             <MapPin className="w-3 h-3" />
-                            {registration.workshopLocation}
+                            {registration.workshop_location}
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="text-sm text-gray-900">
-                          {registration.registrationType === 'pair' ? 'Pár' : '1 osoba'}
+                          {registration.registration_type === 'pair' ? 'Pár' : '1 osoba'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -258,7 +258,7 @@ export default function AdminPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(registration.createdAt).toLocaleDateString('cs-CZ', {
+                        {new Date(registration.created_at).toLocaleDateString('cs-CZ', {
                           day: 'numeric',
                           month: 'short',
                           year: 'numeric',
