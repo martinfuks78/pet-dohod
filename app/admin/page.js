@@ -35,7 +35,6 @@ export default function AdminPage() {
     }
   }
   const [workshopForm, setWorkshopForm] = useState({
-    date: '',
     startDate: '',
     endDate: '',
     location: '',
@@ -50,7 +49,6 @@ export default function AdminPage() {
     // Payment details
     bankAccount: '',
     variableSymbol: '',
-    amount: '',
   })
 
   const handleLogin = async (e) => {
@@ -128,7 +126,6 @@ export default function AdminPage() {
         await loadWorkshops()
         setIsCreatingWorkshop(false)
         setWorkshopForm({
-          date: '',
           startDate: '',
           endDate: '',
           location: '',
@@ -141,7 +138,6 @@ export default function AdminPage() {
           instructorInfo: '',
           bankAccount: '',
           variableSymbol: '',
-          amount: '',
         })
       } else {
         alert('Nepodařilo se vytvořit workshop')
@@ -162,7 +158,6 @@ export default function AdminPage() {
         headers: getAuthHeaders(),
         body: JSON.stringify({
           id: workshop.id,
-          date: workshop.date,
           location: workshop.location,
           capacity: cleanValue(workshop.capacity),
           priceSingle: Number(workshop.price_single),
@@ -175,7 +170,6 @@ export default function AdminPage() {
           instructorInfo: cleanValue(workshop.instructor_info),
           bankAccount: cleanValue(workshop.bank_account),
           variableSymbol: cleanValue(workshop.variable_symbol),
-          amount: cleanValue(workshop.amount),
         }),
       })
 
@@ -542,63 +536,70 @@ export default function AdminPage() {
                   </button>
                 </div>
 
-                <form onSubmit={handleCreateWorkshop} className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Datum *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={workshopForm.date}
-                      onChange={(e) => setWorkshopForm({ ...workshopForm, date: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                      placeholder="15.-16. března 2026"
-                    />
+                <form onSubmit={handleCreateWorkshop} className="space-y-4">
+                  {/* Řádek 1: Počátek a Konec workshopu */}
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Počátek workshopu (pro řazení) *
+                      </label>
+                      <input
+                        type="date"
+                        required
+                        value={workshopForm.startDate}
+                        onChange={(e) => setWorkshopForm({ ...workshopForm, startDate: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Konec workshopu (pro datum rozsahu) *
+                      </label>
+                      <input
+                        type="date"
+                        required
+                        value={workshopForm.endDate}
+                        onChange={(e) => setWorkshopForm({ ...workshopForm, endDate: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                      />
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Počátek workshopu (pro řazení)
-                    </label>
-                    <input
-                      type="date"
-                      value={workshopForm.startDate}
-                      onChange={(e) => setWorkshopForm({ ...workshopForm, startDate: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                    />
+                  {/* Řádek 2: Místo a Kapacita */}
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Místo *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={workshopForm.location}
+                        onChange={(e) => setWorkshopForm({ ...workshopForm, location: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                        placeholder="Praha - Vinohrady"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Kapacita
+                      </label>
+                      <input
+                        type="number"
+                        value={workshopForm.capacity}
+                        onChange={(e) => setWorkshopForm({ ...workshopForm, capacity: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                        placeholder="20 (nechej prázdné pro skrytí)"
+                      />
+                    </div>
                   </div>
 
+                  {/* Řádek 3: Cena */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Místo *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={workshopForm.location}
-                      onChange={(e) => setWorkshopForm({ ...workshopForm, location: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                      placeholder="Praha - Vinohrady"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Kapacita
-                    </label>
-                    <input
-                      type="number"
-                      value={workshopForm.capacity}
-                      onChange={(e) => setWorkshopForm({ ...workshopForm, capacity: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                      placeholder="20 (nechej prázdné pro skrytí)"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Cena (1 osoba) *
+                      Cena *
                     </label>
                     <input
                       type="number"
@@ -610,7 +611,8 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  <div className="md:col-span-2">
+                  {/* Řádek 4: Program */}
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Program
                     </label>
@@ -623,9 +625,10 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  <div className="md:col-span-2">
+                  {/* Řádek 5: Přesná adresa vč. odkazu na Google Mapy */}
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Adresa
+                      Přesná adresa vč. odkazu na Google Mapy
                     </label>
                     <textarea
                       rows="2"
@@ -636,7 +639,8 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  <div className="md:col-span-2">
+                  {/* Řádek 6: Co si vzít s sebou */}
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Co si vzít s sebou
                     </label>
@@ -649,75 +653,37 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Info o lektorovi
-                    </label>
-                    <textarea
-                      rows="2"
-                      value={workshopForm.instructorInfo}
-                      onChange={(e) => setWorkshopForm({ ...workshopForm, instructorInfo: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                      placeholder="Krátké info o lektorovi..."
-                    />
+                  {/* Řádek 7: Číslo účtu a Variabilní symbol */}
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Číslo účtu
+                      </label>
+                      <input
+                        type="text"
+                        value={workshopForm.bankAccount}
+                        onChange={(e) => setWorkshopForm({ ...workshopForm, bankAccount: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                        placeholder="123456789/0100"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Variabilní symbol
+                      </label>
+                      <input
+                        type="text"
+                        value={workshopForm.variableSymbol}
+                        onChange={(e) => setWorkshopForm({ ...workshopForm, variableSymbol: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                        placeholder="202603"
+                      />
+                    </div>
                   </div>
 
-                  <div className="md:col-span-2">
-                    <h4 className="text-sm font-semibold text-gray-900 mb-3 mt-4">Platební údaje</h4>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Číslo účtu
-                    </label>
-                    <input
-                      type="text"
-                      value={workshopForm.bankAccount}
-                      onChange={(e) => setWorkshopForm({ ...workshopForm, bankAccount: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                      placeholder="123456789/0100"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Variabilní symbol
-                    </label>
-                    <input
-                      type="text"
-                      value={workshopForm.variableSymbol}
-                      onChange={(e) => setWorkshopForm({ ...workshopForm, variableSymbol: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                      placeholder="202603"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Částka k úhradě
-                    </label>
-                    <input
-                      type="number"
-                      value={workshopForm.amount}
-                      onChange={(e) => setWorkshopForm({ ...workshopForm, amount: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                      placeholder="4800"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Konec workshopu (pro datum rozsahu)
-                    </label>
-                    <input
-                      type="date"
-                      value={workshopForm.endDate}
-                      onChange={(e) => setWorkshopForm({ ...workshopForm, endDate: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="md:col-span-2 flex justify-end gap-3">
+                  {/* Tlačítka */}
+                  <div className="flex justify-end gap-3 pt-4">
                     <button
                       type="button"
                       onClick={() => setIsCreatingWorkshop(false)}
