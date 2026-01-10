@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, Calendar, Users, Building2, CheckCircle2 } from 'lucide-react'
 import Link from 'next/link'
@@ -12,6 +12,11 @@ import ContactForm from '../components/ContactForm'
 export default function Home() {
   const [selectedWorkshop, setSelectedWorkshop] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  // Scroll to top on page load
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   const openRegistration = (workshop) => {
     setSelectedWorkshop(workshop)
@@ -55,8 +60,12 @@ export default function Home() {
             Pět dohod
           </h1>
 
-          <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl text-gray-600 mb-4 max-w-2xl mx-auto">
             Nauč se žít bez zbytečných strachů a utrpení.
+          </p>
+
+          <p className="text-lg md:text-xl text-gray-500 mb-12 max-w-2xl mx-auto">
+            Workshopy založené na moudrosti knih Čtyři dohody a Pátá dohoda.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
