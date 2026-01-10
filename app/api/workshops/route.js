@@ -85,9 +85,9 @@ export async function POST(request) {
     const data = await request.json()
 
     // Validace
-    if (!data.date || !data.location || !data.priceSingle) {
+    if (!data.startDate || !data.endDate || !data.location || !data.priceSingle) {
       return NextResponse.json(
-        { error: 'Vyplň prosím všechna povinná pole' },
+        { error: 'Vyplň prosím všechna povinná pole (datum, místo, cena)' },
         { status: 400 }
       )
     }
