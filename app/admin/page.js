@@ -117,8 +117,13 @@ export default function AdminPage() {
           date: workshop.date,
           location: workshop.location,
           capacity: workshop.capacity || null,
-          priceSingle: workshop.price_single,
+          priceSingle: Number(workshop.price_single),
           type: workshop.type,
+          startDate: workshop.start_date || null,
+          program: workshop.program || null,
+          address: workshop.address || null,
+          whatToBring: workshop.what_to_bring || null,
+          instructorInfo: workshop.instructor_info || null,
         }),
       })
 
@@ -508,62 +513,116 @@ export default function AdminPage() {
                       {workshops.map((workshop) => (
                         <tr key={workshop.id} className="hover:bg-gray-50">
                           {editingWorkshop?.id === workshop.id ? (
-                            <>
-                              <td className="px-6 py-4">
-                                <input
-                                  type="text"
-                                  value={editingWorkshop.date}
-                                  onChange={(e) => setEditingWorkshop({ ...editingWorkshop, date: e.target.value })}
-                                  className="w-full px-3 py-1 border border-gray-300 rounded"
-                                />
-                              </td>
-                              <td className="px-6 py-4">
-                                <input
-                                  type="text"
-                                  value={editingWorkshop.location}
-                                  onChange={(e) => setEditingWorkshop({ ...editingWorkshop, location: e.target.value })}
-                                  className="w-full px-3 py-1 border border-gray-300 rounded"
-                                />
-                              </td>
-                              <td className="px-6 py-4">
-                                <input
-                                  type="number"
-                                  value={editingWorkshop.capacity || ''}
-                                  onChange={(e) => setEditingWorkshop({ ...editingWorkshop, capacity: e.target.value })}
-                                  className="w-20 px-3 py-1 border border-gray-300 rounded"
-                                  placeholder="20"
-                                />
-                              </td>
-                              <td className="px-6 py-4 text-sm text-gray-600">
-                                {workshop.registrationCount || 0}
-                              </td>
-                              <td className="px-6 py-4">
-                                <input
-                                  type="number"
-                                  value={editingWorkshop.price_single}
-                                  onChange={(e) => setEditingWorkshop({ ...editingWorkshop, price_single: e.target.value })}
-                                  className="w-24 px-3 py-1 border border-gray-300 rounded"
-                                />
-                              </td>
-                              <td className="px-6 py-4">
-                                <div className="flex gap-2">
-                                  <button
-                                    onClick={() => handleUpdateWorkshop(editingWorkshop)}
-                                    className="p-2 text-green-600 hover:bg-green-50 rounded transition-colors"
-                                    title="Uložit"
-                                  >
-                                    <Save className="w-4 h-4" />
-                                  </button>
+                            <td colSpan="6" className="px-6 py-6 bg-gray-50">
+                              <div className="bg-white rounded-lg p-6 border border-gray-200">
+                                <div className="flex items-center justify-between mb-4">
+                                  <h4 className="font-semibold text-gray-900">Upravit workshop</h4>
                                   <button
                                     onClick={() => setEditingWorkshop(null)}
-                                    className="p-2 text-gray-600 hover:bg-gray-100 rounded transition-colors"
-                                    title="Zrušit"
+                                    className="text-gray-500 hover:text-gray-700"
                                   >
-                                    <X className="w-4 h-4" />
+                                    <X className="w-5 h-5" />
                                   </button>
                                 </div>
-                              </td>
-                            </>
+                                <div className="grid md:grid-cols-2 gap-4">
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Datum</label>
+                                    <input
+                                      type="text"
+                                      value={editingWorkshop.date}
+                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, date: e.target.value })}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Počátek (pro řazení)</label>
+                                    <input
+                                      type="date"
+                                      value={editingWorkshop.start_date || ''}
+                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, start_date: e.target.value })}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Místo</label>
+                                    <input
+                                      type="text"
+                                      value={editingWorkshop.location}
+                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, location: e.target.value })}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Kapacita</label>
+                                    <input
+                                      type="number"
+                                      value={editingWorkshop.capacity || ''}
+                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, capacity: e.target.value })}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Cena (1 osoba)</label>
+                                    <input
+                                      type="number"
+                                      value={editingWorkshop.price_single || ''}
+                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, price_single: e.target.value })}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                    />
+                                  </div>
+                                  <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Program</label>
+                                    <textarea
+                                      rows="3"
+                                      value={editingWorkshop.program || ''}
+                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, program: e.target.value })}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                    />
+                                  </div>
+                                  <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Adresa</label>
+                                    <textarea
+                                      rows="2"
+                                      value={editingWorkshop.address || ''}
+                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, address: e.target.value })}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                    />
+                                  </div>
+                                  <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Co si vzít s sebou</label>
+                                    <textarea
+                                      rows="2"
+                                      value={editingWorkshop.what_to_bring || ''}
+                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, what_to_bring: e.target.value })}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                    />
+                                  </div>
+                                  <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Info o lektorovi</label>
+                                    <textarea
+                                      rows="2"
+                                      value={editingWorkshop.instructor_info || ''}
+                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, instructor_info: e.target.value })}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                    />
+                                  </div>
+                                  <div className="md:col-span-2 flex justify-end gap-3 mt-2">
+                                    <button
+                                      onClick={() => setEditingWorkshop(null)}
+                                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                                    >
+                                      Zrušit
+                                    </button>
+                                    <button
+                                      onClick={() => handleUpdateWorkshop(editingWorkshop)}
+                                      className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+                                    >
+                                      Uložit změny
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
                           ) : (
                             <>
                               <td className="px-6 py-4 whitespace-nowrap">
