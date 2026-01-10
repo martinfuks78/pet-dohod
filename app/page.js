@@ -879,12 +879,17 @@ function WorkshopCard({ workshop, index, onRegister }) {
     >
       <div className="flex items-start justify-between mb-4">
         <div>
+          {workshop.name && (
+            <h3 className="text-xl font-serif font-bold text-primary-700 mb-2">
+              {workshop.name}
+            </h3>
+          )}
           <div className="inline-block px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold mb-3">
             {workshop.location}
           </div>
-          <h3 className="text-2xl font-serif font-bold text-gray-900 mb-2">
+          <div className="text-2xl font-serif font-bold text-gray-900 mb-2">
             {workshop.date}
-          </h3>
+          </div>
         </div>
         <div className="text-right">
           <span className="text-sm text-gray-500">Zbývá míst:</span>
@@ -932,7 +937,35 @@ function WorkshopCard({ workshop, index, onRegister }) {
               {workshop.address && (
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">Adresa</h4>
-                  <p className="text-gray-600 text-sm whitespace-pre-line">{workshop.address}</p>
+                  <p className="text-gray-600 text-sm whitespace-pre-line">
+                    {workshop.address.split('\n').map((line, i) => {
+                      // Detekce URL v textu
+                      const urlRegex = /(https?:\/\/[^\s]+)/g
+                      const parts = line.split(urlRegex)
+
+                      return (
+                        <span key={i}>
+                          {parts.map((part, j) => {
+                            if (part.match(urlRegex)) {
+                              return (
+                                <a
+                                  key={j}
+                                  href={part}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-primary-600 hover:text-primary-700 underline"
+                                >
+                                  {part}
+                                </a>
+                              )
+                            }
+                            return <span key={j}>{part}</span>
+                          })}
+                          {i < workshop.address.split('\n').length - 1 && <br />}
+                        </span>
+                      )
+                    })}
+                  </p>
                 </div>
               )}
               {workshop.whatToBring && (

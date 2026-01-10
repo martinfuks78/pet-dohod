@@ -35,6 +35,7 @@ export default function AdminPage() {
     }
   }
   const [workshopForm, setWorkshopForm] = useState({
+    name: '',
     startDate: '',
     endDate: '',
     location: '',
@@ -126,6 +127,7 @@ export default function AdminPage() {
         await loadWorkshops()
         setIsCreatingWorkshop(false)
         setWorkshopForm({
+          name: '',
           startDate: '',
           endDate: '',
           location: '',
@@ -158,6 +160,7 @@ export default function AdminPage() {
         headers: getAuthHeaders(),
         body: JSON.stringify({
           id: workshop.id,
+          name: cleanValue(workshop.name),
           location: workshop.location,
           capacity: cleanValue(workshop.capacity),
           priceSingle: Number(workshop.price_single),
@@ -537,6 +540,21 @@ export default function AdminPage() {
                 </div>
 
                 <form onSubmit={handleCreateWorkshop} className="space-y-4">
+                  {/* Řádek 0: Název workshopu */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Název workshopu
+                    </label>
+                    <input
+                      type="text"
+                      value={workshopForm.name}
+                      onChange={(e) => setWorkshopForm({ ...workshopForm, name: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                      placeholder="Například: Pět dohod - Základní workshop"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Ponecháno prázdné = použije se standardní název "Workshop Pět dohod"</p>
+                  </div>
+
                   {/* Řádek 1: Počátek a Konec workshopu */}
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
@@ -1143,6 +1161,11 @@ export default function AdminPage() {
                                       {registration.registration_type === 'pair' && registration.partner_first_name && (
                                         <div className="text-sm text-gray-500">
                                           + {registration.partner_first_name} {registration.partner_last_name}
+                                        </div>
+                                      )}
+                                      {registration.notes && (
+                                        <div className="text-sm text-gray-600 mt-1 italic">
+                                          💬 {registration.notes}
                                         </div>
                                       )}
                                     </td>
