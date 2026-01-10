@@ -45,28 +45,24 @@ export default function Home() {
           <div className="flex items-center justify-center gap-8 lg:gap-16">
             {/* Levá kniha - Čtyři dohody */}
             <motion.div
-              initial={{ opacity: 0, x: -50, rotateY: -15 }}
-              animate={{ opacity: 1, x: 0, rotateY: 0 }}
+              initial={{ opacity: 0, x: -50, rotate: 0 }}
+              animate={{ opacity: 1, x: 0, rotate: 8 }}
               transition={{ duration: 1, delay: 0.3 }}
               className="hidden lg:block relative"
-              style={{ perspective: '1000px' }}
+              style={{ transformOrigin: 'center right' }}
             >
               <div className="relative w-48 xl:w-56 transform hover:scale-105 transition-transform duration-300">
-                <div className="relative aspect-[2/3] bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg shadow-2xl overflow-hidden border-2 border-amber-300/50">
-                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent"></div>
-                  <div className="p-6 h-full flex flex-col justify-between">
-                    <div>
-                      <div className="text-xs font-semibold text-amber-800 mb-2">Don Miguel Ruiz</div>
-                      <h3 className="font-serif font-bold text-2xl xl:text-3xl text-gray-900 leading-tight">
-                        Čtyři<br />dohody
-                      </h3>
-                    </div>
-                    <div className="text-xs text-amber-900 opacity-70">
-                      Cesta k osobní svobodě
-                    </div>
-                  </div>
+                <div className="relative aspect-[2/3] rounded-lg shadow-2xl overflow-hidden">
+                  <Image
+                    src="/ctyri-dohody.jpg"
+                    alt="Čtyři dohody - Don Miguel Ruiz"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
                 </div>
-                <div className="absolute -right-2 top-2 w-full h-full bg-amber-200/30 rounded-lg -z-10"></div>
+                {/* 3D depth shadow */}
+                <div className="absolute -right-2 top-2 w-full h-full bg-black/20 rounded-lg -z-10 blur-sm"></div>
               </div>
             </motion.div>
 
@@ -137,28 +133,24 @@ export default function Home() {
 
             {/* Pravá kniha - Pátá dohoda */}
             <motion.div
-              initial={{ opacity: 0, x: 50, rotateY: 15 }}
-              animate={{ opacity: 1, x: 0, rotateY: 0 }}
+              initial={{ opacity: 0, x: 50, rotate: 0 }}
+              animate={{ opacity: 1, x: 0, rotate: -8 }}
               transition={{ duration: 1, delay: 0.3 }}
               className="hidden lg:block relative"
-              style={{ perspective: '1000px' }}
+              style={{ transformOrigin: 'center left' }}
             >
               <div className="relative w-48 xl:w-56 transform hover:scale-105 transition-transform duration-300">
-                <div className="relative aspect-[2/3] bg-gradient-to-br from-sage-100 to-sage-200 rounded-lg shadow-2xl overflow-hidden border-2 border-sage-300/50">
-                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent"></div>
-                  <div className="p-6 h-full flex flex-col justify-between">
-                    <div>
-                      <div className="text-xs font-semibold text-sage-800 mb-2">Don Miguel Ruiz</div>
-                      <h3 className="font-serif font-bold text-2xl xl:text-3xl text-gray-900 leading-tight">
-                        Pátá<br />dohoda
-                      </h3>
-                    </div>
-                    <div className="text-xs text-sage-900 opacity-70">
-                      Praktická příručka pro skeptiky
-                    </div>
-                  </div>
+                <div className="relative aspect-[2/3] rounded-lg shadow-2xl overflow-hidden">
+                  <Image
+                    src="/pata-dohoda.jpg"
+                    alt="Pátá dohoda - Don Miguel Ruiz"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
                 </div>
-                <div className="absolute -left-2 top-2 w-full h-full bg-sage-200/30 rounded-lg -z-10"></div>
+                {/* 3D depth shadow */}
+                <div className="absolute -left-2 top-2 w-full h-full bg-black/20 rounded-lg -z-10 blur-sm"></div>
               </div>
             </motion.div>
           </div>
