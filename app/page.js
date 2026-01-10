@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { ArrowRight, Calendar, Users, Building2, CheckCircle2 } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ArrowRight, Calendar, Users, Building2, CheckCircle2, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import Navigation from '../components/Navigation'
@@ -37,9 +37,12 @@ export default function Home() {
             capacity: w.capacity,
             registrationCount: w.registrationCount || 0,
             price: `${w.price_single.toLocaleString('cs-CZ')} Kč`,
-            pairPrice: `${w.price_couple.toLocaleString('cs-CZ')} Kč`,
             priceSingle: w.price_single,
-            priceCouple: w.price_couple
+            // Detail fields
+            program: w.program,
+            address: w.address,
+            whatToBring: w.what_to_bring,
+            instructorInfo: w.instructor_info
           }))
           setWorkshops(formattedWorkshops)
         }
@@ -854,6 +857,16 @@ const faqs = [
 
 // Workshop Card Component
 function WorkshopCard({ workshop, index, onRegister }) {
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  // Calculate capacity color
+  const fillPercentage = workshop.capacity ? (workshop.registrationCount / workshop.capacity) * 100 : 0
+  const isFull = fillPercentage >= 100
+  const spotsColor = isFull ? 'text-red-600' : fillPercentage > 50 ? 'text-yellow-600' : 'text-green-600'
+
+  // Check if there are any detail fields to show
+  const hasDetails = workshop.program || workshop.address || workshop.whatToBring || workshop.instructorInfo
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -873,26 +886,80 @@ function WorkshopCard({ workshop, index, onRegister }) {
         </div>
         <div className="text-right">
           <span className="text-sm text-gray-500">Zbývá míst:</span>
-          <div className="text-3xl font-bold text-primary-600">{workshop.spots}</div>
+          <div className={`text-3xl font-bold ${spotsColor}`}>
+            {isFull ? 'Naplněno' : workshop.spots}
+          </div>
         </div>
       </div>
 
       <div className="space-y-3 mb-6">
         <div className="flex justify-between items-center">
-          <span className="text-gray-600">1 osoba:</span>
+          <span className="text-gray-600">Cena:</span>
           <span className="text-xl font-bold text-gray-900">{workshop.price}</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-gray-600">Pár:</span>
-          <span className="text-xl font-bold text-gray-900">{workshop.pairPrice}</span>
         </div>
       </div>
 
+      {hasDetails && (
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="flex items-center justify-between w-full px-4 py-2 mb-4 text-primary-600 hover:text-primary-700 transition-colors border border-primary-200 rounded-lg hover:bg-primary-50"
+        >
+          <span className="font-semibold">Více informací</span>
+          <ChevronDown
+            className={`w-5 h-5 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+          />
+        </button>
+      )}
+
+      <AnimatePresence>
+        {isExpanded && hasDetails && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden mb-6"
+          >
+            <div className="space-y-4 pt-2 pb-4 border-t border-gray-200">
+              {workshop.program && (
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-2">Program</h4>
+                  <p className="text-gray-600 text-sm whitespace-pre-line">{workshop.program}</p>
+                </div>
+              )}
+              {workshop.address && (
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-2">Adresa</h4>
+                  <p className="text-gray-600 text-sm whitespace-pre-line">{workshop.address}</p>
+                </div>
+              )}
+              {workshop.whatToBring && (
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-2">Co si vzít s sebou</h4>
+                  <p className="text-gray-600 text-sm whitespace-pre-line">{workshop.whatToBring}</p>
+                </div>
+              )}
+              {workshop.instructorInfo && (
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-2">Lektor</h4>
+                  <p className="text-gray-600 text-sm whitespace-pre-line">{workshop.instructorInfo}</p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <button
         onClick={() => onRegister(workshop)}
-        className="block w-full px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold text-center"
+        disabled={isFull}
+        className={`block w-full px-6 py-3 rounded-lg font-semibold text-center transition-colors ${
+          isFull
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            : 'bg-primary-500 text-white hover:bg-primary-600'
+        }`}
       >
-        Registrovat se
+        {isFull ? 'Obsazeno' : 'Registrovat se'}
       </button>
     </motion.div>
   )
