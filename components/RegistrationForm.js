@@ -234,7 +234,7 @@ export default function RegistrationForm({ workshop }) {
           a využity pouze pro účely související s workshopem.
         </p>
         <p className="text-xs">
-          Provozovatel: Martin Fuks, IČ: [doplň IČ] •
+          Provozovatel: Martin Fuks, IČ: 19755015 •
           Více informací o zpracování osobních údajů najdeš v{' '}
           <a href="/ochrana-osobnich-udaju" className="text-primary-600 hover:underline">
             dokumentu o ochraně osobních údajů
