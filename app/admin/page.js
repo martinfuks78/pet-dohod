@@ -772,137 +772,169 @@ export default function AdminPage() {
                                     <X className="w-5 h-5" />
                                   </button>
                                 </div>
-                                <div className="grid md:grid-cols-2 gap-4">
+                                <div className="space-y-4">
+                                  {/* Řádek 0: Název workshopu */}
                                   <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Datum</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      Název workshopu
+                                    </label>
                                     <input
                                       type="text"
-                                      value={editingWorkshop.date}
-                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, date: e.target.value })}
+                                      value={editingWorkshop.name || ''}
+                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, name: e.target.value })}
                                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                      placeholder="Například: Pět dohod - Základní workshop"
                                     />
+                                    <p className="text-xs text-gray-500 mt-1">Ponecháno prázdné = použije se standardní název "Workshop Pět dohod"</p>
                                   </div>
-                                  <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Počátek (pro řazení)</label>
-                                    <input
-                                      type="date"
-                                      value={formatDateForInput(editingWorkshop.start_date)}
-                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, start_date: e.target.value })}
-                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                                    />
+
+                                  {/* Řádek 1: Počátek a Konec workshopu */}
+                                  <div className="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Počátek workshopu (pro řazení) *
+                                      </label>
+                                      <input
+                                        type="date"
+                                        required
+                                        value={formatDateForInput(editingWorkshop.start_date)}
+                                        onChange={(e) => setEditingWorkshop({ ...editingWorkshop, start_date: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Konec workshopu (pro datum rozsahu) *
+                                      </label>
+                                      <input
+                                        type="date"
+                                        required
+                                        value={formatDateForInput(editingWorkshop.end_date)}
+                                        onChange={(e) => setEditingWorkshop({ ...editingWorkshop, end_date: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                      />
+                                    </div>
                                   </div>
-                                  <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Místo</label>
-                                    <input
-                                      type="text"
-                                      value={editingWorkshop.location}
-                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, location: e.target.value })}
-                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                                    />
+
+                                  {/* Řádek 2: Místo a Kapacita */}
+                                  <div className="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Místo *
+                                      </label>
+                                      <input
+                                        type="text"
+                                        required
+                                        value={editingWorkshop.location}
+                                        onChange={(e) => setEditingWorkshop({ ...editingWorkshop, location: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                        placeholder="Praha - Vinohrady"
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Kapacita
+                                      </label>
+                                      <input
+                                        type="number"
+                                        value={editingWorkshop.capacity || ''}
+                                        onChange={(e) => setEditingWorkshop({ ...editingWorkshop, capacity: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                        placeholder="20 (nechej prázdné pro skrytí)"
+                                      />
+                                    </div>
                                   </div>
+
+                                  {/* Řádek 3: Cena */}
                                   <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Kapacita</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      Cena *
+                                    </label>
                                     <input
                                       type="number"
-                                      value={editingWorkshop.capacity || ''}
-                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, capacity: e.target.value })}
-                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                                    />
-                                  </div>
-                                  <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Cena (1 osoba)</label>
-                                    <input
-                                      type="number"
+                                      required
                                       value={editingWorkshop.price_single || ''}
                                       onChange={(e) => setEditingWorkshop({ ...editingWorkshop, price_single: e.target.value })}
-                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                                    />
-                                  </div>
-                                  <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Program</label>
-                                    <textarea
-                                      rows="3"
-                                      value={editingWorkshop.program || ''}
-                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, program: e.target.value })}
-                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                                    />
-                                  </div>
-                                  <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Adresa</label>
-                                    <textarea
-                                      rows="2"
-                                      value={editingWorkshop.address || ''}
-                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, address: e.target.value })}
-                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                                    />
-                                  </div>
-                                  <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Co si vzít s sebou</label>
-                                    <textarea
-                                      rows="2"
-                                      value={editingWorkshop.what_to_bring || ''}
-                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, what_to_bring: e.target.value })}
-                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                                    />
-                                  </div>
-                                  <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Info o lektorovi</label>
-                                    <textarea
-                                      rows="2"
-                                      value={editingWorkshop.instructor_info || ''}
-                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, instructor_info: e.target.value })}
-                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                                    />
-                                  </div>
-
-                                  <div className="md:col-span-2">
-                                    <h4 className="text-sm font-semibold text-gray-900 mb-2 mt-2">Platební údaje</h4>
-                                  </div>
-
-                                  <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Konec workshopu</label>
-                                    <input
-                                      type="date"
-                                      value={formatDateForInput(editingWorkshop.end_date)}
-                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, end_date: e.target.value })}
-                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                                    />
-                                  </div>
-
-                                  <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Číslo účtu</label>
-                                    <input
-                                      type="text"
-                                      value={editingWorkshop.bank_account || ''}
-                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, bank_account: e.target.value })}
-                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                                      placeholder="123456789/0100"
-                                    />
-                                  </div>
-
-                                  <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Variabilní symbol</label>
-                                    <input
-                                      type="text"
-                                      value={editingWorkshop.variable_symbol || ''}
-                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, variable_symbol: e.target.value })}
-                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                                      placeholder="202603"
-                                    />
-                                  </div>
-
-                                  <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Částka k úhradě</label>
-                                    <input
-                                      type="number"
-                                      value={editingWorkshop.amount || ''}
-                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, amount: e.target.value })}
                                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
                                       placeholder="4800"
                                     />
                                   </div>
 
-                                  <div className="md:col-span-2 flex justify-end gap-3 mt-2">
+                                  {/* Řádek 4: Program */}
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      Program
+                                    </label>
+                                    <textarea
+                                      rows="3"
+                                      value={editingWorkshop.program || ''}
+                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, program: e.target.value })}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                      placeholder="Popis programu pro den 1 a den 2..."
+                                    />
+                                  </div>
+
+                                  {/* Řádek 5: Přesná adresa vč. odkazu na Google Mapy */}
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      Přesná adresa vč. odkazu na Google Mapy
+                                    </label>
+                                    <textarea
+                                      rows="2"
+                                      value={editingWorkshop.address || ''}
+                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, address: e.target.value })}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                      placeholder="Přesná adresa místa konání..."
+                                    />
+                                  </div>
+
+                                  {/* Řádek 6: Co si vzít s sebou */}
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                      Co si vzít s sebou
+                                    </label>
+                                    <textarea
+                                      rows="2"
+                                      value={editingWorkshop.what_to_bring || ''}
+                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, what_to_bring: e.target.value })}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                      placeholder="Seznam věcí, které si mají účastníci vzít..."
+                                    />
+                                  </div>
+
+                                  {/* Řádek 7: Číslo účtu a Variabilní symbol */}
+                                  <div className="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Číslo účtu
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={editingWorkshop.bank_account || ''}
+                                        onChange={(e) => setEditingWorkshop({ ...editingWorkshop, bank_account: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                        placeholder="123456789/0100"
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Variabilní symbol
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={editingWorkshop.variable_symbol || ''}
+                                        onChange={(e) => setEditingWorkshop({ ...editingWorkshop, variable_symbol: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                        placeholder="202603"
+                                      />
+                                    </div>
+                                  </div>
+
+                                  {/* Tlačítka */}
+                                  <div className="flex justify-end gap-3 pt-4">
                                     <button
                                       onClick={() => setEditingWorkshop(null)}
                                       className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
