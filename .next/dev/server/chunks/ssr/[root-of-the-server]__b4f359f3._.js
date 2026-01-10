@@ -80,6 +80,11 @@ const metadata = {
             name: 'Martin Fuks'
         }
     ],
+    robots: {
+        index: false,
+        follow: true,
+        nocache: true
+    },
     icons: {
         icon: '/favicon.svg'
     },
@@ -87,7 +92,17 @@ const metadata = {
         title: 'Pět dohod - Workshop pro osobní svobodu',
         description: 'Dvoudenní workshop založený na moudrosti Čtyř dohod a Páté dohody.',
         type: 'website',
-        locale: 'cs_CZ'
+        locale: 'cs_CZ',
+        url: 'https://www.petdohod.cz',
+        siteName: 'Pět dohod'
+    },
+    alternates: {
+        canonical: 'https://www.petdohod.cz'
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Pět dohod - Workshop pro osobní svobodu',
+        description: 'Dvoudenní workshop založený na moudrosti Čtyř dohod a Páté dohody.'
     }
 };
 function RootLayout({ children }) {
@@ -99,12 +114,12 @@ function RootLayout({ children }) {
             children: children
         }, void 0, false, {
             fileName: "[project]/app/layout.js",
-            lineNumber: 35,
+            lineNumber: 50,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/layout.js",
-        lineNumber: 34,
+        lineNumber: 49,
         columnNumber: 5
     }, this);
 }
