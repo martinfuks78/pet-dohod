@@ -34,6 +34,14 @@ export async function POST(request) {
   try {
     const data = await request.json()
 
+    // DEBUG - log received data
+    console.log('📝 Registration data received:', {
+      workshopId: data.workshopId,
+      workshopDate: data.workshopDate,
+      workshopLocation: data.workshopLocation,
+      email: data.email
+    })
+
     // Validace
     if (!data.firstName || !data.lastName || !data.email || !data.phone) {
       return NextResponse.json(
