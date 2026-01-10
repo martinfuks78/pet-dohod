@@ -38,7 +38,12 @@ export default function Navigation() {
           <Link
             href="/"
             className="font-serif text-2xl font-bold text-gray-900 hover:text-primary-600 transition-colors tracking-wide"
-            onClick={() => setIsOpen(false)}
+            onClick={() => {
+              setIsOpen(false)
+              // Clear saved scroll position and scroll to top when logo is clicked
+              sessionStorage.removeItem('scrollPosition')
+              window.scrollTo(0, 0)
+            }}
             style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
           >
             Pět dohod

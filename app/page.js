@@ -16,9 +16,32 @@ export default function Home() {
   const [workshops, setWorkshops] = useState([])
   const [loading, setLoading] = useState(true)
 
-  // Scroll to top on page load
+  // Scroll position restoration (preserve scroll on refresh)
   useEffect(() => {
-    window.scrollTo(0, 0)
+    // Check if this is a page refresh (has saved scroll position)
+    const savedScrollPosition = sessionStorage.getItem('scrollPosition')
+
+    if (savedScrollPosition) {
+      // Restore scroll position after a small delay to ensure content is rendered
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(savedScrollPosition, 10))
+      }, 100)
+    } else {
+      // New page load - scroll to top
+      window.scrollTo(0, 0)
+    }
+
+    // Save scroll position on scroll events
+    const handleScroll = () => {
+      sessionStorage.setItem('scrollPosition', window.scrollY.toString())
+    }
+
+    window.addEventListener('scroll', handleScroll)
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
 
   // Load workshops from API
