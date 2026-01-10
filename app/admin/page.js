@@ -43,10 +43,16 @@ export default function AdminPage() {
   const loadRegistrations = async () => {
     try {
       const response = await fetch('/api/register')
+      if (!response.ok) {
+        console.error('API error:', response.status)
+        setRegistrations([])
+        return
+      }
       const data = await response.json()
       setRegistrations(data.registrations || [])
     } catch (error) {
       console.error('Chyba při načítání registrací:', error)
+      setRegistrations([])
     } finally {
       setLoading(false)
     }
@@ -55,10 +61,16 @@ export default function AdminPage() {
   const loadWorkshops = async () => {
     try {
       const response = await fetch('/api/workshops')
+      if (!response.ok) {
+        console.error('API error:', response.status)
+        setWorkshops([])
+        return
+      }
       const data = await response.json()
       setWorkshops(data.workshops || [])
     } catch (error) {
       console.error('Chyba při načítání workshopů:', error)
+      setWorkshops([])
     }
   }
 
