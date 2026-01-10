@@ -57,7 +57,7 @@ export default function Home() {
                     src="/ctyri-dohody.jpg"
                     alt="Čtyři dohody - Don Miguel Ruiz"
                     fill
-                    className="object-cover opacity-70 saturate-75"
+                    className="object-cover opacity-50 saturate-75 hover:opacity-100 hover:saturate-100 transition-all duration-300"
                     priority
                   />
                 </div>
@@ -145,7 +145,7 @@ export default function Home() {
                     src="/pata-dohoda.jpg"
                     alt="Pátá dohoda - Don Miguel Ruiz"
                     fill
-                    className="object-cover opacity-70 saturate-75"
+                    className="object-cover opacity-50 saturate-75 hover:opacity-100 hover:saturate-100 transition-all duration-300"
                     priority
                   />
                 </div>
