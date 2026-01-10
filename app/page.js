@@ -55,12 +55,8 @@ export default function Home() {
             Pět dohod
           </h1>
 
-          <p className="text-xl md:text-2xl text-gray-600 mb-4 max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto">
             Nauč se žít bez zbytečných strachů a utrpení.
-          </p>
-
-          <p className="text-lg md:text-xl text-gray-500 mb-12 max-w-2xl mx-auto">
-            Workshopy založené na moudrosti knih Čtyři dohody a Pátá dohoda. Žádná omáčka, trapné scénky nebo suchá teorie.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -125,8 +121,9 @@ export default function Home() {
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
               Co je Pět dohod?
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Pět jednoduchých principů, které mění život. Nejde o teorii - jde o to se naučit dohody žít a přestat zbytečně trpět.
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              Pět jednoduchých principů, které mění život.<br />
+              Nejde o teorii - jde o to se naučit dohody žít a přestat zbytečně trpět.
             </p>
           </motion.div>
 
@@ -142,8 +139,9 @@ export default function Home() {
             viewport={{ once: true }}
             className="mt-16 text-center"
           >
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Každá dohoda je jednoduchá. Ale dát ji do praxe? To chce trénink a zkušenost. Přesně to dostaneš na workshopu.
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Každá dohoda je jednoduchá. Ale dát ji do praxe? To chce trénink a zkušenost.<br />
+              Přesně to dostaneš na workshopu.
             </p>
           </motion.div>
         </div>
@@ -255,7 +253,7 @@ export default function Home() {
               Firemní workshop nebo teambuilding
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Pět dohod vytváří také zdravější a produktivnější pracovní prostředí. Vyzkoušejte netradiční teambuilding, kde se lidé baví osobním rozvojem.
+              Pět dohod pro zdravější a produktivnější pracovní prostředí? Vyzkoušejte netradiční teambuilding, kde se lidé baví osobním rozvojem.
             </p>
           </motion.div>
 
@@ -646,7 +644,6 @@ const agreements = [
   },
   {
     title: 'Dělejte vše, jak nejlépe dovedete',
-    subtitle: 'Ale ne lépe',
     description: 'Každý den je jiný. Vaše maximum taky. Dělejte vždy nejlépe - ale ne lépe.'
   },
   {
