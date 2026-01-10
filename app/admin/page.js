@@ -608,6 +608,7 @@ export default function AdminPage() {
                         type="number"
                         value={workshopForm.capacity}
                         onChange={(e) => setWorkshopForm({ ...workshopForm, capacity: e.target.value })}
+                        onWheel={(e) => e.target.blur()}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
                         placeholder="20 (nechej prázdné pro skrytí)"
                       />
@@ -624,6 +625,7 @@ export default function AdminPage() {
                       required
                       value={workshopForm.priceSingle}
                       onChange={(e) => setWorkshopForm({ ...workshopForm, priceSingle: e.target.value })}
+                      onWheel={(e) => e.target.blur()}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
                       placeholder="4800"
                     />
@@ -841,6 +843,7 @@ export default function AdminPage() {
                                         type="number"
                                         value={editingWorkshop.capacity || ''}
                                         onChange={(e) => setEditingWorkshop({ ...editingWorkshop, capacity: e.target.value })}
+                                        onWheel={(e) => e.target.blur()}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
                                         placeholder="20 (nechej prázdné pro skrytí)"
                                       />
@@ -857,6 +860,7 @@ export default function AdminPage() {
                                       required
                                       value={editingWorkshop.price_single || ''}
                                       onChange={(e) => setEditingWorkshop({ ...editingWorkshop, price_single: e.target.value })}
+                                      onWheel={(e) => e.target.blur()}
                                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
                                       placeholder="4800"
                                     />

@@ -91,36 +91,49 @@ export async function POST(request) {
 
     // Odeslání emailů (pokud je RESEND_API_KEY nastavený)
     if (process.env.RESEND_API_KEY) {
-      try {
-        // Potvrzení účastníkovi - s workshop daty
-        await sendRegistrationConfirmation({
-          ...registration,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email,
-          workshopDate: data.workshopDate,
-          workshopLocation: data.workshopLocation,
-          registrationType: data.registrationType,
-          partnerFirstName: data.partnerFirstName,
-          partnerLastName: data.partnerLastName,
-          price: data.price,
-        }, workshop)
+      // Email sending v samostatném try-catch aby neovlivnilo registraci
+      setImmediate(async () => {
+        try {
+          // Potvrzení účastníkovi - s workshop daty
+          const confirmResult = await sendRegistrationConfirmation({
+            ...registration,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            workshopDate: data.workshopDate,
+            workshopLocation: data.workshopLocation,
+            registrationType: data.registrationType,
+            partnerFirstName: data.partnerFirstName,
+            partnerLastName: data.partnerLastName,
+            price: data.price,
+          }, workshop)
 
-        // Notifikace adminovi
-        await sendAdminNotification({
-          ...data,
-          id: registration.id,
-          variable_symbol: registration.variable_symbol,
-          createdAt: new Date().toISOString(),
-        })
+          if (confirmResult.success) {
+            console.log('✅ Confirmation email sent to:', data.email)
+          } else {
+            console.error('❌ Confirmation email failed:', confirmResult.error)
+          }
 
-        console.log('Emails sent successfully')
-      } catch (emailError) {
-        // Email error neblokuje registraci - pouze logujeme
-        console.error('Email send failed:', emailError)
-      }
+          // Notifikace adminovi
+          const adminResult = await sendAdminNotification({
+            ...data,
+            id: registration.id,
+            variable_symbol: registration.variable_symbol,
+            createdAt: new Date().toISOString(),
+          })
+
+          if (adminResult.success) {
+            console.log('✅ Admin notification sent')
+          } else {
+            console.error('❌ Admin notification failed:', adminResult.error)
+          }
+        } catch (emailError) {
+          // Email error neblokuje registraci - pouze logujeme
+          console.error('❌ Email send exception:', emailError)
+        }
+      })
     } else {
-      console.log('RESEND_API_KEY not set, skipping email send')
+      console.log('⚠️  RESEND_API_KEY not set, skipping email send')
     }
 
     return NextResponse.json({
