@@ -71,8 +71,7 @@ export async function POST(request) {
     // Načíst workshop z databáze pro platební údaje
     const workshopResult = await sql`
       SELECT * FROM workshops
-      WHERE date = ${data.workshopDate}
-      AND location = ${data.workshopLocation}
+      WHERE id = ${data.workshopId}
       AND is_active = true
       LIMIT 1
     `
@@ -81,7 +80,7 @@ export async function POST(request) {
 
     if (!workshop) {
       return NextResponse.json(
-        { error: 'Workshop nebyl nalezen' },
+        { error: 'Workshop nebyl nalezen nebo již není aktivní' },
         { status: 404 }
       )
     }

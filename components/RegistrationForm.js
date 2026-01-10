@@ -38,6 +38,7 @@ export default function RegistrationForm({ workshop }) {
         },
         body: JSON.stringify({
           ...formData,
+          workshopId: workshop.id,
           workshopDate: workshop.date,
           workshopLocation: workshop.location,
           price: workshop.price,
