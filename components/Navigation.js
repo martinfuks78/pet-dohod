@@ -44,7 +44,7 @@ export default function Navigation() {
             }}
             style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
           >
-            PĚT DOHOD
+            Pět dohod
           </Link>
 
           {/* Desktop Navigation */}
