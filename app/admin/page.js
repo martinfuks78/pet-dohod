@@ -14,11 +14,16 @@ export default function AdminPage() {
   const [isCreatingWorkshop, setIsCreatingWorkshop] = useState(false)
   const [workshopForm, setWorkshopForm] = useState({
     date: '',
+    startDate: '',
     location: '',
     capacity: '',
     priceSingle: '',
-    priceCouple: '',
     type: 'public',
+    // Detail fields
+    program: '',
+    address: '',
+    whatToBring: '',
+    instructorInfo: '',
   })
 
   // Jednoduché heslo (později nahradíme NextAuth)
@@ -71,11 +76,15 @@ export default function AdminPage() {
         setIsCreatingWorkshop(false)
         setWorkshopForm({
           date: '',
+          startDate: '',
           location: '',
           capacity: '',
           priceSingle: '',
-          priceCouple: '',
           type: 'public',
+          program: '',
+          address: '',
+          whatToBring: '',
+          instructorInfo: '',
         })
       } else {
         alert('Nepodařilo se vytvořit workshop')
@@ -97,7 +106,6 @@ export default function AdminPage() {
           location: workshop.location,
           capacity: workshop.capacity || null,
           priceSingle: workshop.price_single,
-          priceCouple: workshop.price_couple,
           type: workshop.type,
         }),
       })
@@ -325,6 +333,18 @@ export default function AdminPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Počátek workshopu (pro řazení)
+                    </label>
+                    <input
+                      type="date"
+                      value={workshopForm.startDate}
+                      onChange={(e) => setWorkshopForm({ ...workshopForm, startDate: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Místo *
                     </label>
                     <input
@@ -364,17 +384,55 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  <div>
+                  <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Cena (pár) *
+                      Program
                     </label>
-                    <input
-                      type="number"
-                      required
-                      value={workshopForm.priceCouple}
-                      onChange={(e) => setWorkshopForm({ ...workshopForm, priceCouple: e.target.value })}
+                    <textarea
+                      rows="3"
+                      value={workshopForm.program}
+                      onChange={(e) => setWorkshopForm({ ...workshopForm, program: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                      placeholder="7800"
+                      placeholder="Popis programu pro den 1 a den 2..."
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Adresa
+                    </label>
+                    <textarea
+                      rows="2"
+                      value={workshopForm.address}
+                      onChange={(e) => setWorkshopForm({ ...workshopForm, address: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                      placeholder="Přesná adresa místa konání..."
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Co si vzít s sebou
+                    </label>
+                    <textarea
+                      rows="2"
+                      value={workshopForm.whatToBring}
+                      onChange={(e) => setWorkshopForm({ ...workshopForm, whatToBring: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                      placeholder="Seznam věcí, které si mají účastníci vzít..."
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Info o lektorovi
+                    </label>
+                    <textarea
+                      rows="2"
+                      value={workshopForm.instructorInfo}
+                      onChange={(e) => setWorkshopForm({ ...workshopForm, instructorInfo: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                      placeholder="Krátké info o lektorovi..."
                     />
                   </div>
 
@@ -430,9 +488,6 @@ export default function AdminPage() {
                           Cena (1 os.)
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                          Cena (pár)
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                           Akce
                         </th>
                       </tr>
@@ -479,14 +534,6 @@ export default function AdminPage() {
                                 />
                               </td>
                               <td className="px-6 py-4">
-                                <input
-                                  type="number"
-                                  value={editingWorkshop.price_couple}
-                                  onChange={(e) => setEditingWorkshop({ ...editingWorkshop, price_couple: e.target.value })}
-                                  className="w-24 px-3 py-1 border border-gray-300 rounded"
-                                />
-                              </td>
-                              <td className="px-6 py-4">
                                 <div className="flex gap-2">
                                   <button
                                     onClick={() => handleUpdateWorkshop(editingWorkshop)}
@@ -519,16 +566,42 @@ export default function AdminPage() {
                                 </div>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm font-semibold text-gray-900">
-                                  {workshop.registrationCount || 0}
-                                  {workshop.capacity && ` / ${workshop.capacity}`}
-                                </div>
+                                {(() => {
+                                  const fillPercentage = workshop.capacity ? (workshop.registrationCount / workshop.capacity) * 100 : 0
+
+                                  if (!workshop.capacity) {
+                                    return (
+                                      <div className="text-sm font-semibold text-gray-500">
+                                        {workshop.registrationCount || 0}
+                                      </div>
+                                    )
+                                  }
+
+                                  if (fillPercentage >= 100) {
+                                    return (
+                                      <div className="text-sm font-semibold text-red-600">
+                                        Naplněno
+                                      </div>
+                                    )
+                                  }
+
+                                  if (fillPercentage > 50) {
+                                    return (
+                                      <div className="text-sm font-semibold text-yellow-600">
+                                        {workshop.registrationCount || 0} / {workshop.capacity}
+                                      </div>
+                                    )
+                                  }
+
+                                  return (
+                                    <div className="text-sm font-semibold text-green-600">
+                                      {workshop.registrationCount || 0} / {workshop.capacity}
+                                    </div>
+                                  )
+                                })()}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="text-sm text-gray-900">{workshop.price_single} Kč</div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm text-gray-900">{workshop.price_couple} Kč</div>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="flex gap-2">
