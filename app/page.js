@@ -57,7 +57,7 @@ export default function Home() {
                     src="/ctyri-dohody.jpg"
                     alt="Čtyři dohody - Don Miguel Ruiz"
                     fill
-                    className="object-cover grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+                    className="object-cover grayscale opacity-35 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
                     priority
                   />
                 </div>
@@ -145,7 +145,7 @@ export default function Home() {
                     src="/pata-dohoda.jpg"
                     alt="Pátá dohoda - Don Miguel Ruiz"
                     fill
-                    className="object-cover grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+                    className="object-cover grayscale opacity-35 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
                     priority
                   />
                 </div>
