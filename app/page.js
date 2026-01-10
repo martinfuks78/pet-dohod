@@ -8,6 +8,7 @@ import Image from 'next/image'
 import Navigation from '../components/Navigation'
 import RegistrationModal from '../components/RegistrationModal'
 import ContactForm from '../components/ContactForm'
+import StructuredData from '../components/StructuredData'
 
 export default function Home() {
   const [selectedWorkshop, setSelectedWorkshop] = useState(null)
@@ -68,6 +69,7 @@ export default function Home() {
 
   return (
     <>
+      <StructuredData workshops={workshops} />
       <Navigation />
       <RegistrationModal
         isOpen={isModalOpen}

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
+import { sql } from '@vercel/postgres'
 import { createRegistration, getAllRegistrations, updateRegistrationStatus, deleteRegistration } from '../../../lib/db'
-import { sendRegistrationConfirmation, sendAdminNotification } from '../../../lib/email'
+import { sendRegistrationConfirmation, sendAdminNotification, sendPaymentConfirmation } from '../../../lib/email'
 
 // Helper funkce pro ověření autentizace
 function checkAuth(request) {
@@ -50,25 +51,66 @@ export async function POST(request) {
       )
     }
 
+    // Kontrola duplikátní registrace
+    const existingReg = await sql`
+      SELECT id FROM registrations
+      WHERE email = ${data.email}
+      AND workshop_date = ${data.workshopDate}
+      AND workshop_location = ${data.workshopLocation}
+      AND status != 'cancelled'
+      LIMIT 1
+    `
+
+    if (existingReg.rows.length > 0) {
+      return NextResponse.json(
+        { error: 'Už jsi zaregistrován/a na tento workshop. Zkontroluj svůj email.' },
+        { status: 400 }
+      )
+    }
+
+    // Načíst workshop z databáze pro platební údaje
+    const workshopResult = await sql`
+      SELECT * FROM workshops
+      WHERE date = ${data.workshopDate}
+      AND location = ${data.workshopLocation}
+      AND is_active = true
+      LIMIT 1
+    `
+
+    const workshop = workshopResult.rows.length > 0 ? workshopResult.rows[0] : null
+
+    if (!workshop) {
+      return NextResponse.json(
+        { error: 'Workshop nebyl nalezen' },
+        { status: 404 }
+      )
+    }
+
     // Uložení do databáze
     const registration = await createRegistration(data)
-
-    console.log('Nova registrace:', registration)
 
     // Odeslání emailů (pokud je RESEND_API_KEY nastavený)
     if (process.env.RESEND_API_KEY) {
       try {
-        // Potvrzení účastníkovi
+        // Potvrzení účastníkovi - s workshop daty
         await sendRegistrationConfirmation({
-          ...data,
-          id: registration.id,
-          createdAt: new Date().toISOString(),
-        })
+          ...registration,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          workshopDate: data.workshopDate,
+          workshopLocation: data.workshopLocation,
+          registrationType: data.registrationType,
+          partnerFirstName: data.partnerFirstName,
+          partnerLastName: data.partnerLastName,
+          price: data.price,
+        }, workshop)
 
         // Notifikace adminovi
         await sendAdminNotification({
           ...data,
           id: registration.id,
+          variable_symbol: registration.variable_symbol,
           createdAt: new Date().toISOString(),
         })
 
@@ -150,6 +192,24 @@ export async function PUT(request) {
     }
 
     await updateRegistrationStatus(id, status)
+
+    // Pokud je status "confirmed", pošli potvrzovací email
+    if (status === 'confirmed' && process.env.RESEND_API_KEY) {
+      try {
+        // Načíst plnou registraci pro email
+        const fullReg = await sql`
+          SELECT * FROM registrations WHERE id = ${id}
+        `
+
+        if (fullReg.rows.length > 0) {
+          await sendPaymentConfirmation(fullReg.rows[0])
+          console.log('Payment confirmation email sent for registration:', id)
+        }
+      } catch (emailError) {
+        // Email error neblokuje update statusu - pouze logujeme
+        console.error('Failed to send payment confirmation email:', emailError)
+      }
+    }
 
     return NextResponse.json({
       success: true,

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Users, Calendar, Mail, Phone, MapPin, Loader2, Plus, Edit2, Trash2, Save, X, ChevronDown, ChevronUp } from 'lucide-react'
+import { Users, Calendar, Mail, Phone, MapPin, Loader2, Plus, Edit2, Trash2, Save, X, ChevronDown, ChevronUp, Download } from 'lucide-react'
 
 export default function AdminPage() {
   const [registrations, setRegistrations] = useState([])
@@ -249,6 +249,51 @@ export default function AdminPage() {
       console.error('Error updating status:', error)
       alert('Chyba při aktualizaci statusu')
     }
+  }
+
+  const handleExportCSV = () => {
+    const filtered = getFilteredRegistrations()
+
+    // Prepare CSV data
+    const csvData = filtered.map(reg => ({
+      'Jméno': reg.first_name,
+      'Příjmení': reg.last_name,
+      'Email': reg.email,
+      'Telefon': reg.phone,
+      'Adresa': reg.address || '',
+      'Město': reg.city || '',
+      'PSČ': reg.zip || '',
+      'Workshop': reg.workshop_date,
+      'Místo': reg.workshop_location,
+      'Typ': reg.registration_type === 'pair' ? 'Pár' : '1 osoba',
+      'Partner': reg.partner_first_name ? `${reg.partner_first_name} ${reg.partner_last_name}` : '',
+      'Partner Email': reg.partner_email || '',
+      'Cena': reg.price,
+      'VS': reg.variable_symbol || reg.id,
+      'Status': reg.status,
+      'Poznámka': reg.notes || '',
+      'Datum registrace': new Date(reg.created_at).toLocaleString('cs-CZ'),
+    }))
+
+    // Convert to CSV
+    const headers = Object.keys(csvData[0]).join(',')
+    const rows = csvData.map(row =>
+      Object.values(row).map(val =>
+        // Escape commas and quotes in values
+        `"${String(val).replace(/"/g, '""')}"`
+      ).join(',')
+    )
+    const csv = [headers, ...rows].join('\n')
+
+    // Add BOM for Czech characters
+    const bom = '\uFEFF'
+    const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' })
+
+    // Download
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = `registrace-${new Date().toISOString().split('T')[0]}.csv`
+    link.click()
   }
 
   // Toggle rozbalení workshopu
@@ -1023,6 +1068,14 @@ export default function AdminPage() {
                     }`}
                   >
                     Zrušené
+                  </button>
+                  <button
+                    onClick={handleExportCSV}
+                    disabled={getFilteredRegistrations().length === 0}
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    Export CSV
                   </button>
                 </div>
               </div>

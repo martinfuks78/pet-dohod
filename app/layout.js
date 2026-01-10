@@ -19,7 +19,7 @@ export const metadata = {
   keywords: 'pět dohod, čtyři dohody, workshop, osobní růst, Don Miguel Ruiz, Martin Fuks',
   authors: [{ name: 'Martin Fuks' }],
   robots: {
-    index: false,
+    index: false, // ⚠️ ZMĚNIT na true při přesunu na www.petdohod.cz
     follow: true,
     nocache: true,
   },
@@ -31,6 +31,16 @@ export const metadata = {
     description: 'Dvoudenní workshop založený na moudrosti Čtyř dohod a Páté dohody.',
     type: 'website',
     locale: 'cs_CZ',
+    url: 'https://www.petdohod.cz', // Ready pro produkci
+    siteName: 'Pět dohod',
+  },
+  alternates: {
+    canonical: 'https://www.petdohod.cz', // Ready pro produkci
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Pět dohod - Workshop pro osobní svobodu',
+    description: 'Dvoudenní workshop založený na moudrosti Čtyř dohod a Páté dohody.',
   },
 }
 
