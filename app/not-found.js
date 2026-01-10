@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Home, ArrowLeft } from 'lucide-react'
 
@@ -30,13 +29,13 @@ export default function NotFound() {
 
           {/* Action buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
+            <a
               href="/"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold"
             >
               <Home className="w-5 h-5" />
               Zpět na hlavní stránku
-            </Link>
+            </a>
 
             <button
               onClick={() => window.history.back()}
@@ -51,26 +50,26 @@ export default function NotFound() {
           <div className="mt-12 pt-8 border-t border-gray-200">
             <p className="text-sm text-gray-600 mb-4">Možná hledáš:</p>
             <div className="flex flex-wrap gap-3 justify-center">
-              <Link
+              <a
                 href="/#terminy"
                 className="text-sm text-primary-600 hover:text-primary-700 hover:underline"
               >
                 Termíny workshopů
-              </Link>
+              </a>
               <span className="text-gray-300">•</span>
-              <Link
+              <a
                 href="/#dohody"
                 className="text-sm text-primary-600 hover:text-primary-700 hover:underline"
               >
                 Co jsou dohody
-              </Link>
+              </a>
               <span className="text-gray-300">•</span>
-              <Link
+              <a
                 href="/#kontakt"
                 className="text-sm text-primary-600 hover:text-primary-700 hover:underline"
               >
                 Kontakt
-              </Link>
+              </a>
             </div>
           </div>
         </motion.div>
