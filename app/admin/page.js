@@ -12,6 +12,17 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('registrations') // 'registrations' nebo 'workshops'
   const [editingWorkshop, setEditingWorkshop] = useState(null)
   const [isCreatingWorkshop, setIsCreatingWorkshop] = useState(false)
+
+  // Pomocná funkce pro konverzi ISO timestamp na YYYY-MM-DD pro date picker
+  const formatDateForInput = (isoDate) => {
+    if (!isoDate) return ''
+    try {
+      const date = new Date(isoDate)
+      return date.toISOString().split('T')[0]
+    } catch {
+      return ''
+    }
+  }
   const [workshopForm, setWorkshopForm] = useState({
     date: '',
     startDate: '',
@@ -44,14 +55,14 @@ export default function AdminPage() {
     try {
       const response = await fetch('/api/register')
       if (!response.ok) {
-        console.error('API error:', response.status)
+        // API endpoint chybí nebo vrací chybu - tiše ignorujeme
         setRegistrations([])
         return
       }
       const data = await response.json()
       setRegistrations(data.registrations || [])
     } catch (error) {
-      console.error('Chyba při načítání registrací:', error)
+      // Registrace nejsou dostupné
       setRegistrations([])
     } finally {
       setLoading(false)
@@ -62,14 +73,12 @@ export default function AdminPage() {
     try {
       const response = await fetch('/api/workshops')
       if (!response.ok) {
-        console.error('API error:', response.status)
         setWorkshops([])
         return
       }
       const data = await response.json()
       setWorkshops(data.workshops || [])
     } catch (error) {
-      console.error('Chyba při načítání workshopů:', error)
       setWorkshops([])
     }
   }
@@ -109,6 +118,9 @@ export default function AdminPage() {
 
   const handleUpdateWorkshop = async (workshop) => {
     try {
+      // Převést prázdné stringy na null
+      const cleanValue = (val) => (val === '' || val === undefined) ? null : val
+
       const response = await fetch('/api/workshops', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -116,14 +128,14 @@ export default function AdminPage() {
           id: workshop.id,
           date: workshop.date,
           location: workshop.location,
-          capacity: workshop.capacity || null,
+          capacity: cleanValue(workshop.capacity),
           priceSingle: Number(workshop.price_single),
-          type: workshop.type,
-          startDate: workshop.start_date || null,
-          program: workshop.program || null,
-          address: workshop.address || null,
-          whatToBring: workshop.what_to_bring || null,
-          instructorInfo: workshop.instructor_info || null,
+          type: workshop.type || 'public',
+          startDate: cleanValue(workshop.start_date),
+          program: cleanValue(workshop.program),
+          address: cleanValue(workshop.address),
+          whatToBring: cleanValue(workshop.what_to_bring),
+          instructorInfo: cleanValue(workshop.instructor_info),
         }),
       })
 
@@ -538,7 +550,7 @@ export default function AdminPage() {
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Počátek (pro řazení)</label>
                                     <input
                                       type="date"
-                                      value={editingWorkshop.start_date || ''}
+                                      value={formatDateForInput(editingWorkshop.start_date)}
                                       onChange={(e) => setEditingWorkshop({ ...editingWorkshop, start_date: e.target.value })}
                                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
                                     />
