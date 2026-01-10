@@ -1,13 +1,25 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Users, Calendar, Mail, Phone, MapPin, Loader2 } from 'lucide-react'
+import { Users, Calendar, Mail, Phone, MapPin, Loader2, Plus, Edit2, Trash2, Save, X } from 'lucide-react'
 
 export default function AdminPage() {
   const [registrations, setRegistrations] = useState([])
+  const [workshops, setWorkshops] = useState([])
   const [loading, setLoading] = useState(true)
   const [password, setPassword] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [activeTab, setActiveTab] = useState('registrations') // 'registrations' nebo 'workshops'
+  const [editingWorkshop, setEditingWorkshop] = useState(null)
+  const [isCreatingWorkshop, setIsCreatingWorkshop] = useState(false)
+  const [workshopForm, setWorkshopForm] = useState({
+    date: '',
+    location: '',
+    capacity: '',
+    priceSingle: '',
+    priceCouple: '',
+    type: 'public',
+  })
 
   // Jednoduché heslo (později nahradíme NextAuth)
   const ADMIN_PASSWORD = 'pet-dohod-2026'
@@ -35,11 +47,98 @@ export default function AdminPage() {
     }
   }
 
+  const loadWorkshops = async () => {
+    try {
+      const response = await fetch('/api/workshops')
+      const data = await response.json()
+      setWorkshops(data.workshops || [])
+    } catch (error) {
+      console.error('Chyba při načítání workshopů:', error)
+    }
+  }
+
+  const handleCreateWorkshop = async (e) => {
+    e.preventDefault()
+    try {
+      const response = await fetch('/api/workshops', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(workshopForm),
+      })
+
+      if (response.ok) {
+        await loadWorkshops()
+        setIsCreatingWorkshop(false)
+        setWorkshopForm({
+          date: '',
+          location: '',
+          capacity: '',
+          priceSingle: '',
+          priceCouple: '',
+          type: 'public',
+        })
+      } else {
+        alert('Nepodařilo se vytvořit workshop')
+      }
+    } catch (error) {
+      console.error('Error creating workshop:', error)
+      alert('Chyba při vytváření workshopu')
+    }
+  }
+
+  const handleUpdateWorkshop = async (workshop) => {
+    try {
+      const response = await fetch('/api/workshops', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: workshop.id,
+          date: workshop.date,
+          location: workshop.location,
+          capacity: workshop.capacity || null,
+          priceSingle: workshop.price_single,
+          priceCouple: workshop.price_couple,
+          type: workshop.type,
+        }),
+      })
+
+      if (response.ok) {
+        await loadWorkshops()
+        setEditingWorkshop(null)
+      } else {
+        alert('Nepodařilo se aktualizovat workshop')
+      }
+    } catch (error) {
+      console.error('Error updating workshop:', error)
+      alert('Chyba při aktualizaci workshopu')
+    }
+  }
+
+  const handleDeleteWorkshop = async (id) => {
+    if (!confirm('Opravdu chceš smazat tento workshop?')) return
+
+    try {
+      const response = await fetch(`/api/workshops?id=${id}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        await loadWorkshops()
+      } else {
+        alert('Nepodařilo se smazat workshop')
+      }
+    } catch (error) {
+      console.error('Error deleting workshop:', error)
+      alert('Chyba při mazání workshopu')
+    }
+  }
+
   useEffect(() => {
     const savedAuth = localStorage.getItem('admin_auth')
     if (savedAuth === 'true') {
       setIsAuthenticated(true)
       loadRegistrations()
+      loadWorkshops()
     } else {
       setLoading(false)
     }
@@ -98,7 +197,7 @@ export default function AdminPage() {
                 Admin Dashboard
               </h1>
               <p className="text-gray-600">
-                Správa registrací na workshopy Pět dohod
+                Správa registrací a workshopů Pět dohod
               </p>
             </div>
             <button
@@ -109,6 +208,30 @@ export default function AdminPage() {
               className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
             >
               Odhlásit se
+            </button>
+          </div>
+
+          {/* Tabs */}
+          <div className="flex gap-4 mt-6 border-b border-gray-200">
+            <button
+              onClick={() => setActiveTab('registrations')}
+              className={`pb-3 px-4 font-semibold transition-colors ${
+                activeTab === 'registrations'
+                  ? 'text-primary-600 border-b-2 border-primary-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Registrace
+            </button>
+            <button
+              onClick={() => setActiveTab('workshops')}
+              className={`pb-3 px-4 font-semibold transition-colors ${
+                activeTab === 'workshops'
+                  ? 'text-primary-600 border-b-2 border-primary-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Workshopy
             </button>
           </div>
         </div>
@@ -156,6 +279,290 @@ export default function AdminPage() {
           </div>
         </div>
 
+        {/* Workshops Tab */}
+        {activeTab === 'workshops' && (
+          <div className="space-y-6">
+            {/* Create Workshop Button */}
+            <div className="flex justify-end">
+              <button
+                onClick={() => setIsCreatingWorkshop(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold"
+              >
+                <Plus className="w-5 h-5" />
+                Přidat workshop
+              </button>
+            </div>
+
+            {/* Create Workshop Form */}
+            {isCreatingWorkshop && (
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-serif font-bold text-gray-900">
+                    Nový workshop
+                  </h3>
+                  <button
+                    onClick={() => setIsCreatingWorkshop(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <form onSubmit={handleCreateWorkshop} className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Datum *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={workshopForm.date}
+                      onChange={(e) => setWorkshopForm({ ...workshopForm, date: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                      placeholder="15.-16. března 2026"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Místo *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={workshopForm.location}
+                      onChange={(e) => setWorkshopForm({ ...workshopForm, location: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                      placeholder="Praha - Vinohrady"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Kapacita
+                    </label>
+                    <input
+                      type="number"
+                      value={workshopForm.capacity}
+                      onChange={(e) => setWorkshopForm({ ...workshopForm, capacity: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                      placeholder="20 (nechej prázdné pro skrytí)"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Cena (1 osoba) *
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      value={workshopForm.priceSingle}
+                      onChange={(e) => setWorkshopForm({ ...workshopForm, priceSingle: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                      placeholder="4800"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Cena (pár) *
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      value={workshopForm.priceCouple}
+                      onChange={(e) => setWorkshopForm({ ...workshopForm, priceCouple: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                      placeholder="7800"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2 flex justify-end gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setIsCreatingWorkshop(false)}
+                      className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      Zrušit
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+                    >
+                      Vytvořit workshop
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {/* Workshops List */}
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <div className="p-6 border-b border-gray-200">
+                <h2 className="text-xl font-serif font-bold text-gray-900">
+                  Všechny workshopy
+                </h2>
+              </div>
+
+              {workshops.length === 0 ? (
+                <div className="p-12 text-center text-gray-500">
+                  Zatím žádné workshopy
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Datum
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Místo
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Kapacita
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Registrace
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Cena (1 os.)
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Cena (pár)
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Akce
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {workshops.map((workshop) => (
+                        <tr key={workshop.id} className="hover:bg-gray-50">
+                          {editingWorkshop?.id === workshop.id ? (
+                            <>
+                              <td className="px-6 py-4">
+                                <input
+                                  type="text"
+                                  value={editingWorkshop.date}
+                                  onChange={(e) => setEditingWorkshop({ ...editingWorkshop, date: e.target.value })}
+                                  className="w-full px-3 py-1 border border-gray-300 rounded"
+                                />
+                              </td>
+                              <td className="px-6 py-4">
+                                <input
+                                  type="text"
+                                  value={editingWorkshop.location}
+                                  onChange={(e) => setEditingWorkshop({ ...editingWorkshop, location: e.target.value })}
+                                  className="w-full px-3 py-1 border border-gray-300 rounded"
+                                />
+                              </td>
+                              <td className="px-6 py-4">
+                                <input
+                                  type="number"
+                                  value={editingWorkshop.capacity || ''}
+                                  onChange={(e) => setEditingWorkshop({ ...editingWorkshop, capacity: e.target.value })}
+                                  className="w-20 px-3 py-1 border border-gray-300 rounded"
+                                  placeholder="20"
+                                />
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-600">
+                                {workshop.registrationCount || 0}
+                              </td>
+                              <td className="px-6 py-4">
+                                <input
+                                  type="number"
+                                  value={editingWorkshop.price_single}
+                                  onChange={(e) => setEditingWorkshop({ ...editingWorkshop, price_single: e.target.value })}
+                                  className="w-24 px-3 py-1 border border-gray-300 rounded"
+                                />
+                              </td>
+                              <td className="px-6 py-4">
+                                <input
+                                  type="number"
+                                  value={editingWorkshop.price_couple}
+                                  onChange={(e) => setEditingWorkshop({ ...editingWorkshop, price_couple: e.target.value })}
+                                  className="w-24 px-3 py-1 border border-gray-300 rounded"
+                                />
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleUpdateWorkshop(editingWorkshop)}
+                                    className="p-2 text-green-600 hover:bg-green-50 rounded transition-colors"
+                                    title="Uložit"
+                                  >
+                                    <Save className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    onClick={() => setEditingWorkshop(null)}
+                                    className="p-2 text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                                    title="Zrušit"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </td>
+                            </>
+                          ) : (
+                            <>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="font-medium text-gray-900">{workshop.date}</div>
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="text-sm text-gray-900">{workshop.location}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-900">
+                                  {workshop.capacity || '-'}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm font-semibold text-gray-900">
+                                  {workshop.registrationCount || 0}
+                                  {workshop.capacity && ` / ${workshop.capacity}`}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-900">{workshop.price_single} Kč</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-900">{workshop.price_couple} Kč</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => setEditingWorkshop(workshop)}
+                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                                    title="Upravit"
+                                  >
+                                    <Edit2 className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteWorkshop(workshop.id)}
+                                    className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                                    title="Smazat"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </td>
+                            </>
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Registrations Tab */}
+        {activeTab === 'registrations' && (
+          <>
         {/* Registrations Table */}
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="p-6 border-b border-gray-200">
@@ -273,6 +680,8 @@ export default function AdminPage() {
             </div>
           )}
         </div>
+          </>
+        )}
       </div>
     </div>
   )
