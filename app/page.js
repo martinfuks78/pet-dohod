@@ -12,10 +12,45 @@ import ContactForm from '../components/ContactForm'
 export default function Home() {
   const [selectedWorkshop, setSelectedWorkshop] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [workshops, setWorkshops] = useState([])
+  const [loading, setLoading] = useState(true)
 
   // Scroll to top on page load
   useEffect(() => {
     window.scrollTo(0, 0)
+  }, [])
+
+  // Load workshops from API
+  useEffect(() => {
+    const loadWorkshops = async () => {
+      try {
+        const response = await fetch('/api/workshops')
+        const data = await response.json()
+
+        if (data.success && data.workshops) {
+          // Transform API data to match component format
+          const formattedWorkshops = data.workshops.map(w => ({
+            id: w.id,
+            date: w.date,
+            location: w.location,
+            spots: w.capacity ? (w.capacity - (w.registrationCount || 0)) : null,
+            capacity: w.capacity,
+            registrationCount: w.registrationCount || 0,
+            price: `${w.price_single.toLocaleString('cs-CZ')} Kč`,
+            pairPrice: `${w.price_couple.toLocaleString('cs-CZ')} Kč`,
+            priceSingle: w.price_single,
+            priceCouple: w.price_couple
+          }))
+          setWorkshops(formattedWorkshops)
+        }
+      } catch (error) {
+        console.error('Error loading workshops:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadWorkshops()
   }, [])
 
   const openRegistration = (workshop) => {
@@ -34,7 +69,7 @@ export default function Home() {
       <RegistrationModal
         isOpen={isModalOpen}
         onClose={closeModal}
-        workshop={selectedWorkshop || upcomingDates[0]}
+        workshop={selectedWorkshop || workshops[0]}
       />
       <main className="min-h-screen">
       {/* Hero Section */}
@@ -268,14 +303,30 @@ export default function Home() {
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {upcomingDates.map((date, index) => (
-              <WorkshopCard
-                key={index}
-                workshop={date}
-                index={index}
-                onRegister={openRegistration}
-              />
-            ))}
+            {loading ? (
+              // Loading skeleton
+              <>
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="bg-gray-100 rounded-xl h-64 animate-pulse"></div>
+                ))}
+              </>
+            ) : workshops.length === 0 ? (
+              // No workshops message
+              <div className="col-span-2 text-center py-12">
+                <p className="text-gray-600">Momentálně nejsou k dispozici žádné termíny.</p>
+                <p className="text-gray-500 mt-2">Sleduj tuto stránku nebo nás kontaktuj pro více informací.</p>
+              </div>
+            ) : (
+              // Workshops list
+              workshops.map((workshop, index) => (
+                <WorkshopCard
+                  key={workshop.id}
+                  workshop={workshop}
+                  index={index}
+                  onRegister={openRegistration}
+                />
+              ))
+            )}
           </div>
 
           <motion.div
@@ -743,29 +794,7 @@ const reasons = [
   },
 ]
 
-const upcomingDates = [
-  {
-    date: '15-16. března 2026',
-    location: 'Praha',
-    spots: 3,
-    price: '4 800 Kč',
-    pairPrice: '7 800 Kč'
-  },
-  {
-    date: '12-13. dubna 2026',
-    location: 'Brno',
-    spots: 8,
-    price: '4 800 Kč',
-    pairPrice: '7 800 Kč'
-  },
-  {
-    date: '17-18. května 2026',
-    location: 'Praha',
-    spots: 5,
-    price: '4 800 Kč',
-    pairPrice: '7 800 Kč'
-  },
-]
+// Workshops are now loaded dynamically from the database via API
 
 const companyBenefits = [
   'Lepší komunikaci v týmu bez konfliktů a nedorozumění',
