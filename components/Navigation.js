@@ -37,13 +37,14 @@ export default function Navigation() {
           {/* Logo */}
           <Link
             href="/"
-            className="font-serif text-2xl font-bold text-gray-900 hover:text-primary-600 transition-colors"
+            className="font-serif text-2xl font-bold text-gray-900 hover:text-primary-600 transition-colors tracking-wide"
             onClick={() => {
               window.scrollTo({ top: 0, behavior: 'smooth' })
               setIsOpen(false)
             }}
+            style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
           >
-            Pět dohod
+            PĚT DOHOD
           </Link>
 
           {/* Desktop Navigation */}

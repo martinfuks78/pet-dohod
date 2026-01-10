@@ -90,17 +90,17 @@ export default function Home() {
               style={{ transformOrigin: 'center right' }}
             >
               <div className="relative w-48 xl:w-56 transform hover:scale-105 transition-transform duration-300">
-                <div className="relative aspect-[2/3] rounded-lg shadow-2xl overflow-hidden">
+                <div className="relative aspect-[2/3] rounded-lg shadow-xl overflow-hidden">
                   <Image
                     src="/ctyri-dohody.jpg"
                     alt="Čtyři dohody - Don Miguel Ruiz"
                     fill
-                    className="object-cover grayscale opacity-35 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+                    className="object-cover grayscale opacity-20 brightness-125 hover:grayscale-0 hover:opacity-100 hover:brightness-100 transition-all duration-500"
                     priority
                   />
                 </div>
                 {/* 3D depth shadow */}
-                <div className="absolute -right-2 top-2 w-full h-full bg-black/20 rounded-lg -z-10 blur-sm"></div>
+                <div className="absolute -right-2 top-2 w-full h-full bg-black/10 rounded-lg -z-10 blur-sm"></div>
               </div>
             </motion.div>
 
@@ -178,17 +178,17 @@ export default function Home() {
               style={{ transformOrigin: 'center left' }}
             >
               <div className="relative w-48 xl:w-56 transform hover:scale-105 transition-transform duration-300">
-                <div className="relative aspect-[2/3] rounded-lg shadow-2xl overflow-hidden">
+                <div className="relative aspect-[2/3] rounded-lg shadow-xl overflow-hidden">
                   <Image
                     src="/pata-dohoda.jpg"
                     alt="Pátá dohoda - Don Miguel Ruiz"
                     fill
-                    className="object-cover grayscale opacity-35 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+                    className="object-cover grayscale opacity-20 brightness-125 hover:grayscale-0 hover:opacity-100 hover:brightness-100 transition-all duration-500"
                     priority
                   />
                 </div>
                 {/* 3D depth shadow */}
-                <div className="absolute -left-2 top-2 w-full h-full bg-black/20 rounded-lg -z-10 blur-sm"></div>
+                <div className="absolute -left-2 top-2 w-full h-full bg-black/10 rounded-lg -z-10 blur-sm"></div>
               </div>
             </motion.div>
           </div>
