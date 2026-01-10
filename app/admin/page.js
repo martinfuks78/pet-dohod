@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Users, Calendar, Mail, Phone, MapPin, Loader2, Plus, Edit2, Trash2, Save, X } from 'lucide-react'
+import { Users, Calendar, Mail, Phone, MapPin, Loader2, Plus, Edit2, Trash2, Save, X, ChevronDown, ChevronUp } from 'lucide-react'
 
 export default function AdminPage() {
   const [registrations, setRegistrations] = useState([])
@@ -13,6 +13,10 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('registrations') // 'registrations' nebo 'workshops'
   const [editingWorkshop, setEditingWorkshop] = useState(null)
   const [isCreatingWorkshop, setIsCreatingWorkshop] = useState(false)
+
+  // Nové stavy pro filtry a seskupení
+  const [statusFilter, setStatusFilter] = useState('all') // 'all', 'pending', 'confirmed', 'cancelled'
+  const [expandedWorkshops, setExpandedWorkshops] = useState(new Set()) // Které workshopy jsou rozbalené
 
   // Helper funkce pro vytvoření auth headeru
   const getAuthHeaders = () => ({
@@ -33,6 +37,7 @@ export default function AdminPage() {
   const [workshopForm, setWorkshopForm] = useState({
     date: '',
     startDate: '',
+    endDate: '',
     location: '',
     capacity: '',
     priceSingle: '',
@@ -42,6 +47,10 @@ export default function AdminPage() {
     address: '',
     whatToBring: '',
     instructorInfo: '',
+    // Payment details
+    bankAccount: '',
+    variableSymbol: '',
+    amount: '',
   })
 
   const handleLogin = async (e) => {
@@ -121,6 +130,7 @@ export default function AdminPage() {
         setWorkshopForm({
           date: '',
           startDate: '',
+          endDate: '',
           location: '',
           capacity: '',
           priceSingle: '',
@@ -129,6 +139,9 @@ export default function AdminPage() {
           address: '',
           whatToBring: '',
           instructorInfo: '',
+          bankAccount: '',
+          variableSymbol: '',
+          amount: '',
         })
       } else {
         alert('Nepodařilo se vytvořit workshop')
@@ -155,10 +168,14 @@ export default function AdminPage() {
           priceSingle: Number(workshop.price_single),
           type: workshop.type || 'public',
           startDate: cleanValue(workshop.start_date),
+          endDate: cleanValue(workshop.end_date),
           program: cleanValue(workshop.program),
           address: cleanValue(workshop.address),
           whatToBring: cleanValue(workshop.what_to_bring),
           instructorInfo: cleanValue(workshop.instructor_info),
+          bankAccount: cleanValue(workshop.bank_account),
+          variableSymbol: cleanValue(workshop.variable_symbol),
+          amount: cleanValue(workshop.amount),
         }),
       })
 
@@ -194,18 +211,109 @@ export default function AdminPage() {
     }
   }
 
+  // Nové funkce pro registrace
+  const handleDeleteRegistration = async (id) => {
+    if (!confirm('Opravdu chceš smazat tuto registraci?')) return
+
+    try {
+      const response = await fetch(`/api/register?id=${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      })
+
+      if (response.ok) {
+        await loadRegistrations()
+      } else {
+        alert('Nepodařilo se smazat registraci')
+      }
+    } catch (error) {
+      console.error('Error deleting registration:', error)
+      alert('Chyba při mazání registrace')
+    }
+  }
+
+  const handleUpdateStatus = async (id, newStatus) => {
+    try {
+      const response = await fetch('/api/register', {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ id, status: newStatus }),
+      })
+
+      if (response.ok) {
+        await loadRegistrations()
+      } else {
+        alert('Nepodařilo se aktualizovat status')
+      }
+    } catch (error) {
+      console.error('Error updating status:', error)
+      alert('Chyba při aktualizaci statusu')
+    }
+  }
+
+  // Toggle rozbalení workshopu
+  const toggleWorkshop = (workshopKey) => {
+    const newExpanded = new Set(expandedWorkshops)
+    if (newExpanded.has(workshopKey)) {
+      newExpanded.delete(workshopKey)
+    } else {
+      newExpanded.add(workshopKey)
+    }
+    setExpandedWorkshops(newExpanded)
+  }
+
   useEffect(() => {
     const savedAuth = localStorage.getItem('admin_auth')
     const savedToken = localStorage.getItem('admin_token')
     if (savedAuth === 'true' && savedToken) {
       setIsAuthenticated(true)
       setAuthToken(savedToken)
-      loadRegistrations()
-      loadWorkshops()
     } else {
       setLoading(false)
     }
   }, [])
+
+  // Načíst data když je authToken nastaven
+  useEffect(() => {
+    if (authToken && isAuthenticated) {
+      loadRegistrations()
+      loadWorkshops()
+    }
+  }, [authToken, isAuthenticated])
+
+  // Pomocné funkce pro zpracování dat
+  const getFilteredRegistrations = () => {
+    if (statusFilter === 'all') return registrations
+    return registrations.filter(r => r.status === statusFilter)
+  }
+
+  const getGroupedRegistrations = () => {
+    const filtered = getFilteredRegistrations()
+    const grouped = {}
+
+    filtered.forEach(reg => {
+      const key = `${reg.workshop_date}___${reg.workshop_location}`
+      if (!grouped[key]) {
+        grouped[key] = {
+          date: reg.workshop_date,
+          location: reg.workshop_location,
+          registrations: []
+        }
+      }
+      grouped[key].registrations.push(reg)
+    })
+
+    return grouped
+  }
+
+  const getTotalRevenue = () => {
+    return getFilteredRegistrations()
+      .filter(r => r.status === 'confirmed')
+      .reduce((sum, reg) => {
+        const price = parseInt(reg.price.replace(/[^\d]/g, '')) || 0
+        return sum + price
+      }, 0)
+  }
 
   if (loading) {
     return (
@@ -302,7 +410,7 @@ export default function AdminPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-sm p-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
@@ -339,6 +447,22 @@ export default function AdminPage() {
                   {registrations.filter(r => r.status === 'pending').length}
                 </div>
                 <div className="text-sm text-gray-600">Čekajících na platbu</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {getTotalRevenue().toLocaleString('cs-CZ')} Kč
+                </div>
+                <div className="text-sm text-gray-600">Příjem (potvrzené)</div>
               </div>
             </div>
           </div>
@@ -490,6 +614,61 @@ export default function AdminPage() {
                       onChange={(e) => setWorkshopForm({ ...workshopForm, instructorInfo: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
                       placeholder="Krátké info o lektorovi..."
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <h4 className="text-sm font-semibold text-gray-900 mb-3 mt-4">Platební údaje</h4>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Číslo účtu
+                    </label>
+                    <input
+                      type="text"
+                      value={workshopForm.bankAccount}
+                      onChange={(e) => setWorkshopForm({ ...workshopForm, bankAccount: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                      placeholder="123456789/0100"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Variabilní symbol
+                    </label>
+                    <input
+                      type="text"
+                      value={workshopForm.variableSymbol}
+                      onChange={(e) => setWorkshopForm({ ...workshopForm, variableSymbol: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                      placeholder="202603"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Částka k úhradě
+                    </label>
+                    <input
+                      type="number"
+                      value={workshopForm.amount}
+                      onChange={(e) => setWorkshopForm({ ...workshopForm, amount: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                      placeholder="4800"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Konec workshopu (pro datum rozsahu)
+                    </label>
+                    <input
+                      type="date"
+                      value={workshopForm.endDate}
+                      onChange={(e) => setWorkshopForm({ ...workshopForm, endDate: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
                     />
                   </div>
 
@@ -646,6 +825,54 @@ export default function AdminPage() {
                                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
                                     />
                                   </div>
+
+                                  <div className="md:col-span-2">
+                                    <h4 className="text-sm font-semibold text-gray-900 mb-2 mt-2">Platební údaje</h4>
+                                  </div>
+
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Konec workshopu</label>
+                                    <input
+                                      type="date"
+                                      value={formatDateForInput(editingWorkshop.end_date)}
+                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, end_date: e.target.value })}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Číslo účtu</label>
+                                    <input
+                                      type="text"
+                                      value={editingWorkshop.bank_account || ''}
+                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, bank_account: e.target.value })}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                      placeholder="123456789/0100"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Variabilní symbol</label>
+                                    <input
+                                      type="text"
+                                      value={editingWorkshop.variable_symbol || ''}
+                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, variable_symbol: e.target.value })}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                      placeholder="202603"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Částka k úhradě</label>
+                                    <input
+                                      type="number"
+                                      value={editingWorkshop.amount || ''}
+                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, amount: e.target.value })}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                      placeholder="4800"
+                                    />
+                                  </div>
+
                                   <div className="md:col-span-2 flex justify-end gap-3 mt-2">
                                     <button
                                       onClick={() => setEditingWorkshop(null)}
@@ -746,125 +973,234 @@ export default function AdminPage() {
 
         {/* Registrations Tab */}
         {activeTab === 'registrations' && (
-          <>
-        {/* Registrations Table */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-serif font-bold text-gray-900">
-              Všechny registrace
-            </h2>
-          </div>
+          <div className="space-y-6">
+            {/* Filter bar */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">Filtry</h3>
+                  <p className="text-sm text-gray-600">
+                    Zobrazeno: {getFilteredRegistrations().length} z {registrations.length} registrací
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setStatusFilter('all')}
+                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                      statusFilter === 'all'
+                        ? 'bg-primary-500 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    Všechny
+                  </button>
+                  <button
+                    onClick={() => setStatusFilter('pending')}
+                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                      statusFilter === 'pending'
+                        ? 'bg-yellow-500 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    Čekající
+                  </button>
+                  <button
+                    onClick={() => setStatusFilter('confirmed')}
+                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                      statusFilter === 'confirmed'
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    Potvrzené
+                  </button>
+                  <button
+                    onClick={() => setStatusFilter('cancelled')}
+                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                      statusFilter === 'cancelled'
+                        ? 'bg-red-500 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    Zrušené
+                  </button>
+                </div>
+              </div>
+            </div>
 
-          {registrations.length === 0 ? (
-            <div className="p-12 text-center text-gray-500">
-              Zatím žádné registrace
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Účastník
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Kontakt
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Workshop
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Typ
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Cena
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Datum registrace
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {registrations.map((registration) => (
-                    <tr key={registration.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="font-medium text-gray-900">
-                          {registration.first_name} {registration.last_name}
-                        </div>
-                        {registration.registration_type === 'pair' && registration.partner_first_name && (
-                          <div className="text-sm text-gray-500">
-                            + {registration.partner_first_name} {registration.partner_last_name}
+            {/* Grouped Registrations */}
+            {registrations.length === 0 ? (
+              <div className="bg-white rounded-xl shadow-sm p-12 text-center text-gray-500">
+                Zatím žádné registrace
+              </div>
+            ) : (
+              <>
+                {Object.entries(getGroupedRegistrations()).map(([key, group]) => {
+                  const isExpanded = expandedWorkshops.has(key)
+                  const confirmedCount = group.registrations.filter(r => r.status === 'confirmed').length
+                  const pendingCount = group.registrations.filter(r => r.status === 'pending').length
+                  const cancelledCount = group.registrations.filter(r => r.status === 'cancelled').length
+
+                  return (
+                    <div key={key} className="bg-white rounded-xl shadow-sm overflow-hidden">
+                      {/* Workshop Header */}
+                      <button
+                        onClick={() => toggleWorkshop(key)}
+                        className="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="text-left">
+                            <h3 className="text-lg font-bold text-gray-900">{group.date}</h3>
+                            <div className="flex items-center gap-2 text-gray-600 mt-1">
+                              <MapPin className="w-4 h-4" />
+                              <span className="text-sm">{group.location}</span>
+                            </div>
                           </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex flex-col gap-1 text-sm">
-                          <div className="flex items-center gap-2 text-gray-600">
-                            <Mail className="w-4 h-4" />
-                            {registration.email}
-                          </div>
-                          <div className="flex items-center gap-2 text-gray-600">
-                            <Phone className="w-4 h-4" />
-                            {registration.phone}
+                          <div className="flex gap-3 ml-8">
+                            {confirmedCount > 0 && (
+                              <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-semibold rounded-full">
+                                {confirmedCount} potvrzených
+                              </span>
+                            )}
+                            {pendingCount > 0 && (
+                              <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-semibold rounded-full">
+                                {pendingCount} čekajících
+                              </span>
+                            )}
+                            {cancelledCount > 0 && (
+                              <span className="px-3 py-1 bg-red-100 text-red-800 text-sm font-semibold rounded-full">
+                                {cancelledCount} zrušených
+                              </span>
+                            )}
                           </div>
                         </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm">
-                          <div className="font-medium text-gray-900">{registration.workshop_date}</div>
-                          <div className="text-gray-500 flex items-center gap-1">
-                            <MapPin className="w-3 h-3" />
-                            {registration.workshop_location}
+                        <div className="flex items-center gap-4">
+                          <span className="text-2xl font-bold text-gray-900">{group.registrations.length}</span>
+                          {isExpanded ? (
+                            <ChevronUp className="w-6 h-6 text-gray-400" />
+                          ) : (
+                            <ChevronDown className="w-6 h-6 text-gray-400" />
+                          )}
+                        </div>
+                      </button>
+
+                      {/* Registrations Table */}
+                      {isExpanded && (
+                        <div className="border-t border-gray-200">
+                          <div className="overflow-x-auto">
+                            <table className="w-full">
+                              <thead className="bg-gray-50">
+                                <tr>
+                                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Účastník
+                                  </th>
+                                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Kontakt
+                                  </th>
+                                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Typ
+                                  </th>
+                                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Cena
+                                  </th>
+                                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Status
+                                  </th>
+                                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Datum registrace
+                                  </th>
+                                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Akce
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-gray-200">
+                                {group.registrations.map((registration) => (
+                                  <tr key={registration.id} className="hover:bg-gray-50">
+                                    <td className="px-6 py-4">
+                                      <div className="font-medium text-gray-900">
+                                        {registration.first_name} {registration.last_name}
+                                      </div>
+                                      {registration.registration_type === 'pair' && registration.partner_first_name && (
+                                        <div className="text-sm text-gray-500">
+                                          + {registration.partner_first_name} {registration.partner_last_name}
+                                        </div>
+                                      )}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                      <div className="flex flex-col gap-1 text-sm">
+                                        <div className="flex items-center gap-2 text-gray-600">
+                                          <Mail className="w-4 h-4" />
+                                          <a href={`mailto:${registration.email}`} className="hover:text-primary-600">
+                                            {registration.email}
+                                          </a>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-gray-600">
+                                          <Phone className="w-4 h-4" />
+                                          <a href={`tel:${registration.phone}`} className="hover:text-primary-600">
+                                            {registration.phone}
+                                          </a>
+                                        </div>
+                                      </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                      <span className="text-sm text-gray-900">
+                                        {registration.registration_type === 'pair' ? 'Pár' : '1 osoba'}
+                                      </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                      <span className="text-sm font-semibold text-gray-900">
+                                        {registration.price}
+                                      </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                      <select
+                                        value={registration.status}
+                                        onChange={(e) => handleUpdateStatus(registration.id, e.target.value)}
+                                        className={`text-xs font-semibold rounded-lg px-3 py-1.5 border-2 cursor-pointer transition-colors ${
+                                          registration.status === 'confirmed'
+                                            ? 'bg-green-50 text-green-800 border-green-200 hover:bg-green-100'
+                                            : registration.status === 'pending'
+                                            ? 'bg-yellow-50 text-yellow-800 border-yellow-200 hover:bg-yellow-100'
+                                            : 'bg-red-50 text-red-800 border-red-200 hover:bg-red-100'
+                                        }`}
+                                      >
+                                        <option value="pending">Čeká na platbu</option>
+                                        <option value="confirmed">Potvrzeno</option>
+                                        <option value="cancelled">Zrušeno</option>
+                                      </select>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                      {new Date(registration.created_at).toLocaleDateString('cs-CZ', {
+                                        day: 'numeric',
+                                        month: 'short',
+                                        year: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                      })}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                      <button
+                                        onClick={() => handleDeleteRegistration(registration.id)}
+                                        className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                                        title="Smazat"
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
                           </div>
                         </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-900">
-                          {registration.registration_type === 'pair' ? 'Pár' : '1 osoba'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm font-semibold text-gray-900">
-                          {registration.price}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            registration.status === 'confirmed'
-                              ? 'bg-green-100 text-green-800'
-                              : registration.status === 'pending'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-gray-100 text-gray-800'
-                          }`}
-                        >
-                          {registration.status === 'confirmed'
-                            ? 'Potvrzeno'
-                            : registration.status === 'pending'
-                            ? 'Čeká na platbu'
-                            : 'Zrušeno'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(registration.created_at).toLocaleDateString('cs-CZ', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-          </>
+                      )}
+                    </div>
+                  )
+                })}
+              </>
+            )}
+          </div>
         )}
       </div>
     </div>

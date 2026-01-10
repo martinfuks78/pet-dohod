@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createRegistration, getAllRegistrations } from '../../../lib/db'
+import { createRegistration, getAllRegistrations, updateRegistrationStatus, deleteRegistration } from '../../../lib/db'
 import { sendRegistrationConfirmation, sendAdminNotification } from '../../../lib/email'
 
 // Helper funkce pro ověření autentizace
@@ -113,6 +113,90 @@ export async function GET(request) {
     console.error('Get registrations error:', error)
     return NextResponse.json(
       { error: 'Chyba při načítání registrací' },
+      { status: 500 }
+    )
+  }
+}
+
+// PUT endpoint pro aktualizaci statusu registrace (pro admin)
+export async function PUT(request) {
+  // Ověření autentizace
+  const auth = checkAuth(request)
+  if (!auth.authorized) {
+    return NextResponse.json(
+      { error: auth.error },
+      { status: 401 }
+    )
+  }
+
+  try {
+    const data = await request.json()
+    const { id, status } = data
+
+    // Validace
+    if (!id || !status) {
+      return NextResponse.json(
+        { error: 'ID a status jsou povinné' },
+        { status: 400 }
+      )
+    }
+
+    // Validace statusu
+    if (!['pending', 'confirmed', 'cancelled'].includes(status)) {
+      return NextResponse.json(
+        { error: 'Neplatný status' },
+        { status: 400 }
+      )
+    }
+
+    await updateRegistrationStatus(id, status)
+
+    return NextResponse.json({
+      success: true,
+      message: 'Status byl úspěšně aktualizován'
+    })
+  } catch (error) {
+    console.error('Update registration error:', error)
+    return NextResponse.json(
+      { error: 'Chyba při aktualizaci registrace' },
+      { status: 500 }
+    )
+  }
+}
+
+// DELETE endpoint pro smazání registrace (pro admin)
+export async function DELETE(request) {
+  // Ověření autentizace
+  const auth = checkAuth(request)
+  if (!auth.authorized) {
+    return NextResponse.json(
+      { error: auth.error },
+      { status: 401 }
+    )
+  }
+
+  try {
+    const url = new URL(request.url)
+    const id = url.searchParams.get('id')
+
+    // Validace
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID je povinné' },
+        { status: 400 }
+      )
+    }
+
+    await deleteRegistration(id)
+
+    return NextResponse.json({
+      success: true,
+      message: 'Registrace byla úspěšně smazána'
+    })
+  } catch (error) {
+    console.error('Delete registration error:', error)
+    return NextResponse.json(
+      { error: 'Chyba při mazání registrace' },
       { status: 500 }
     )
   }
