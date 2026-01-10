@@ -80,6 +80,9 @@ const metadata = {
             name: 'Martin Fuks'
         }
     ],
+    icons: {
+        icon: '/favicon.svg'
+    },
     openGraph: {
         title: 'Pět dohod - Workshop pro osobní svobodu',
         description: 'Dvoudenní workshop založený na moudrosti Čtyř dohod a Páté dohody.',
@@ -96,12 +99,12 @@ function RootLayout({ children }) {
             children: children
         }, void 0, false, {
             fileName: "[project]/app/layout.js",
-            lineNumber: 32,
+            lineNumber: 35,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/layout.js",
-        lineNumber: 31,
+        lineNumber: 34,
         columnNumber: 5
     }, this);
 }

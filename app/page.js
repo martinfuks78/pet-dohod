@@ -7,6 +7,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Navigation from '../components/Navigation'
 import RegistrationModal from '../components/RegistrationModal'
+import ContactForm from '../components/ContactForm'
 
 export default function Home() {
   const [selectedWorkshop, setSelectedWorkshop] = useState(null)
@@ -55,11 +56,11 @@ export default function Home() {
           </h1>
 
           <p className="text-xl md:text-2xl text-gray-600 mb-4 max-w-2xl mx-auto">
-            Nauč se žít bez zbytečného utrpení.
+            Nauč se žít bez zbytečných strachů a utrpení.
           </p>
 
           <p className="text-lg md:text-xl text-gray-500 mb-12 max-w-2xl mx-auto">
-            Dvoudenní workshop založený na moudrosti Čtyř dohod a Páté dohody. Žádná omáčka, trapné scénky nebo suchá teorie. Jde to na dřeň.
+            Workshopy založené na moudrosti knih Čtyři dohody a Pátá dohoda. Žádná omáčka, trapné scénky nebo suchá teorie.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -122,10 +123,10 @@ export default function Home() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
-              Co jsou Pět dohod?
+              Co je Pět dohod?
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Pět jednoduchých principů, které ti změní život. Nejde o teorii - jde o to, jak přestat zbytečně trpět a začít žít svobodně.
+              Pět jednoduchých principů, které mění život. Nejde o teorii - jde o to se naučit dohody žít a přestat zbytečně trpět.
             </p>
           </motion.div>
 
@@ -142,7 +143,7 @@ export default function Home() {
             className="mt-16 text-center"
           >
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Každá dohoda je jednoduchá. Ale dát ji do praxe? To chce AHA momenty a jasné kroky. Přesně to dostaneš na workshopu.
+              Každá dohoda je jednoduchá. Ale dát ji do praxe? To chce trénink a zkušenost. Přesně to dostaneš na workshopu.
             </p>
           </motion.div>
         </div>
@@ -251,10 +252,10 @@ export default function Home() {
               <Building2 className="w-8 h-8 text-white" />
             </div>
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
-              Workshop pro firmy
+              Firemní workshop nebo teambuilding
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Přiveď Pět dohod do svého týmu. Pomůžu vám vytvořit zdravější a produktivnější pracovní prostředí.
+              Pět dohod vytváří také zdravější a produktivnější pracovní prostředí. Vyzkoušejte netradiční teambuilding, kde se lidé baví osobním rozvojem.
             </p>
           </motion.div>
 
@@ -286,7 +287,7 @@ export default function Home() {
                       <h4 className="font-semibold text-gray-900">Úvodní konzultace</h4>
                     </div>
                     <p className="text-gray-600 ml-11">
-                      Probereme, co potřebuje váš tým a upravíme workshop na míru.
+                      Probereme, co potřebuje váš tým a upravíme workshop přesně na míru.
                     </p>
                   </div>
                   <div>
@@ -294,10 +295,10 @@ export default function Home() {
                       <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
                         2
                       </div>
-                      <h4 className="font-semibold text-gray-900">Workshop</h4>
+                      <h4 className="font-semibold text-gray-900">Workshop nebo teambuilding</h4>
                     </div>
                     <p className="text-gray-600 ml-11">
-                      2-3 dny intenzivní práce s dohody, praktické cvičení a AHA momenty.
+                      Akce Pět dohod plných intenzivní práce, praktických cvičení a AHA momentů.
                     </p>
                   </div>
                   <div>
@@ -308,7 +309,7 @@ export default function Home() {
                       <h4 className="font-semibold text-gray-900">Follow-up</h4>
                     </div>
                     <p className="text-gray-600 ml-11">
-                      Následná podpora, aby změny zůstaly i po workshopu.
+                      Následná podpora, aby se změny skutečně propsaly do praxe.
                     </p>
                   </div>
                 </div>
@@ -529,49 +530,24 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Kontakt/Newsletter Section */}
+      {/* Kontakt Section */}
       <section id="kontakt" className="py-24 px-4 bg-gradient-to-br from-primary-50 to-earth-50">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            className="text-center mb-12"
           >
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
-              Zůstaň v obraze
+              Máš otázku?
             </h2>
-            <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
-              Přihlas se k odběru novinek a dostaneš info o nových termínech, tipech a článcích o dohody.
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Napiš mi a já ti odpovím co nejdříve.
             </p>
-
-            <div className="bg-white rounded-2xl p-8 md:p-12 shadow-lg max-w-2xl mx-auto">
-              <form className="space-y-4">
-                <div>
-                  <input
-                    type="email"
-                    placeholder="Tvůj email"
-                    className="w-full px-6 py-4 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:outline-none text-lg"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full px-8 py-4 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold text-lg"
-                >
-                  Přihlásit se
-                </button>
-              </form>
-
-              <div className="mt-12 pt-8 border-t border-gray-200">
-                <p className="text-gray-600 mb-4">Nebo mi napiš přímo:</p>
-                <a
-                  href="mailto:info@martinfuks.cz"
-                  className="text-primary-600 hover:text-primary-700 font-semibold text-lg"
-                >
-                  info@martinfuks.cz
-                </a>
-              </div>
-            </div>
           </motion.div>
+
+          <ContactForm />
         </div>
       </section>
     </main>
@@ -600,8 +576,8 @@ export default function Home() {
             <h4 className="text-white font-semibold mb-4">Kontakt</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="mailto:info@martinfuks.cz" className="hover:text-primary-400 transition-colors">
-                  info@martinfuks.cz
+                <a href="mailto:kouc@martinfuks.cz" className="hover:text-primary-400 transition-colors">
+                  kouc@martinfuks.cz
                 </a>
               </li>
               <li>
@@ -658,24 +634,24 @@ const agreements = [
   {
     title: 'Nehřešte slovem',
     subtitle: 'Miřte slovy přesně',
-    description: 'Nepouštěj si ze rtů nic, co by ti mohlo škodit nebo druhým ubližovat. Slova mají sílu. Používej je správně a přesně.'
+    description: 'Slova mají sílu. Mohou tvořit nebo škodit. Naučte se vyjadřovat správně a přesně.'
   },
   {
     title: 'Neberte si nic osobně',
-    description: 'Co dělají a říkají ostatní, není o tobě. Je to o nich. Až tohle pochopíš, přestaneš zbytečně trpět.'
+    description: 'Co dělají a říkají druzí, není o vás. Je to o nich. Přestaňte se ubíjet cizími názory.'
   },
   {
-    title: 'Nevytvářejte si domněnky',
-    description: 'Víš co se stane, když si něco domýšlíš? Vytvoříš si v hlavě příběh, který nemusí být pravda. Ptej se, ověřuj, mluv otevřeně.'
+    title: 'Nevytvářejte si žádné domněnky',
+    description: 'Příběhy, které si tvoříte v hlavě, často nejsou pravdivé. Skončete s nimi.'
   },
   {
-    title: 'Vše, co děláte, dělejte nejlépe',
+    title: 'Dělejte vše, jak nejlépe dovedete',
     subtitle: 'Ale ne lépe',
-    description: 'Ne perfekcionismus. Prostě udělej, co můžeš s tím, co máš. Každý den je jiný. Tvoje maximum taky.'
+    description: 'Každý den je jiný. Vaše maximum taky. Dělejte vždy nejlépe - ale ne lépe.'
   },
   {
     title: 'Buďte skeptičtí, ale naslouchejte',
-    description: 'Nevěř všemu, co uslyšíš - ani tomu, co si říkáš sám sobě. Ale zároveň poslouchej. S otevřenou myslí.'
+    description: 'Nevěřte všemu, co slyšíte. Ani tomu, co říkáte sami sobě. Začněte naslouchat.'
   },
 ]
 
@@ -694,7 +670,7 @@ const reasons = [
   },
   {
     title: 'Zažiješ AHA momenty',
-    description: 'Ty momenty, kdy ti dojde, proč děláš to, co děláš. A jak to změnit. Právě tyhle momenty tě posunou dál.'
+    description: 'Ty momenty, kdy ti dojde, proč děláš to, co děláš. A jak to změnit. Aby ses konečně posunul dál.'
   },
 ]
 
@@ -723,10 +699,9 @@ const upcomingDates = [
 ]
 
 const companyBenefits = [
-  'Lepší komunikace v týmu bez konfliktů a nedorozumění',
-  'Zdravější firemní kultura postavená na důvěře',
-  'Zvýšená produktivita díky jasné komunikaci',
-  'Snížení stresu a vyhoření mezi zaměstnanci',
+  'Lepší komunikaci v týmu bez konfliktů a nedorozumění',
+  'Zdravější firemní kulturu postavenou na důvěře',
+  'Zvýšenou produktivitu, snížení stresu a vyhoření',
   'Silnější týmová soudržnost a spolupráce',
 ]
 
