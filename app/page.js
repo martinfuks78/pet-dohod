@@ -46,7 +46,7 @@ export default function Home() {
             {/* Levá kniha - Čtyři dohody */}
             <motion.div
               initial={{ opacity: 0, x: -50, rotate: 0 }}
-              animate={{ opacity: 1, x: 0, rotate: 8 }}
+              animate={{ opacity: 1, x: 0, rotate: -8 }}
               transition={{ duration: 1, delay: 0.3 }}
               className="hidden lg:block relative"
               style={{ transformOrigin: 'center right' }}
@@ -57,7 +57,7 @@ export default function Home() {
                     src="/ctyri-dohody.jpg"
                     alt="Čtyři dohody - Don Miguel Ruiz"
                     fill
-                    className="object-cover"
+                    className="object-cover opacity-70 saturate-75"
                     priority
                   />
                 </div>
@@ -134,7 +134,7 @@ export default function Home() {
             {/* Pravá kniha - Pátá dohoda */}
             <motion.div
               initial={{ opacity: 0, x: 50, rotate: 0 }}
-              animate={{ opacity: 1, x: 0, rotate: -8 }}
+              animate={{ opacity: 1, x: 0, rotate: 8 }}
               transition={{ duration: 1, delay: 0.3 }}
               className="hidden lg:block relative"
               style={{ transformOrigin: 'center left' }}
@@ -145,7 +145,7 @@ export default function Home() {
                     src="/pata-dohoda.jpg"
                     alt="Pátá dohoda - Don Miguel Ruiz"
                     fill
-                    className="object-cover"
+                    className="object-cover opacity-70 saturate-75"
                     priority
                   />
                 </div>
