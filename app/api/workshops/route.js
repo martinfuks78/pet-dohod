@@ -7,6 +7,33 @@ import {
   getWorkshopRegistrationCount,
 } from '../../../lib/db'
 
+// Helper funkce pro ověření autentizace
+function checkAuth(request) {
+  const authHeader = request.headers.get('authorization')
+
+  if (!authHeader) {
+    return { authorized: false, error: 'Unauthorized - missing authorization header' }
+  }
+
+  const [type, password] = authHeader.split(' ')
+
+  if (type !== 'Bearer' || !password) {
+    return { authorized: false, error: 'Unauthorized - invalid authorization format' }
+  }
+
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
+
+  if (!ADMIN_PASSWORD) {
+    return { authorized: false, error: 'Server configuration error' }
+  }
+
+  if (password !== ADMIN_PASSWORD) {
+    return { authorized: false, error: 'Unauthorized - invalid credentials' }
+  }
+
+  return { authorized: true }
+}
+
 /**
  * GET - Získá všechny aktivní workshopy
  */
@@ -45,6 +72,15 @@ export async function GET() {
  * POST - Vytvoří nový workshop
  */
 export async function POST(request) {
+  // Ověření autentizace
+  const auth = checkAuth(request)
+  if (!auth.authorized) {
+    return NextResponse.json(
+      { error: auth.error },
+      { status: 401 }
+    )
+  }
+
   try {
     const data = await request.json()
 
@@ -75,6 +111,15 @@ export async function POST(request) {
  * PUT - Aktualizuje workshop
  */
 export async function PUT(request) {
+  // Ověření autentizace
+  const auth = checkAuth(request)
+  if (!auth.authorized) {
+    return NextResponse.json(
+      { error: auth.error },
+      { status: 401 }
+    )
+  }
+
   try {
     const data = await request.json()
 
@@ -104,6 +149,15 @@ export async function PUT(request) {
  * DELETE - Smaže workshop (soft delete)
  */
 export async function DELETE(request) {
+  // Ověření autentizace
+  const auth = checkAuth(request)
+  if (!auth.authorized) {
+    return NextResponse.json(
+      { error: auth.error },
+      { status: 401 }
+    )
+  }
+
   try {
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')

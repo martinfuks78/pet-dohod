@@ -2,6 +2,33 @@ import { NextResponse } from 'next/server'
 import { createRegistration, getAllRegistrations } from '../../../lib/db'
 import { sendRegistrationConfirmation, sendAdminNotification } from '../../../lib/email'
 
+// Helper funkce pro ověření autentizace
+function checkAuth(request) {
+  const authHeader = request.headers.get('authorization')
+
+  if (!authHeader) {
+    return { authorized: false, error: 'Unauthorized - missing authorization header' }
+  }
+
+  const [type, password] = authHeader.split(' ')
+
+  if (type !== 'Bearer' || !password) {
+    return { authorized: false, error: 'Unauthorized - invalid authorization format' }
+  }
+
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
+
+  if (!ADMIN_PASSWORD) {
+    return { authorized: false, error: 'Server configuration error' }
+  }
+
+  if (password !== ADMIN_PASSWORD) {
+    return { authorized: false, error: 'Unauthorized - invalid credentials' }
+  }
+
+  return { authorized: true }
+}
+
 export async function POST(request) {
   try {
     const data = await request.json()
@@ -69,7 +96,16 @@ export async function POST(request) {
 }
 
 // GET endpoint pro získání všech registrací (pro admin)
-export async function GET() {
+export async function GET(request) {
+  // Ověření autentizace
+  const auth = checkAuth(request)
+  if (!auth.authorized) {
+    return NextResponse.json(
+      { error: auth.error },
+      { status: 401 }
+    )
+  }
+
   try {
     const registrations = await getAllRegistrations()
     return NextResponse.json({ registrations })

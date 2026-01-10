@@ -8,10 +8,17 @@ export default function AdminPage() {
   const [workshops, setWorkshops] = useState([])
   const [loading, setLoading] = useState(true)
   const [password, setPassword] = useState('')
+  const [authToken, setAuthToken] = useState('') // Uložené heslo pro API requesty
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [activeTab, setActiveTab] = useState('registrations') // 'registrations' nebo 'workshops'
   const [editingWorkshop, setEditingWorkshop] = useState(null)
   const [isCreatingWorkshop, setIsCreatingWorkshop] = useState(false)
+
+  // Helper funkce pro vytvoření auth headeru
+  const getAuthHeaders = () => ({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${authToken}`
+  })
 
   // Pomocná funkce pro konverzi ISO timestamp na YYYY-MM-DD pro date picker
   const formatDateForInput = (isoDate) => {
@@ -37,23 +44,39 @@ export default function AdminPage() {
     instructorInfo: '',
   })
 
-  // Jednoduché heslo (později nahradíme NextAuth)
-  const ADMIN_PASSWORD = 'pet-dohod-2026'
-
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true)
-      localStorage.setItem('admin_auth', 'true')
-      loadRegistrations()
-    } else {
-      alert('Špatné heslo')
+
+    // Ověření hesla přes API endpoint
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setIsAuthenticated(true)
+        setAuthToken(password) // Uložit heslo pro budoucí API requesty
+        localStorage.setItem('admin_auth', 'true')
+        localStorage.setItem('admin_token', password) // Uložit i do localStorage
+        loadRegistrations()
+        loadWorkshops()
+      } else {
+        alert('Špatné heslo')
+      }
+    } catch (error) {
+      alert('Chyba při přihlašování')
     }
   }
 
   const loadRegistrations = async () => {
     try {
-      const response = await fetch('/api/register')
+      const response = await fetch('/api/register', {
+        headers: getAuthHeaders()
+      })
       if (!response.ok) {
         // API endpoint chybí nebo vrací chybu - tiše ignorujeme
         setRegistrations([])
@@ -88,7 +111,7 @@ export default function AdminPage() {
     try {
       const response = await fetch('/api/workshops', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(workshopForm),
       })
 
@@ -123,7 +146,7 @@ export default function AdminPage() {
 
       const response = await fetch('/api/workshops', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           id: workshop.id,
           date: workshop.date,
@@ -157,6 +180,7 @@ export default function AdminPage() {
     try {
       const response = await fetch(`/api/workshops?id=${id}`, {
         method: 'DELETE',
+        headers: getAuthHeaders(),
       })
 
       if (response.ok) {
@@ -172,8 +196,10 @@ export default function AdminPage() {
 
   useEffect(() => {
     const savedAuth = localStorage.getItem('admin_auth')
-    if (savedAuth === 'true') {
+    const savedToken = localStorage.getItem('admin_token')
+    if (savedAuth === 'true' && savedToken) {
       setIsAuthenticated(true)
+      setAuthToken(savedToken)
       loadRegistrations()
       loadWorkshops()
     } else {
@@ -240,7 +266,9 @@ export default function AdminPage() {
             <button
               onClick={() => {
                 setIsAuthenticated(false)
+                setAuthToken('')
                 localStorage.removeItem('admin_auth')
+                localStorage.removeItem('admin_token')
               }}
               className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
             >
