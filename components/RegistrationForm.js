@@ -226,6 +226,22 @@ export default function RegistrationForm({ workshop }) {
         </div>
       )}
 
+      {/* GDPR info */}
+      <div className="text-sm text-gray-600 leading-relaxed bg-gray-50 p-4 rounded-lg">
+        <p className="mb-2">
+          <strong>Ochrana osobních údajů:</strong> Odesláním formuláře souhlasíš se zpracováním osobních údajů
+          pro účely registrace na workshop a komunikace s tebou. Tvé údaje budou zpracovány v souladu s GDPR
+          a využity pouze pro účely související s workshopem.
+        </p>
+        <p className="text-xs">
+          Provozovatel: Martin Fuks, IČ: [doplň IČ] •
+          Více informací o zpracování osobních údajů najdeš v{' '}
+          <a href="/ochrana-osobnich-udaju" className="text-primary-600 hover:underline">
+            dokumentu o ochraně osobních údajů
+          </a>.
+        </p>
+      </div>
+
       {/* Submit button */}
       <button
         type="submit"

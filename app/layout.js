@@ -18,6 +18,11 @@ export const metadata = {
   description: 'Dvoudenní workshop založený na moudrosti Čtyř dohod a Páté dohody. Nauč se žít v osobní svobodě, bez zbytečného utrpení a s jasnou myslí.',
   keywords: 'pět dohod, čtyři dohody, workshop, osobní růst, Don Miguel Ruiz, Martin Fuks',
   authors: [{ name: 'Martin Fuks' }],
+  robots: {
+    index: false,
+    follow: true,
+    nocache: true,
+  },
   icons: {
     icon: '/favicon.svg',
   },
