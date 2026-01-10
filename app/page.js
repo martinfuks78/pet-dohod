@@ -32,6 +32,7 @@ export default function Home() {
           // Transform API data to match component format
           const formattedWorkshops = data.workshops.map(w => ({
             id: w.id,
+            name: w.name,
             date: w.date,
             location: w.location,
             spots: w.capacity ? (w.capacity - (w.registrationCount || 0)) : null,
