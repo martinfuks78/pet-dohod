@@ -38,72 +38,131 @@ export default function Home() {
       />
       <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-earth-50 via-white to-sage-50 px-4">
+      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-earth-50 via-white to-sage-50 px-4 overflow-hidden">
         <div className="absolute inset-0 bg-[url('/patterns/subtle-grid.svg')] opacity-5"></div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-4xl mx-auto text-center relative z-10"
-        >
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="inline-block px-4 py-2 bg-primary-100 rounded-full text-primary-800 text-sm font-medium mb-8"
-          >
-            Workshop pro osobní svobodu
-          </motion.div>
-
-          <h1 className="text-5xl md:text-7xl font-serif font-bold text-gray-900 mb-6 leading-tight">
-            Pět dohod
-          </h1>
-
-          <p className="text-xl md:text-2xl text-gray-600 mb-4 max-w-2xl mx-auto">
-            Nauč se žít bez zbytečných strachů a utrpení.
-          </p>
-
-          <p className="text-lg md:text-xl text-gray-500 mb-12 max-w-2xl mx-auto">
-            Workshopy založené na moudrosti knih Čtyři dohody a Pátá dohoda.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="#terminy"
-              className="group px-8 py-4 bg-primary-500 text-white rounded-lg font-semibold hover:bg-primary-600 transition-all duration-200 flex items-center justify-center gap-2"
+        <div className="max-w-7xl mx-auto w-full relative z-10">
+          <div className="flex items-center justify-center gap-8 lg:gap-16">
+            {/* Levá kniha - Čtyři dohody */}
+            <motion.div
+              initial={{ opacity: 0, x: -50, rotateY: -15 }}
+              animate={{ opacity: 1, x: 0, rotateY: 0 }}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="hidden lg:block relative"
+              style={{ perspective: '1000px' }}
             >
-              Zobrazit termíny
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <Link
-              href="#dohody"
-              className="px-8 py-4 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-200 border-2 border-gray-200"
+              <div className="relative w-48 xl:w-56 transform hover:scale-105 transition-transform duration-300">
+                <div className="relative aspect-[2/3] bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg shadow-2xl overflow-hidden border-2 border-amber-300/50">
+                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent"></div>
+                  <div className="p-6 h-full flex flex-col justify-between">
+                    <div>
+                      <div className="text-xs font-semibold text-amber-800 mb-2">Don Miguel Ruiz</div>
+                      <h3 className="font-serif font-bold text-2xl xl:text-3xl text-gray-900 leading-tight">
+                        Čtyři<br />dohody
+                      </h3>
+                    </div>
+                    <div className="text-xs text-amber-900 opacity-70">
+                      Cesta k osobní svobodě
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute -right-2 top-2 w-full h-full bg-amber-200/30 rounded-lg -z-10"></div>
+              </div>
+            </motion.div>
+
+            {/* Střed - Hlavní obsah */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="max-w-4xl mx-auto text-center"
             >
-              Co jsou dohody?
-            </Link>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="inline-block px-4 py-2 bg-primary-100 rounded-full text-primary-800 text-sm font-medium mb-8"
+              >
+                Workshop pro osobní svobodu
+              </motion.div>
+
+              <h1 className="text-5xl md:text-7xl font-serif font-bold text-gray-900 mb-6 leading-tight">
+                Pět dohod
+              </h1>
+
+              <p className="text-xl md:text-2xl text-gray-600 mb-4 max-w-2xl mx-auto">
+                Nauč se žít bez zbytečných strachů a utrpení.
+              </p>
+
+              <p className="text-lg md:text-xl text-gray-500 mb-12 max-w-2xl mx-auto">
+                Workshopy založené na moudrosti knih Čtyři dohody a Pátá dohoda.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="#terminy"
+                  className="group px-8 py-4 bg-primary-500 text-white rounded-lg font-semibold hover:bg-primary-600 transition-all duration-200 flex items-center justify-center gap-2"
+                >
+                  Zobrazit termíny
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link
+                  href="#dohody"
+                  className="px-8 py-4 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-200 border-2 border-gray-200"
+                >
+                  Co jsou dohody?
+                </Link>
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                className="mt-16 flex items-center justify-center gap-8 text-sm text-gray-500"
+              >
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  <span>2 dny</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  <span>Malé skupiny</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Praxe, ne teorie</span>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Pravá kniha - Pátá dohoda */}
+            <motion.div
+              initial={{ opacity: 0, x: 50, rotateY: 15 }}
+              animate={{ opacity: 1, x: 0, rotateY: 0 }}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="hidden lg:block relative"
+              style={{ perspective: '1000px' }}
+            >
+              <div className="relative w-48 xl:w-56 transform hover:scale-105 transition-transform duration-300">
+                <div className="relative aspect-[2/3] bg-gradient-to-br from-sage-100 to-sage-200 rounded-lg shadow-2xl overflow-hidden border-2 border-sage-300/50">
+                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent"></div>
+                  <div className="p-6 h-full flex flex-col justify-between">
+                    <div>
+                      <div className="text-xs font-semibold text-sage-800 mb-2">Don Miguel Ruiz</div>
+                      <h3 className="font-serif font-bold text-2xl xl:text-3xl text-gray-900 leading-tight">
+                        Pátá<br />dohoda
+                      </h3>
+                    </div>
+                    <div className="text-xs text-sage-900 opacity-70">
+                      Praktická příručka pro skeptiky
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute -left-2 top-2 w-full h-full bg-sage-200/30 rounded-lg -z-10"></div>
+              </div>
+            </motion.div>
           </div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="mt-16 flex items-center justify-center gap-8 text-sm text-gray-500"
-          >
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              <span>2 dny</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4" />
-              <span>Malé skupiny</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Praxe, ne teorie</span>
-            </div>
-          </motion.div>
-        </motion.div>
+        </div>
 
         {/* Scroll indicator */}
         <motion.div
@@ -236,12 +295,16 @@ export default function Home() {
             <p className="text-gray-600 mb-4">
               Žádný termín ti nevyhovuje? Ozvěte se a domluvíme individuální termín.
             </p>
-            <Link
+            <a
               href="#kontakt"
-              className="inline-block px-6 py-3 border-2 border-primary-500 text-primary-600 rounded-lg hover:bg-primary-50 transition-colors font-semibold"
+              onClick={(e) => {
+                e.preventDefault()
+                document.getElementById('kontakt')?.scrollIntoView({ behavior: 'smooth' })
+              }}
+              className="inline-block px-6 py-3 border-2 border-primary-500 text-primary-600 rounded-lg hover:bg-primary-50 transition-colors font-semibold cursor-pointer"
             >
               Napište mi
-            </Link>
+            </a>
           </motion.div>
         </div>
       </section>
@@ -323,12 +386,16 @@ export default function Home() {
               </div>
             </div>
             <div className="mt-12 text-center">
-              <Link
+              <a
                 href="#kontakt"
-                className="inline-block px-8 py-4 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold text-lg"
+                onClick={(e) => {
+                  e.preventDefault()
+                  document.getElementById('kontakt')?.scrollIntoView({ behavior: 'smooth' })
+                }}
+                className="inline-block px-8 py-4 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold text-lg cursor-pointer"
               >
                 Domluvit firemní workshop
-              </Link>
+              </a>
             </div>
           </div>
         </div>
@@ -527,12 +594,16 @@ export default function Home() {
             <p className="text-gray-600 mb-4">
               Něco dalšího tě zajímá?
             </p>
-            <Link
+            <a
               href="#kontakt"
-              className="inline-block px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold"
+              onClick={(e) => {
+                e.preventDefault()
+                document.getElementById('kontakt')?.scrollIntoView({ behavior: 'smooth' })
+              }}
+              className="inline-block px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold cursor-pointer"
             >
               Zeptej se
-            </Link>
+            </a>
           </motion.div>
         </div>
       </section>
