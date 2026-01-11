@@ -1189,13 +1189,25 @@ export default function AdminPage() {
                               </thead>
                               <tbody className="divide-y divide-gray-200">
                                 {group.registrations.map((registration) => (
-                                  <tr key={registration.id} className="hover:bg-gray-50">
+                                  <tr
+                                    key={registration.id}
+                                    className={`
+                                      ${registration.registration_type === 'pair'
+                                        ? 'bg-blue-50 hover:bg-blue-100 border-l-4 border-blue-400'
+                                        : 'hover:bg-gray-50'}
+                                    `}
+                                  >
                                     <td className="px-6 py-4">
-                                      <div className="font-medium text-gray-900">
-                                        {registration.first_name} {registration.last_name}
+                                      <div className="flex items-center gap-2">
+                                        {registration.registration_type === 'pair' && (
+                                          <span className="text-blue-600 font-bold" title="Párová registrace">👥</span>
+                                        )}
+                                        <div className="font-medium text-gray-900">
+                                          {registration.first_name} {registration.last_name}
+                                        </div>
                                       </div>
                                       {registration.registration_type === 'pair' && registration.partner_first_name && (
-                                        <div className="text-sm text-gray-500">
+                                        <div className="text-sm text-gray-700 ml-6 font-medium">
                                           + {registration.partner_first_name} {registration.partner_last_name}
                                         </div>
                                       )}
@@ -1222,8 +1234,13 @@ export default function AdminPage() {
                                       </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                      <span className="text-sm text-gray-900">
-                                        {registration.registration_type === 'pair' ? 'Pár' : '1 osoba'}
+                                      <span className={`
+                                        text-xs font-semibold px-3 py-1.5 rounded-full
+                                        ${registration.registration_type === 'pair'
+                                          ? 'bg-blue-100 text-blue-800'
+                                          : 'bg-gray-100 text-gray-700'}
+                                      `}>
+                                        {registration.registration_type === 'pair' ? '👥 Pár' : '1 osoba'}
                                       </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
