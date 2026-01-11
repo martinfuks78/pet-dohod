@@ -156,7 +156,10 @@ export async function POST(request) {
       registrationId: registration.id,
     })
   } catch (error) {
-    console.error('Registration error:', error)
+    console.error('❌ Registration error:', error)
+    console.error('❌ Error name:', error.name)
+    console.error('❌ Error message:', error.message)
+    console.error('❌ Error stack:', error.stack)
     return NextResponse.json(
       { error: 'Něco se pokazilo. Zkus to prosím znovu.' },
       { status: 500 }
