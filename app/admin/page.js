@@ -41,6 +41,7 @@ export default function AdminPage() {
     location: '',
     capacity: '',
     priceSingle: '',
+    priceCouple: '',
     type: 'public',
     // Detail fields
     program: '',
@@ -133,6 +134,7 @@ export default function AdminPage() {
           location: '',
           capacity: '',
           priceSingle: '',
+          priceCouple: '',
           type: 'public',
           program: '',
           address: '',
