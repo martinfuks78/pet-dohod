@@ -98,10 +98,11 @@ export async function POST(request) {
       firstName: data.firstName,
       email: data.email,
       price: data.price,
-      priceType: typeof data.price
+      priceType: typeof data.price,
+      workshopVS: workshop.variable_symbol
     })
-    const registration = await createRegistration(data)
-    console.log('✅ Registration created:', registration.id)
+    const registration = await createRegistration(data, workshop.variable_symbol)
+    console.log('✅ Registration created:', registration.id, 'VS:', registration.variable_symbol)
 
     // Odeslání emailů (pokud je RESEND_API_KEY nastavený)
     if (process.env.RESEND_API_KEY) {
