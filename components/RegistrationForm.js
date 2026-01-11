@@ -35,7 +35,7 @@ export default function RegistrationForm({ workshop }) {
       workshopId: workshop.id,
       workshopDate: workshop.date,
       workshopLocation: workshop.location,
-      price: workshop.price,
+      price: workshop.priceSingle,
     }
 
     console.log('📤 Sending registration payload:', payload)
