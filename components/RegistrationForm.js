@@ -164,69 +164,73 @@ export default function RegistrationForm({ workshop }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Typ registrace */}
-      <div className="space-y-3">
-        <label className="block text-sm font-medium text-gray-700">
-          Počet účastníků *
-        </label>
-        <div className="grid grid-cols-2 gap-4">
-          <label className={`
-            relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all
-            ${formData.registrationType === 'single'
-              ? 'border-primary-500 bg-primary-50'
-              : 'border-gray-300 bg-white hover:border-gray-400'}
-          `}>
-            <input
-              type="radio"
-              name="registrationType"
-              value="single"
-              checked={formData.registrationType === 'single'}
-              onChange={handleChange}
-              className="sr-only"
-            />
-            <div className="text-center">
-              <div className="font-semibold text-gray-900">1 osoba</div>
-              <div className="text-sm text-gray-600 mt-1">{workshop.price}</div>
-            </div>
+      {/* Typ registrace - zobrazit jen když je k dispozici cena pro páry */}
+      {workshop.priceCouple && (
+        <div className="space-y-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Počet účastníků *
           </label>
-
-          <label className={`
-            relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all
-            ${formData.registrationType === 'pair'
-              ? 'border-primary-500 bg-primary-50'
-              : 'border-gray-300 bg-white hover:border-gray-400'}
-          `}>
-            <input
-              type="radio"
-              name="registrationType"
-              value="pair"
-              checked={formData.registrationType === 'pair'}
-              onChange={handleChange}
-              className="sr-only"
-            />
-            <div className="text-center">
-              <div className="font-semibold text-gray-900">Pár (2 osoby)</div>
-              <div className="text-sm text-gray-600 mt-1">
-                {workshop.priceCouple ? `${workshop.priceCouple.toLocaleString('cs-CZ')} Kč` : 'N/A'}
+          <div className="grid grid-cols-2 gap-4">
+            <label className={`
+              relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all
+              ${formData.registrationType === 'single'
+                ? 'border-primary-500 bg-primary-50'
+                : 'border-gray-300 bg-white hover:border-gray-400'}
+            `}>
+              <input
+                type="radio"
+                name="registrationType"
+                value="single"
+                checked={formData.registrationType === 'single'}
+                onChange={handleChange}
+                className="sr-only"
+              />
+              <div className="text-center">
+                <div className="font-semibold text-gray-900">1 osoba</div>
+                <div className="text-sm text-gray-600 mt-1">{workshop.price}</div>
               </div>
-              {workshop.priceCouple && workshop.priceSingle && (
-                <div className="text-xs text-green-600 font-medium mt-1">
-                  Úspora {((workshop.priceSingle * 2) - workshop.priceCouple).toLocaleString('cs-CZ')} Kč
-                </div>
-              )}
-            </div>
-          </label>
-        </div>
-      </div>
+            </label>
 
-      {/* Cena celkem */}
-      <div className="bg-primary-50 border-2 border-primary-200 rounded-xl p-6 text-center">
-        <div className="text-sm text-gray-600 mb-1">Cena celkem</div>
-        <div className="text-3xl font-bold text-primary-700">{displayPrice}</div>
-        <div className="text-sm text-gray-600 mt-2">
-          {formData.registrationType === 'pair' ? 'za pár' : 'na osobu'}
+            <label className={`
+              relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all
+              ${formData.registrationType === 'pair'
+                ? 'border-primary-500 bg-primary-50'
+                : 'border-gray-300 bg-white hover:border-gray-400'}
+            `}>
+              <input
+                type="radio"
+                name="registrationType"
+                value="pair"
+                checked={formData.registrationType === 'pair'}
+                onChange={handleChange}
+                className="sr-only"
+              />
+              <div className="text-center">
+                <div className="font-semibold text-gray-900">Pár (2 osoby)</div>
+                <div className="text-sm text-gray-600 mt-1">
+                  {workshop.priceCouple.toLocaleString('cs-CZ')} Kč
+                </div>
+                {workshop.priceSingle && (
+                  <div className="text-xs text-green-600 font-medium mt-1">
+                    Úspora {((workshop.priceSingle * 2) - workshop.priceCouple).toLocaleString('cs-CZ')} Kč
+                  </div>
+                )}
+              </div>
+            </label>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Cena celkem - zobrazit jen když je možnost výběru */}
+      {workshop.priceCouple && (
+        <div className="bg-primary-50 border-2 border-primary-200 rounded-xl p-6 text-center">
+          <div className="text-sm text-gray-600 mb-1">Cena celkem</div>
+          <div className="text-3xl font-bold text-primary-700">{displayPrice}</div>
+          <div className="text-sm text-gray-600 mt-2">
+            {formData.registrationType === 'pair' ? 'za pár' : 'na osobu'}
+          </div>
+        </div>
+      )}
 
       {/* Hlavní účastník */}
       <div className="space-y-4">
