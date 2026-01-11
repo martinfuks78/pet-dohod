@@ -19,6 +19,7 @@ export default function RegistrationForm({ workshop }) {
 
   const [status, setStatus] = useState('idle') // idle, loading, success, error
   const [errorMessage, setErrorMessage] = useState('')
+  const [paymentData, setPaymentData] = useState(null)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -55,6 +56,8 @@ export default function RegistrationForm({ workshop }) {
         throw new Error(data.error || 'Něco se pokazilo')
       }
 
+      // Uložit platební údaje pro zobrazení
+      setPaymentData(data.paymentDetails)
       setStatus('success')
     } catch (error) {
       setStatus('error')
@@ -67,16 +70,51 @@ export default function RegistrationForm({ workshop }) {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-green-50 border-2 border-green-200 rounded-xl p-8 text-center"
+        className="bg-green-50 border-2 border-green-200 rounded-xl p-8"
       >
         <CheckCircle2 className="w-16 h-16 text-green-600 mx-auto mb-4" />
-        <h3 className="text-2xl font-serif font-bold text-gray-900 mb-3">
+        <h3 className="text-2xl font-serif font-bold text-gray-900 mb-3 text-center">
           Registrace proběhla úspěšně!
         </h3>
-        <p className="text-gray-700 mb-4">
-          Na email <strong>{formData.email}</strong> jsme ti poslali potvrzení s platebními údaji.
+        <p className="text-gray-700 mb-6 text-center">
+          Na email <strong>{formData.email}</strong> jsme odeslali potvrzení.
         </p>
-        <p className="text-gray-600 text-sm">
+
+        {paymentData && (
+          <div className="bg-white rounded-lg p-6 mb-6 border-2 border-green-300">
+            <h4 className="font-semibold text-gray-900 mb-4 text-lg">💳 Detaily k platbě</h4>
+
+            <div className="space-y-3 mb-6">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Číslo účtu:</span>
+                <strong className="text-gray-900">{paymentData.bankAccount}</strong>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Variabilní symbol:</span>
+                <strong className="text-gray-900 text-xl">{paymentData.variableSymbol}</strong>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Částka:</span>
+                <strong className="text-gray-900 text-xl">{paymentData.amount} Kč</strong>
+              </div>
+            </div>
+
+            {paymentData.qrCodeUrl && (
+              <div className="text-center border-t pt-4">
+                <p className="text-sm text-gray-600 mb-3">Naskenuj QR kód k platbě:</p>
+                <img
+                  src={paymentData.qrCodeUrl}
+                  alt="QR kód pro platbu"
+                  className="mx-auto rounded-lg border-2 border-gray-200"
+                  width="250"
+                  height="250"
+                />
+              </div>
+            )}
+          </div>
+        )}
+
+        <p className="text-gray-600 text-sm text-center">
           Platba je splatná do 7 dnů. Těšíme se na tebe!
         </p>
       </motion.div>

@@ -151,10 +151,26 @@ export async function POST(request) {
       console.log('⚠️  RESEND_API_KEY not set, skipping email send')
     }
 
+    // Vygenerovat QR kód pro response
+    const { generatePaymentQRCode } = await import('../../../lib/qr-code')
+    const qrCodeUrl = generatePaymentQRCode({
+      bankAccount: workshop.bank_account,
+      amount: data.price,
+      variableSymbol: registration.variable_symbol,
+      message: `${data.firstName} ${data.lastName} - ${data.workshopDate}`,
+      size: '300x300'
+    })
+
     return NextResponse.json({
       success: true,
       message: 'Registrace byla úspěšně odeslána',
       registrationId: registration.id,
+      paymentDetails: {
+        bankAccount: workshop.bank_account,
+        variableSymbol: registration.variable_symbol,
+        amount: data.price,
+        qrCodeUrl: qrCodeUrl
+      }
     })
   } catch (error) {
     console.error('❌ Registration error:', error)
