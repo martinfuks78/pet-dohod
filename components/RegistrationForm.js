@@ -14,6 +14,9 @@ export default function RegistrationForm({ workshop }) {
     city: '',
     zip: '',
     registrationType: 'single',
+    partnerFirstName: '',
+    partnerLastName: '',
+    partnerEmail: '',
     notes: '',
   })
 
@@ -31,12 +34,15 @@ export default function RegistrationForm({ workshop }) {
     setStatus('loading')
     setErrorMessage('')
 
+    // Vypočítat cenu podle typu registrace
+    const price = formData.registrationType === 'pair' ? workshop.priceCouple : workshop.priceSingle
+
     const payload = {
       ...formData,
       workshopId: workshop.id,
       workshopDate: workshop.date,
       workshopLocation: workshop.location,
-      price: workshop.priceSingle,
+      price: price,
     }
 
     console.log('📤 Sending registration payload:', payload)
@@ -121,18 +127,82 @@ export default function RegistrationForm({ workshop }) {
     )
   }
 
+  // Vypočítat zobrazenou cenu
+  const displayPrice = formData.registrationType === 'pair'
+    ? `${workshop.priceCouple?.toLocaleString('cs-CZ')} Kč`
+    : workshop.price
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Cena */}
+      {/* Typ registrace */}
+      <div className="space-y-3">
+        <label className="block text-sm font-medium text-gray-700">
+          Počet účastníků *
+        </label>
+        <div className="grid grid-cols-2 gap-4">
+          <label className={`
+            relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all
+            ${formData.registrationType === 'single'
+              ? 'border-primary-500 bg-primary-50'
+              : 'border-gray-300 bg-white hover:border-gray-400'}
+          `}>
+            <input
+              type="radio"
+              name="registrationType"
+              value="single"
+              checked={formData.registrationType === 'single'}
+              onChange={handleChange}
+              className="sr-only"
+            />
+            <div className="text-center">
+              <div className="font-semibold text-gray-900">1 osoba</div>
+              <div className="text-sm text-gray-600 mt-1">{workshop.price}</div>
+            </div>
+          </label>
+
+          <label className={`
+            relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all
+            ${formData.registrationType === 'pair'
+              ? 'border-primary-500 bg-primary-50'
+              : 'border-gray-300 bg-white hover:border-gray-400'}
+          `}>
+            <input
+              type="radio"
+              name="registrationType"
+              value="pair"
+              checked={formData.registrationType === 'pair'}
+              onChange={handleChange}
+              className="sr-only"
+            />
+            <div className="text-center">
+              <div className="font-semibold text-gray-900">Pár (2 osoby)</div>
+              <div className="text-sm text-gray-600 mt-1">
+                {workshop.priceCouple ? `${workshop.priceCouple.toLocaleString('cs-CZ')} Kč` : 'N/A'}
+              </div>
+              {workshop.priceCouple && workshop.priceSingle && (
+                <div className="text-xs text-green-600 font-medium mt-1">
+                  Úspora {((workshop.priceSingle * 2) - workshop.priceCouple).toLocaleString('cs-CZ')} Kč
+                </div>
+              )}
+            </div>
+          </label>
+        </div>
+      </div>
+
+      {/* Cena celkem */}
       <div className="bg-primary-50 border-2 border-primary-200 rounded-xl p-6 text-center">
-        <div className="text-sm text-gray-600 mb-1">Cena workshopu</div>
-        <div className="text-3xl font-bold text-primary-700">{workshop.price}</div>
-        <div className="text-sm text-gray-600 mt-2">na osobu</div>
+        <div className="text-sm text-gray-600 mb-1">Cena celkem</div>
+        <div className="text-3xl font-bold text-primary-700">{displayPrice}</div>
+        <div className="text-sm text-gray-600 mt-2">
+          {formData.registrationType === 'pair' ? 'za pár' : 'na osobu'}
+        </div>
       </div>
 
       {/* Hlavní účastník */}
       <div className="space-y-4">
-        <h3 className="font-semibold text-gray-900">Tvoje údaje</h3>
+        <h3 className="font-semibold text-gray-900">
+          {formData.registrationType === 'pair' ? 'První účastník' : 'Tvoje údaje'}
+        </h3>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -242,6 +312,62 @@ export default function RegistrationForm({ workshop }) {
           </div>
         </div>
       </div>
+
+      {/* Partner údaje (jen pro páry) */}
+      {formData.registrationType === 'pair' && (
+        <div className="space-y-4 bg-blue-50 p-6 rounded-lg border-2 border-blue-200">
+          <h3 className="font-semibold text-gray-900">Druhý účastník (partner)</h3>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="partnerFirstName" className="block text-sm font-medium text-gray-700 mb-1">
+                Jméno *
+              </label>
+              <input
+                type="text"
+                id="partnerFirstName"
+                name="partnerFirstName"
+                required
+                value={formData.partnerFirstName}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label htmlFor="partnerLastName" className="block text-sm font-medium text-gray-700 mb-1">
+                Příjmení *
+              </label>
+              <input
+                type="text"
+                id="partnerLastName"
+                name="partnerLastName"
+                required
+                value={formData.partnerLastName}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="partnerEmail" className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              id="partnerEmail"
+              name="partnerEmail"
+              value={formData.partnerEmail}
+              onChange={handleChange}
+              placeholder="email@example.com (nepovinné)"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Pokud vyplníš, partner dostane také potvrzovací email
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Poznámka */}
       <div>

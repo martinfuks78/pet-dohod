@@ -63,6 +63,7 @@ export default function Home() {
             registrationCount: w.registrationCount || 0,
             price: `${w.price_single.toLocaleString('cs-CZ')} Kč`,
             priceSingle: w.price_single,
+            priceCouple: w.price_couple,
             // Detail fields
             program: w.program,
             address: w.address,
