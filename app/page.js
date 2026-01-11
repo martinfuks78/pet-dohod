@@ -69,6 +69,7 @@ export default function Home() {
             whatToBring: w.what_to_bring,
             instructorInfo: w.instructor_info
           }))
+          console.log('🔍 Formatted workshops:', formattedWorkshops.map(w => ({ id: w.id, name: w.name, date: w.date })))
           setWorkshops(formattedWorkshops)
         }
       } catch (error) {
@@ -82,6 +83,7 @@ export default function Home() {
   }, [])
 
   const openRegistration = (workshop) => {
+    console.log('🎯 Opening registration for workshop:', { id: workshop.id, name: workshop.name, date: workshop.date })
     setSelectedWorkshop(workshop)
     setIsModalOpen(true)
   }
