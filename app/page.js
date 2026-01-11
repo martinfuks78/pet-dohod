@@ -918,12 +918,14 @@ function WorkshopCard({ workshop, index, onRegister }) {
             {workshop.date}
           </div>
         </div>
-        <div className="text-right">
-          <span className="text-sm text-gray-500">Zbývá míst:</span>
-          <div className={`text-3xl font-bold ${spotsColor}`}>
-            {isFull ? 'Naplněno' : workshop.spots}
+        {workshop.spots !== null && (
+          <div className="text-right">
+            <span className="text-sm text-gray-500">Zbývá míst:</span>
+            <div className={`text-3xl font-bold ${spotsColor}`}>
+              {isFull ? 'Naplněno' : workshop.spots}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="space-y-3 mb-6">

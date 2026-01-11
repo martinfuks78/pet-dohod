@@ -615,20 +615,36 @@ export default function AdminPage() {
                     </div>
                   </div>
 
-                  {/* Řádek 3: Cena */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Cena *
-                    </label>
-                    <input
-                      type="number"
-                      required
-                      value={workshopForm.priceSingle}
-                      onChange={(e) => setWorkshopForm({ ...workshopForm, priceSingle: e.target.value })}
-                      onWheel={(e) => e.target.blur()}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
-                      placeholder="4800"
-                    />
+                  {/* Řádek 3: Ceny */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Cena za 1 osobu *
+                      </label>
+                      <input
+                        type="number"
+                        required
+                        value={workshopForm.priceSingle}
+                        onChange={(e) => setWorkshopForm({ ...workshopForm, priceSingle: e.target.value })}
+                        onWheel={(e) => e.target.blur()}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                        placeholder="4800"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Cena za pár (2 osoby)
+                      </label>
+                      <input
+                        type="number"
+                        value={workshopForm.priceCouple}
+                        onChange={(e) => setWorkshopForm({ ...workshopForm, priceCouple: e.target.value })}
+                        onWheel={(e) => e.target.blur()}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                        placeholder="7800"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Nepovinné - pokud nevyplníš, párová registrace nebude dostupná</p>
+                    </div>
                   </div>
 
                   {/* Řádek 4: Program */}
@@ -850,20 +866,35 @@ export default function AdminPage() {
                                     </div>
                                   </div>
 
-                                  {/* Řádek 3: Cena */}
-                                  <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                      Cena *
-                                    </label>
-                                    <input
-                                      type="number"
-                                      required
-                                      value={editingWorkshop.price_single || ''}
-                                      onChange={(e) => setEditingWorkshop({ ...editingWorkshop, price_single: e.target.value })}
-                                      onWheel={(e) => e.target.blur()}
+                                  {/* Řádek 3: Ceny */}
+                                  <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Cena za 1 osobu *
+                                      </label>
+                                      <input
+                                        type="number"
+                                        required
+                                        value={editingWorkshop.price_single || ''}
+                                        onChange={(e) => setEditingWorkshop({ ...editingWorkshop, price_single: e.target.value })}
+                                        onWheel={(e) => e.target.blur()}
                                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
                                       placeholder="4800"
                                     />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Cena za pár (2 osoby)
+                                      </label>
+                                      <input
+                                        type="number"
+                                        value={editingWorkshop.price_couple || ''}
+                                        onChange={(e) => setEditingWorkshop({ ...editingWorkshop, price_couple: e.target.value })}
+                                        onWheel={(e) => e.target.blur()}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+                                        placeholder="7800"
+                                      />
+                                    </div>
                                   </div>
 
                                   {/* Řádek 4: Program */}
