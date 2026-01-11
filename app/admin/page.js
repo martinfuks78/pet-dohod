@@ -697,11 +697,14 @@ export default function AdminPage() {
                       </label>
                       <input
                         type="text"
+                        name="workshopBankAccount"
                         value={workshopForm.bankAccount}
                         onChange={(e) => setWorkshopForm({ ...workshopForm, bankAccount: e.target.value })}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
                         placeholder="123456789/0100"
+                        autoComplete="on"
                       />
+                      <p className="text-xs text-gray-500 mt-1">Browser si pamatuje předchozí hodnoty</p>
                     </div>
 
                     <div>
@@ -710,11 +713,14 @@ export default function AdminPage() {
                       </label>
                       <input
                         type="text"
+                        name="workshopVariableSymbol"
                         value={workshopForm.variableSymbol}
                         onChange={(e) => setWorkshopForm({ ...workshopForm, variableSymbol: e.target.value })}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
                         placeholder="202603"
+                        autoComplete="on"
                       />
+                      <p className="text-xs text-gray-500 mt-1">Prefix pro variabilní symboly (např. 202603)</p>
                     </div>
                   </div>
 
