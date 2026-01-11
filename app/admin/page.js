@@ -164,6 +164,7 @@ export default function AdminPage() {
           location: workshop.location,
           capacity: cleanValue(workshop.capacity),
           priceSingle: Number(workshop.price_single),
+          priceCouple: workshop.price_couple ? Number(workshop.price_couple) : null,
           type: workshop.type || 'public',
           startDate: cleanValue(workshop.start_date),
           endDate: cleanValue(workshop.end_date),
