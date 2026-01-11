@@ -94,7 +94,14 @@ export async function POST(request) {
     }
 
     // Uložení do databáze
+    console.log('📦 About to create registration with data:', {
+      firstName: data.firstName,
+      email: data.email,
+      price: data.price,
+      priceType: typeof data.price
+    })
     const registration = await createRegistration(data)
+    console.log('✅ Registration created:', registration.id)
 
     // Odeslání emailů (pokud je RESEND_API_KEY nastavený)
     if (process.env.RESEND_API_KEY) {
