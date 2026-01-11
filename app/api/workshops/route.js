@@ -84,6 +84,8 @@ export async function POST(request) {
   try {
     const data = await request.json()
 
+    console.log('📥 POST /api/workshops - Received data:', JSON.stringify(data, null, 2))
+
     // Validace
     if (!data.startDate || !data.endDate || !data.location || !data.priceSingle) {
       return NextResponse.json(
@@ -93,6 +95,8 @@ export async function POST(request) {
     }
 
     const workshop = await createWorkshop(data)
+
+    console.log('✅ POST /api/workshops - Created workshop:', JSON.stringify(workshop, null, 2))
 
     return NextResponse.json({
       success: true,
@@ -123,6 +127,8 @@ export async function PUT(request) {
   try {
     const data = await request.json()
 
+    console.log('📥 PUT /api/workshops - Received data:', JSON.stringify(data, null, 2))
+
     if (!data.id) {
       return NextResponse.json(
         { error: 'Chybí ID workshopu' },
@@ -131,6 +137,8 @@ export async function PUT(request) {
     }
 
     const workshop = await updateWorkshop(data.id, data)
+
+    console.log('✅ PUT /api/workshops - Updated workshop:', JSON.stringify(workshop, null, 2))
 
     return NextResponse.json({
       success: true,
