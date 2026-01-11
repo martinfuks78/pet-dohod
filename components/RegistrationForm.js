@@ -23,6 +23,7 @@ export default function RegistrationForm({ workshop }) {
   const [status, setStatus] = useState('idle') // idle, loading, success, error
   const [errorMessage, setErrorMessage] = useState('')
   const [paymentData, setPaymentData] = useState(null)
+  const [isWaitlist, setIsWaitlist] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -64,6 +65,7 @@ export default function RegistrationForm({ workshop }) {
 
       // Uložit platební údaje pro zobrazení
       setPaymentData(data.paymentDetails)
+      setIsWaitlist(data.isWaitlist || false)
       setStatus('success')
     } catch (error) {
       setStatus('error')
@@ -72,6 +74,34 @@ export default function RegistrationForm({ workshop }) {
   }
 
   if (status === 'success') {
+    if (isWaitlist) {
+      // Waitlist success message
+      return (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-8"
+        >
+          <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-yellow-100 rounded-full">
+            <span className="text-4xl">⏳</span>
+          </div>
+          <h3 className="text-2xl font-serif font-bold text-gray-900 mb-3 text-center">
+            Jste na náhradnické listině!
+          </h3>
+          <p className="text-gray-700 mb-4 text-center">
+            Workshop je momentálně plný, ale zaregistrovali jsme Vás jako náhradníka.
+          </p>
+          <p className="text-gray-700 mb-6 text-center">
+            Na email <strong>{formData.email}</strong> jsme odeslali potvrzení. Pokud se uvolní místo, ozveme se Vám s platebními údaji.
+          </p>
+          <p className="text-gray-600 text-sm text-center">
+            Děkujeme za Váš zájem a držíme palce! 🤞
+          </p>
+        </motion.div>
+      )
+    }
+
+    // Regular success message
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -121,7 +151,7 @@ export default function RegistrationForm({ workshop }) {
         )}
 
         <p className="text-gray-600 text-sm text-center">
-          Platba je splatná do 7 dnů. Těšíme se na tebe!
+          Platba je splatná do 7 dnů. Těšíme se na Vás!
         </p>
       </motion.div>
     )
@@ -201,7 +231,7 @@ export default function RegistrationForm({ workshop }) {
       {/* Hlavní účastník */}
       <div className="space-y-4">
         <h3 className="font-semibold text-gray-900">
-          {formData.registrationType === 'pair' ? 'První účastník' : 'Tvoje údaje'}
+          {formData.registrationType === 'pair' ? 'První účastník' : 'Vaše údaje'}
         </h3>
 
         <div className="grid grid-cols-2 gap-4">
@@ -363,7 +393,7 @@ export default function RegistrationForm({ workshop }) {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
             />
             <p className="text-xs text-gray-500 mt-1">
-              Pokud vyplníš, partner dostane také potvrzovací email
+              Pokud vyplníte, partner dostane také potvrzovací email
             </p>
           </div>
         </div>
@@ -380,7 +410,7 @@ export default function RegistrationForm({ workshop }) {
           rows={3}
           value={formData.notes}
           onChange={handleChange}
-          placeholder="Máš nějaké speciální požadavky nebo otázky?"
+          placeholder="Máte nějaké speciální požadavky nebo otázky?"
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none resize-none"
         />
       </div>
@@ -398,13 +428,13 @@ export default function RegistrationForm({ workshop }) {
       {/* GDPR info */}
       <div className="text-sm text-gray-600 leading-relaxed bg-gray-50 p-4 rounded-lg">
         <p className="mb-2">
-          <strong>Ochrana osobních údajů:</strong> Odesláním formuláře souhlasíš se zpracováním osobních údajů
-          pro účely registrace na workshop a komunikace s tebou. Tvé údaje budou zpracovány v souladu s GDPR
+          <strong>Ochrana osobních údajů:</strong> Odesláním formuláře souhlasíte se zpracováním osobních údajů
+          pro účely registrace na workshop a komunikace s Vámi. Vaše údaje budou zpracovány v souladu s GDPR
           a využity pouze pro účely související s workshopem.
         </p>
         <p className="text-xs">
           Provozovatel: Martin Fuks, IČ: 19755015 •
-          Více informací o zpracování osobních údajů najdeš v{' '}
+          Více informací o zpracování osobních údajů najdete v{' '}
           <a href="/ochrana-osobnich-udaju" className="text-primary-600 hover:underline">
             dokumentu o ochraně osobních údajů
           </a>.

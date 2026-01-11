@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { sql } from '@vercel/postgres'
 import { createRegistration, getAllRegistrations, updateRegistrationStatus, deleteRegistration } from '../../../lib/db'
-import { sendRegistrationConfirmation, sendAdminNotification, sendPaymentConfirmation } from '../../../lib/email'
+import { sendRegistrationConfirmation, sendAdminNotification, sendPaymentConfirmation, sendWaitlistConfirmation } from '../../../lib/email'
 
 // Helper funkce pro ověření autentizace
 function checkAuth(request) {
@@ -93,24 +93,47 @@ export async function POST(request) {
       )
     }
 
+    // Zkontroluj kapacitu a určit status
+    let initialStatus = 'pending'
+    let isWaitlist = false
+
+    if (workshop.capacity) {
+      // Spočítej aktuální počet potvrzených a čekajících registrací
+      const countResult = await sql`
+        SELECT COUNT(*) as count FROM registrations
+        WHERE workshop_date = ${data.workshopDate}
+        AND workshop_location = ${data.workshopLocation}
+        AND status IN ('pending', 'confirmed')
+      `
+      const currentCount = parseInt(countResult.rows[0].count)
+
+      // Pokud je plný, zařaď na waitlist
+      if (currentCount >= workshop.capacity) {
+        initialStatus = 'waitlist'
+        isWaitlist = true
+      }
+    }
+
     // Uložení do databáze
     console.log('📦 About to create registration with data:', {
       firstName: data.firstName,
       email: data.email,
       price: data.price,
       priceType: typeof data.price,
-      workshopVS: workshop.variable_symbol
+      workshopVS: workshop.variable_symbol,
+      initialStatus: initialStatus,
+      isWaitlist: isWaitlist
     })
-    const registration = await createRegistration(data, workshop.variable_symbol)
-    console.log('✅ Registration created:', registration.id, 'VS:', registration.variable_symbol)
+    const registration = await createRegistration(data, workshop.variable_symbol, initialStatus)
+    console.log('✅ Registration created:', registration.id, 'VS:', registration.variable_symbol, 'Status:', initialStatus)
 
     // Odeslání emailů (pokud je RESEND_API_KEY nastavený)
     if (process.env.RESEND_API_KEY) {
       // Email sending v samostatném try-catch aby neovlivnilo registraci
       setImmediate(async () => {
         try {
-          // Potvrzení účastníkovi - s workshop daty
-          const confirmResult = await sendRegistrationConfirmation({
+          // Potvrzení účastníkovi - odlišný email pro waitlist vs. normal
+          const registrationData = {
             ...registration,
             firstName: data.firstName,
             lastName: data.lastName,
@@ -121,7 +144,11 @@ export async function POST(request) {
             partnerFirstName: data.partnerFirstName,
             partnerLastName: data.partnerLastName,
             price: data.price,
-          }, workshop)
+          }
+
+          const confirmResult = isWaitlist
+            ? await sendWaitlistConfirmation(registrationData, workshop)
+            : await sendRegistrationConfirmation(registrationData, workshop)
 
           if (confirmResult.success) {
             console.log('✅ Confirmation email sent to:', data.email)
@@ -151,26 +178,34 @@ export async function POST(request) {
       console.log('⚠️  RESEND_API_KEY not set, skipping email send')
     }
 
-    // Vygenerovat QR kód pro response
-    const { generatePaymentQRCode } = await import('../../../lib/qr-code')
-    const qrCodeUrl = generatePaymentQRCode({
-      bankAccount: workshop.bank_account,
-      amount: data.price,
-      variableSymbol: registration.variable_symbol,
-      message: `${data.firstName} ${data.lastName} - ${data.workshopDate}`,
-      size: '300x300'
-    })
+    // Pro waitlist neposíláme platební údaje
+    let paymentDetails = null
 
-    return NextResponse.json({
-      success: true,
-      message: 'Registrace byla úspěšně odeslána',
-      registrationId: registration.id,
-      paymentDetails: {
+    if (!isWaitlist) {
+      // Vygenerovat QR kód pro response
+      const { generatePaymentQRCode } = await import('../../../lib/qr-code')
+      const qrCodeUrl = generatePaymentQRCode({
+        bankAccount: workshop.bank_account,
+        amount: data.price,
+        variableSymbol: registration.variable_symbol,
+        message: `${data.firstName} ${data.lastName} - ${data.workshopDate}`,
+        size: '300x300'
+      })
+
+      paymentDetails = {
         bankAccount: workshop.bank_account,
         variableSymbol: registration.variable_symbol,
         amount: data.price,
         qrCodeUrl: qrCodeUrl
       }
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: isWaitlist ? 'Zaregistrován jako náhradník' : 'Registrace byla úspěšně odeslána',
+      registrationId: registration.id,
+      isWaitlist: isWaitlist,
+      paymentDetails: paymentDetails
     })
   } catch (error) {
     console.error('❌ Registration error:', error)

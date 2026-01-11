@@ -154,7 +154,7 @@ export default function Home() {
               </h1>
 
               <p className="text-xl md:text-2xl text-gray-600 mb-4 max-w-2xl mx-auto">
-                Nauč se žít bez zbytečných strachů a utrpení.
+                Naučte se žít bez zbytečných strachů a utrpení.
               </p>
 
               <p className="text-lg md:text-xl text-gray-500 mb-12 max-w-2xl mx-auto">
@@ -268,7 +268,7 @@ export default function Home() {
           >
             <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
               Každá dohoda je jednoduchá. Ale dát ji do praxe? To chce trénink a zkušenost.<br />
-              Přesně to dostaneš na workshopu.
+              Přesně to dostanete na workshopu.
             </p>
           </motion.div>
         </div>
@@ -330,7 +330,7 @@ export default function Home() {
               Nadcházející termíny
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Vyber si termín, který ti vyhovuje. Každý workshop je dvoudenní a probíhá v malých skupinách.
+              Vyberte si termín, který Vám vyhovuje. Každý workshop je dvoudenní a probíhá v malých skupinách.
             </p>
           </motion.div>
 
@@ -346,7 +346,7 @@ export default function Home() {
               // No workshops message
               <div className="col-span-2 text-center py-12">
                 <p className="text-gray-600">Momentálně nejsou k dispozici žádné termíny.</p>
-                <p className="text-gray-500 mt-2">Sleduj tuto stránku nebo nás kontaktuj pro více informací.</p>
+                <p className="text-gray-500 mt-2">Sledujte tuto stránku nebo nás kontaktujte pro více informací.</p>
               </div>
             ) : (
               // Workshops list
@@ -809,20 +809,20 @@ const agreements = [
 
 const reasons = [
   {
-    title: 'Naučíš se žít svobodněji',
-    description: 'Přestaneš se trápit tím, co si myslí druzí. Přestaneš se hrabat v minulosti nebo stresovat budoucností. Prostě začneš žít tady a teď.'
+    title: 'Naučíte se žít svobodněji',
+    description: 'Přestanete se trápit tím, co si myslí druzí. Přestanete se hrabat v minulosti nebo stresovat budoucností. Prostě začnete žít tady a teď.'
   },
   {
-    title: 'Dostaneš konkrétní kroky',
-    description: 'Žádná teorie naoko. Každá dohoda dostane jasný postup - co s ní dělat hned druhý den po workshopu. Pracujeme s reálnými příklady z tvého života.'
+    title: 'Dostanete konkrétní kroky',
+    description: 'Žádná teorie naoko. Každá dohoda dostane jasný postup - co s ní dělat hned druhý den po workshopu. Pracujeme s reálnými příklady z Vašeho života.'
   },
   {
-    title: 'Změníš vztahy',
-    description: 'S partnerem, dětmi, rodiči, kolegy. Když změníš sebe, změní se i to, jak komunikuješ. A tím se změní všechno okolo.'
+    title: 'Změníte vztahy',
+    description: 'S partnerem, dětmi, rodiči, kolegy. Když změníte sebe, změní se i to, jak komunikujete. A tím se změní všechno okolo.'
   },
   {
-    title: 'Zažiješ AHA momenty',
-    description: 'Ty momenty, kdy ti dojde, proč děláš to, co děláš. A jak to změnit. Aby ses konečně posunul dál.'
+    title: 'Zažijete AHA momenty',
+    description: 'Ty momenty, kdy Vám dojde, proč děláte to, co děláte. A jak to změnit. Abyste se konečně posunuli dál.'
   },
 ]
 
@@ -856,7 +856,7 @@ const testimonials = [
 const faqs = [
   {
     question: 'Musím znát knihy Čtyři/Pátá dohoda, abych se mohl zúčastnit?',
-    answer: 'Ne. Workshop je postavený tak, aby ses s dohody seznámil úplně od začátku. Pokud knihy znáš, o to lepší - půjdeme víc do hloubky.'
+    answer: 'Ne. Workshop je postavený tak, abyste se s dohody seznámili úplně od začátku. Pokud knihy znáte, o to lepší - půjdeme víc do hloubky.'
   },
   {
     question: 'Jak vypadá typický den na workshopu?',
@@ -864,23 +864,23 @@ const faqs = [
   },
   {
     question: 'Co mám vzít s sebou?',
-    answer: 'Sebe. Otevřenou mysl. Poznámkový blok, pokud si rád píšeš poznámky. Občerstvení zajistíme.'
+    answer: 'Sebe. Otevřenou mysl. Poznámkový blok, pokud si rádi píšete poznámky. Občerstvení zajistíme.'
   },
   {
     question: 'Můžu přijít sám nebo je lepší v páru?',
-    answer: 'Obojí funguje skvěle. Sám se víc soustředíš na sebe. V páru (partner, kamarád) můžete pak dohody cvičit spolu.'
+    answer: 'Obojí funguje skvěle. Sám se víc soustředíte na sebe. V páru (partner, kamarád) můžete pak dohody cvičit spolu.'
   },
   {
     question: 'Co když mi termín nevyhovuje?',
-    answer: 'Napiš mi a domluvíme individuální termín nebo tě zařadím do dalšího kola.'
+    answer: 'Napište mi a domluvíme individuální termín nebo Vás zařadím do dalšího kola.'
   },
   {
-    question: 'Nabízíš online verzi?',
+    question: 'Nabízíte online verzi?',
     answer: 'Ne. Workshop je postavený na osobním kontaktu a energii skupiny. Online to prostě není ono.'
   },
   {
     question: 'Jak probíhá platba?',
-    answer: 'Po registraci ti přijde email s pokyny k platbě bankovním převodem. Platba je splatná do 7 dnů.'
+    answer: 'Po registraci Vám přijde email s pokyny k platbě bankovním převodem. Platba je splatná do 7 dnů.'
   },
 ]
 
