@@ -12,6 +12,8 @@ export default function AdminPage() {
   const [newsletter, setNewsletter] = useState([])
   const [emailTemplates, setEmailTemplates] = useState([])
   const [editingTemplate, setEditingTemplate] = useState(null)
+  const [workshopTemplates, setWorkshopTemplates] = useState([])
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false)
   const [loading, setLoading] = useState(true)
   const [password, setPassword] = useState('')
   const [authToken, setAuthToken] = useState('') // Uložené heslo pro API requesty
@@ -158,6 +160,22 @@ export default function AdminPage() {
     }
   }
 
+  const loadWorkshopTemplates = async () => {
+    try {
+      const response = await fetch('/api/workshop-templates', {
+        headers: getAuthHeaders()
+      })
+      if (!response.ok) {
+        setWorkshopTemplates([])
+        return
+      }
+      const data = await response.json()
+      setWorkshopTemplates(data.templates || [])
+    } catch (error) {
+      setWorkshopTemplates([])
+    }
+  }
+
   const handleCreateWorkshop = async (e) => {
     e.preventDefault()
     try {
@@ -193,6 +211,27 @@ export default function AdminPage() {
       console.error('Error creating workshop:', error)
       alert('Chyba při vytváření workshopu')
     }
+  }
+
+  const handleUseTemplate = (template) => {
+    setWorkshopForm({
+      name: template.name || '',
+      startDate: '',
+      endDate: '',
+      location: template.location || '',
+      capacity: template.capacity || '',
+      priceSingle: template.price_single || '',
+      priceCouple: template.price_couple || '',
+      type: template.type || 'public',
+      program: template.program || '',
+      address: template.address || '',
+      whatToBring: template.what_to_bring || '',
+      instructorInfo: template.instructor_info || '',
+      bankAccount: template.bank_account || '',
+      variableSymbol: template.variable_symbol || '',
+    })
+    setShowTemplateSelector(false)
+    setIsCreatingWorkshop(true)
   }
 
   const handleUpdateWorkshop = async (workshop) => {
@@ -555,6 +594,7 @@ export default function AdminPage() {
       loadWorkshops()
       loadNewsletter()
       loadEmailTemplates()
+      loadWorkshopTemplates()
     }
   }, [authToken, isAuthenticated])
 
@@ -972,13 +1012,24 @@ export default function AdminPage() {
         {activeTab === 'workshops' && (
           <div className="space-y-6">
             {/* Create Workshop Button */}
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-3">
+              {workshopTemplates.length > 0 && (
+                <button
+                  onClick={() => setShowTemplateSelector(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-white text-primary-600 border-2 border-primary-600 rounded-lg hover:bg-primary-50 transition-colors font-semibold"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Použít šablonu
+                </button>
+              )}
               <button
                 onClick={() => setIsCreatingWorkshop(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold"
               >
                 <Plus className="w-5 h-5" />
-                Přidat workshop
+                Nový workshop
               </button>
             </div>
 
@@ -1949,6 +2000,59 @@ export default function AdminPage() {
                 })}
               </>
             )}
+          </div>
+        )}
+
+        {/* Template Selector Modal */}
+        {showTemplateSelector && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-xl shadow-xl max-w-3xl w-full max-h-[80vh] overflow-y-auto">
+              <div className="bg-gradient-to-r from-primary-50 to-sage-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between sticky top-0">
+                <h3 className="text-xl font-semibold text-gray-900">Vyberte šablonu workshopu</h3>
+                <button
+                  onClick={() => setShowTemplateSelector(false)}
+                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-white rounded transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-6">
+                {workshopTemplates.length === 0 ? (
+                  <div className="text-center py-12">
+                    <p className="text-gray-500">Žádné šablony k dispozici</p>
+                    <p className="text-sm text-gray-400 mt-2">Spusťte migraci /api/migrate-workshop-templates</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-4">
+                    {workshopTemplates.map(template => (
+                      <div
+                        key={template.id}
+                        className="border-2 border-gray-200 rounded-lg p-4 hover:border-primary-500 transition-colors cursor-pointer group"
+                        onClick={() => handleUseTemplate(template)}
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div>
+                            <h4 className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
+                              {template.name}
+                            </h4>
+                            <p className="text-sm text-gray-600 mt-1">
+                              {template.location} • Kapacita: {template.capacity} • {template.price_single} Kč / {template.price_couple} Kč
+                            </p>
+                          </div>
+                          <svg className="w-5 h-5 text-gray-400 group-hover:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                        {template.program && (
+                          <p className="text-sm text-gray-500 line-clamp-2">{template.program}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
