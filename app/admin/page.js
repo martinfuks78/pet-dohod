@@ -2364,8 +2364,35 @@ export default function AdminPage() {
             {emailTemplates.length === 0 ? (
               <div className="bg-white rounded-xl shadow-sm p-12 text-center">
                 <Mail className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500 mb-2">Žádné email šablony</p>
-                <p className="text-sm text-gray-400">Spusť migraci databáze pro vytvoření výchozích šablon</p>
+                <p className="text-gray-500 mb-4">Žádné email šablony</p>
+                <p className="text-sm text-gray-400 mb-6">Vytvoř výchozí šablony nebo přidej vlastní</p>
+                <div className="flex gap-3 justify-center">
+                  <button
+                    onClick={async () => {
+                      try {
+                        const response = await fetch('/api/migrate-email-templates', {
+                          method: 'GET',
+                          headers: getAuthHeaders()
+                        })
+                        const data = await response.json()
+                        if (data.success) {
+                          alert('✅ Výchozí šablony byly vytvořeny!')
+                          loadEmailTemplates()
+                        } else {
+                          alert('❌ Chyba: ' + (data.error || 'Nepodařilo se vytvořit šablony'))
+                        }
+                      } catch (error) {
+                        alert('❌ Chyba při vytváření šablon')
+                      }
+                    }}
+                    className="flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Vytvořit výchozí šablony
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="grid gap-6">
