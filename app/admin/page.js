@@ -12,11 +12,22 @@ export default function AdminPage() {
   const [newsletter, setNewsletter] = useState([])
   const [emailTemplates, setEmailTemplates] = useState([])
   const [editingTemplate, setEditingTemplate] = useState(null)
+  const [isCreatingTemplate, setIsCreatingTemplate] = useState(false)
+  const [newTemplateForm, setNewTemplateForm] = useState({
+    template_key: '',
+    name: '',
+    subject: '',
+    html_body: '',
+    variables: ''
+  })
   const [workshopTemplates, setWorkshopTemplates] = useState([])
   const [showTemplateSelector, setShowTemplateSelector] = useState(false)
   const [editingNotes, setEditingNotes] = useState(null) // Registrace s editovanými poznámkami (celý objekt)
   const [notesFormData, setNotesFormData] = useState({ notes: '', tags: '' })
   const [auditLogs, setAuditLogs] = useState([])
+  const [showCustomEmailDialog, setShowCustomEmailDialog] = useState(null) // {registrationId, registration}
+  const [selectedCustomTemplate, setSelectedCustomTemplate] = useState('')
+  const [showBulkEmailDialog, setShowBulkEmailDialog] = useState(false)
   const [loading, setLoading] = useState(true)
   const [password, setPassword] = useState('')
   const [authToken, setAuthToken] = useState('') // Uložené heslo pro API requesty
@@ -1807,6 +1818,13 @@ export default function AdminPage() {
                         Zrušit
                       </button>
                       <button
+                        onClick={() => setShowBulkEmailDialog(true)}
+                        className="px-3 py-1.5 bg-primary-600 text-white rounded text-sm font-semibold hover:bg-primary-700 transition-colors flex items-center gap-1"
+                      >
+                        <Mail className="w-4 h-4" />
+                        Odeslat email
+                      </button>
+                      <button
                         onClick={handleBulkDelete}
                         className="px-3 py-1.5 bg-red-600 text-white rounded text-sm font-semibold hover:bg-red-700 transition-colors"
                       >
@@ -2058,6 +2076,16 @@ export default function AdminPage() {
                                                   <Send className="w-4 h-4" />
                                                   Poslat email o platbě
                                                 </button>
+                                                <button
+                                                  onClick={() => {
+                                                    setShowCustomEmailDialog({ registrationId: registration.id, registration })
+                                                    toggleActionMenu(registration.id)
+                                                  }}
+                                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                                >
+                                                  <Mail className="w-4 h-4" />
+                                                  Odeslat vlastní email
+                                                </button>
 
                                                 {/* Divider */}
                                                 <div className="border-t border-gray-100 my-1"></div>
@@ -2253,6 +2281,159 @@ export default function AdminPage() {
           </div>
         )}
 
+        {/* Create New Email Template Modal */}
+        {isCreatingTemplate && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="bg-gradient-to-r from-primary-50 to-sage-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between sticky top-0 z-10">
+                <h3 className="text-xl font-semibold text-gray-900">Nová email šablona</h3>
+                <button
+                  onClick={() => {
+                    setIsCreatingTemplate(false)
+                    setNewTemplateForm({
+                      template_key: '',
+                      name: '',
+                      subject: '',
+                      html_body: '',
+                      variables: ''
+                    })
+                  }}
+                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-white rounded transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Klíč šablony <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={newTemplateForm.template_key}
+                    onChange={(e) => setNewTemplateForm({...newTemplateForm, template_key: e.target.value})}
+                    placeholder="napr. follow_up_email"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Unikátní identifikátor (pouze malá písmena, čísla a podtržítka)</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Název šablony <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={newTemplateForm.name}
+                    onChange={(e) => setNewTemplateForm({...newTemplateForm, name: e.target.value})}
+                    placeholder="např. Follow-up dotazník"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Předmět emailu <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={newTemplateForm.subject}
+                    onChange={(e) => setNewTemplateForm({...newTemplateForm, subject: e.target.value})}
+                    placeholder="např. Jak se ti workshop líbil?"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Můžeš použít proměnné: {'{{firstName}}'}, {'{{workshopDate}}'} atd.</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    HTML tělo emailu <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    value={newTemplateForm.html_body}
+                    onChange={(e) => setNewTemplateForm({...newTemplateForm, html_body: e.target.value})}
+                    placeholder="<div>Ahoj {{firstName}},<br><br>Děkujeme za účast na workshopu!</div>"
+                    rows={15}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono text-sm"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">HTML kód emailu. Proměnné: {'{{firstName}}'}, {'{{lastName}}'}, {'{{email}}'}, {'{{workshopDate}}'}, {'{{workshopLocation}}'}</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Proměnné (JSON - volitelné)
+                  </label>
+                  <textarea
+                    value={newTemplateForm.variables}
+                    onChange={(e) => setNewTemplateForm({...newTemplateForm, variables: e.target.value})}
+                    placeholder='{"firstName": "text", "workshopDate": "text"}'
+                    rows={3}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono text-sm"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">JSON objekt s definicí proměnných (pro budoucí použití)</p>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+                  <button
+                    onClick={() => {
+                      setIsCreatingTemplate(false)
+                      setNewTemplateForm({
+                        template_key: '',
+                        name: '',
+                        subject: '',
+                        html_body: '',
+                        variables: ''
+                      })
+                    }}
+                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-semibold"
+                  >
+                    Zrušit
+                  </button>
+                  <button
+                    onClick={async () => {
+                      if (!newTemplateForm.template_key || !newTemplateForm.name || !newTemplateForm.subject || !newTemplateForm.html_body) {
+                        alert('❌ Vyplň všechna povinná pole')
+                        return
+                      }
+
+                      try {
+                        const response = await fetch('/api/email-templates', {
+                          method: 'POST',
+                          headers: getAuthHeaders(),
+                          body: JSON.stringify(newTemplateForm)
+                        })
+
+                        const data = await response.json()
+
+                        if (data.success) {
+                          alert('✅ Šablona byla vytvořena!')
+                          setIsCreatingTemplate(false)
+                          setNewTemplateForm({
+                            template_key: '',
+                            name: '',
+                            subject: '',
+                            html_body: '',
+                            variables: ''
+                          })
+                          loadEmailTemplates()
+                        } else {
+                          alert('❌ Chyba: ' + (data.error || 'Nepodařilo se vytvořit šablonu'))
+                        }
+                      } catch (error) {
+                        alert('❌ Chyba při vytváření šablony')
+                      }
+                    }}
+                    className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 font-semibold"
+                  >
+                    Vytvořit šablonu
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Newsletter Tab */}
         {activeTab === 'newsletter' && (
           <div className="space-y-6">
@@ -2265,14 +2446,24 @@ export default function AdminPage() {
                     Celkem: {newsletter.length} odběratelů
                   </p>
                 </div>
-                <button
-                  onClick={handleExportNewsletterCSV}
-                  disabled={newsletter.length === 0}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Download className="w-4 h-4" />
-                  Export CSV
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setShowBulkEmailDialog(true)}
+                    disabled={newsletter.length === 0}
+                    className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Mail className="w-4 h-4" />
+                    Odeslat kampaň
+                  </button>
+                  <button
+                    onClick={handleExportNewsletterCSV}
+                    disabled={newsletter.length === 0}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Download className="w-4 h-4" />
+                    Export CSV
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -2357,6 +2548,15 @@ export default function AdminPage() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-1">Email šablony</h3>
                   <p className="text-sm text-gray-600">Upravit texty automatických emailů</p>
                 </div>
+                {emailTemplates.length > 0 && (
+                  <button
+                    onClick={() => setIsCreatingTemplate(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-semibold"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Nová šablona
+                  </button>
+                )}
               </div>
             </div>
 
@@ -2765,6 +2965,217 @@ export default function AdminPage() {
                   <p className="text-sm text-gray-600">
                     💡 Tip: Klávesové zkratky nefungují když jsi v textovém poli.
                   </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Bulk Email Dialog */}
+        {showBulkEmailDialog && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
+              <div className="bg-gradient-to-r from-primary-50 to-sage-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 className="text-xl font-semibold text-gray-900">Hromadné odeslání emailu</h3>
+                <button
+                  onClick={() => {
+                    setShowBulkEmailDialog(false)
+                    setSelectedCustomTemplate('')
+                  }}
+                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-white rounded transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4">
+                <div>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Odeslat email <strong>{selectedRegistrations.size} vybraným účastníkům</strong>
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Vyber email šablonu
+                  </label>
+                  <select
+                    value={selectedCustomTemplate}
+                    onChange={(e) => setSelectedCustomTemplate(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  >
+                    <option value="">-- Vyber šablonu --</option>
+                    {emailTemplates.map(template => (
+                      <option key={template.id} value={template.template_key}>
+                        {template.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+                  <button
+                    onClick={() => {
+                      setShowBulkEmailDialog(false)
+                      setSelectedCustomTemplate('')
+                    }}
+                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-semibold"
+                  >
+                    Zrušit
+                  </button>
+                  <button
+                    onClick={async () => {
+                      if (!selectedCustomTemplate) {
+                        alert('❌ Vyber šablonu')
+                        return
+                      }
+
+                      if (!confirm(`Opravdu odeslat email ${selectedRegistrations.size} účastníkům?`)) {
+                        return
+                      }
+
+                      try {
+                        // Získat emaily vybraných registrací
+                        const selectedRegs = registrations.filter(r => selectedRegistrations.has(r.id))
+
+                        let sentCount = 0
+                        let errors = []
+
+                        for (const reg of selectedRegs) {
+                          try {
+                            const response = await fetch('/api/send-custom-email', {
+                              method: 'POST',
+                              headers: getAuthHeaders(),
+                              body: JSON.stringify({
+                                registrationId: reg.id,
+                                templateKey: selectedCustomTemplate
+                              })
+                            })
+
+                            const data = await response.json()
+
+                            if (data.success) {
+                              sentCount++
+                            } else {
+                              errors.push(reg.email)
+                            }
+                          } catch (error) {
+                            errors.push(reg.email)
+                          }
+
+                          // Malé zpoždění mezi emaily
+                          await new Promise(resolve => setTimeout(resolve, 200))
+                        }
+
+                        if (errors.length === 0) {
+                          alert(`✅ Emaily odeslány všem ${sentCount} účastníkům!`)
+                        } else {
+                          alert(`⚠️ Odesláno ${sentCount}/${selectedRegs.length} emailů. Chyby: ${errors.join(', ')}`)
+                        }
+
+                        setShowBulkEmailDialog(false)
+                        setSelectedCustomTemplate('')
+                        setSelectedRegistrations(new Set())
+                      } catch (error) {
+                        alert('❌ Chyba při odesílání emailů')
+                      }
+                    }}
+                    className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 font-semibold"
+                  >
+                    Odeslat všem
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Custom Email Dialog */}
+        {showCustomEmailDialog && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
+              <div className="bg-gradient-to-r from-primary-50 to-sage-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 className="text-xl font-semibold text-gray-900">Odeslat vlastní email</h3>
+                <button
+                  onClick={() => {
+                    setShowCustomEmailDialog(null)
+                    setSelectedCustomTemplate('')
+                  }}
+                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-white rounded transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4">
+                <div>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Odeslat email pro: <strong>{showCustomEmailDialog.registration?.first_name} {showCustomEmailDialog.registration?.last_name}</strong>
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Vyber email šablonu
+                  </label>
+                  <select
+                    value={selectedCustomTemplate}
+                    onChange={(e) => setSelectedCustomTemplate(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  >
+                    <option value="">-- Vyber šablonu --</option>
+                    {emailTemplates.map(template => (
+                      <option key={template.id} value={template.template_key}>
+                        {template.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+                  <button
+                    onClick={() => {
+                      setShowCustomEmailDialog(null)
+                      setSelectedCustomTemplate('')
+                    }}
+                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-semibold"
+                  >
+                    Zrušit
+                  </button>
+                  <button
+                    onClick={async () => {
+                      if (!selectedCustomTemplate) {
+                        alert('❌ Vyber šablonu')
+                        return
+                      }
+
+                      try {
+                        const response = await fetch('/api/send-custom-email', {
+                          method: 'POST',
+                          headers: getAuthHeaders(),
+                          body: JSON.stringify({
+                            registrationId: showCustomEmailDialog.registrationId,
+                            templateKey: selectedCustomTemplate
+                          })
+                        })
+
+                        const data = await response.json()
+
+                        if (data.success) {
+                          alert(`✅ Email odeslán!`)
+                          setShowCustomEmailDialog(null)
+                          setSelectedCustomTemplate('')
+                        } else {
+                          alert('❌ Chyba: ' + (data.error || 'Nepodařilo se odeslat email'))
+                        }
+                      } catch (error) {
+                        alert('❌ Chyba při odesílání emailu')
+                      }
+                    }}
+                    className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 font-semibold"
+                  >
+                    Odeslat email
+                  </button>
                 </div>
               </div>
             </div>

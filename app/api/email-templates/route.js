@@ -54,6 +54,52 @@ export async function GET(request) {
   }
 }
 
+// POST - Vytvořit novou šablonu
+export async function POST(request) {
+  try {
+    const auth = checkAuth(request)
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error }, { status: 401 })
+    }
+
+    const { template_key, name, subject, html_body, variables } = await request.json()
+
+    if (!template_key || !name || !subject || !html_body) {
+      return NextResponse.json(
+        { error: 'Chybí povinná pole (template_key, name, subject, html_body)' },
+        { status: 400 }
+      )
+    }
+
+    const result = await sql`
+      INSERT INTO email_templates (template_key, name, subject, html_body, variables)
+      VALUES (${template_key}, ${name}, ${subject}, ${html_body}, ${variables || null})
+      RETURNING *
+    `
+
+    return NextResponse.json({
+      success: true,
+      template: result.rows[0],
+      message: 'Email šablona byla vytvořena'
+    })
+  } catch (error) {
+    console.error('Email template create error:', error)
+
+    // Check for duplicate key error
+    if (error.message && error.message.includes('duplicate key')) {
+      return NextResponse.json(
+        { error: 'Šablona s tímto klíčem již existuje' },
+        { status: 400 }
+      )
+    }
+
+    return NextResponse.json(
+      { error: 'Nepodařilo se vytvořit email šablonu' },
+      { status: 500 }
+    )
+  }
+}
+
 // PUT - Upravit šablonu
 export async function PUT(request) {
   try {
