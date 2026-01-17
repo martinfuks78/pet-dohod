@@ -2,13 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Users, Calendar, Mail, Phone, MapPin, Loader2, Plus, Edit2, Trash2, Save, X, ChevronDown, ChevronUp, Download, Eye } from 'lucide-react'
+import { Users, Calendar, Mail, Phone, MapPin, Loader2, Plus, Edit2, Trash2, Save, X, ChevronDown, ChevronUp, Download, Eye, Send, MoreVertical } from 'lucide-react'
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 export default function AdminPage() {
   const router = useRouter()
   const [registrations, setRegistrations] = useState([])
   const [workshops, setWorkshops] = useState([])
   const [newsletter, setNewsletter] = useState([])
+  const [emailTemplates, setEmailTemplates] = useState([])
+  const [editingTemplate, setEditingTemplate] = useState(null)
   const [loading, setLoading] = useState(true)
   const [password, setPassword] = useState('')
   const [authToken, setAuthToken] = useState('') // Uložené heslo pro API requesty
@@ -22,6 +25,7 @@ export default function AdminPage() {
   const [expandedWorkshops, setExpandedWorkshops] = useState(new Set()) // Které workshopy jsou rozbalené
   const [workshopTimeFilter, setWorkshopTimeFilter] = useState('upcoming') // 'upcoming', 'past', 'all'
   const [selectedRegistrations, setSelectedRegistrations] = useState(new Set()) // Vybrané registrace pro bulk akce
+  const [openActionMenus, setOpenActionMenus] = useState(new Set()) // Otevřené dropdown menu pro akce
 
   // Helper funkce pro vytvoření auth headeru
   const getAuthHeaders = () => ({
@@ -133,6 +137,22 @@ export default function AdminPage() {
       setNewsletter(data.subscribers || [])
     } catch (error) {
       setNewsletter([])
+    }
+  }
+
+  const loadEmailTemplates = async () => {
+    try {
+      const response = await fetch('/api/email-templates', {
+        headers: getAuthHeaders()
+      })
+      if (!response.ok) {
+        setEmailTemplates([])
+        return
+      }
+      const data = await response.json()
+      setEmailTemplates(data.templates || [])
+    } catch (error) {
+      setEmailTemplates([])
     }
   }
 
@@ -385,6 +405,80 @@ export default function AdminPage() {
     }
   }
 
+  const handleResendEmail = async (registrationId, emailType) => {
+    const typeLabels = {
+      confirmation: 'potvrzovací email',
+      payment: 'email o platbě'
+    }
+
+    if (!confirm(`Opravdu chceš znovu odeslat ${typeLabels[emailType]}?`)) return
+
+    try {
+      const response = await fetch('/api/resend-email', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ registrationId, emailType }),
+      })
+
+      if (response.ok) {
+        alert('Email byl úspěšně odeslán')
+      } else {
+        const data = await response.json()
+        alert(data.error || 'Nepodařilo se odeslat email')
+      }
+    } catch (error) {
+      console.error('Resend email error:', error)
+      alert('Chyba při odesílání emailu')
+    }
+  }
+
+  const toggleActionMenu = (registrationId) => {
+    const newOpenMenus = new Set(openActionMenus)
+    if (newOpenMenus.has(registrationId)) {
+      newOpenMenus.delete(registrationId)
+    } else {
+      newOpenMenus.add(registrationId)
+    }
+    setOpenActionMenus(newOpenMenus)
+  }
+
+  const handleUpdateTemplate = async (templateId, subject, htmlBody) => {
+    try {
+      const response = await fetch('/api/email-templates', {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          id: templateId,
+          subject,
+          html_body: htmlBody,
+        }),
+      })
+
+      if (response.ok) {
+        alert('Šablona byla úspěšně uložena')
+        await loadEmailTemplates()
+        setEditingTemplate(null)
+      } else {
+        const data = await response.json()
+        alert(data.error || 'Nepodařilo se uložit šablonu')
+      }
+    } catch (error) {
+      console.error('Template update error:', error)
+      alert('Chyba při ukládání šablony')
+    }
+  }
+
+  const handleSaveTemplate = (e) => {
+    e.preventDefault()
+    if (!editingTemplate) return
+
+    const formData = new FormData(e.target)
+    const subject = formData.get('subject')
+    const htmlBody = formData.get('html_body')
+
+    handleUpdateTemplate(editingTemplate.id, subject, htmlBody)
+  }
+
   const handleExportCSV = () => {
     const filtered = getFilteredRegistrations()
 
@@ -458,8 +552,20 @@ export default function AdminPage() {
       loadRegistrations()
       loadWorkshops()
       loadNewsletter()
+      loadEmailTemplates()
     }
   }, [authToken, isAuthenticated])
+
+  // Zavřít dropdown menu při kliknutí mimo
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (openActionMenus.size > 0 && !event.target.closest('.relative')) {
+        setOpenActionMenus(new Set())
+      }
+    }
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [openActionMenus])
 
   // Pomocné funkce pro zpracování dat
   const getFilteredRegistrations = () => {
@@ -493,6 +599,67 @@ export default function AdminPage() {
         const price = parseInt(reg.price.replace(/[^\d]/g, '')) || 0
         return sum + price
       }, 0)
+  }
+
+  // Data pro grafy
+  const getRevenueByWorkshop = () => {
+    const revenueMap = {}
+
+    registrations.forEach(reg => {
+      if (reg.status === 'confirmed') {
+        const key = `${reg.workshop_date} - ${reg.workshop_location}`
+        const price = parseInt(reg.price.replace(/[^\d]/g, '')) || 0
+
+        if (!revenueMap[key]) {
+          revenueMap[key] = { name: key, revenue: 0, count: 0 }
+        }
+
+        revenueMap[key].revenue += price
+        revenueMap[key].count += 1
+      }
+    })
+
+    return Object.values(revenueMap).sort((a, b) => b.revenue - a.revenue)
+  }
+
+  const getStatusDistribution = () => {
+    const confirmed = registrations.filter(r => r.status === 'confirmed').length
+    const pending = registrations.filter(r => r.status === 'pending').length
+    const cancelled = registrations.filter(r => r.status === 'cancelled').length
+    const waitlist = registrations.filter(r => r.status === 'waitlist').length
+
+    return [
+      { name: 'Potvrzené', value: confirmed, color: '#10b981' },
+      { name: 'Čekající', value: pending, color: '#f59e0b' },
+      { name: 'Waitlist', value: waitlist, color: '#3b82f6' },
+      { name: 'Zrušené', value: cancelled, color: '#ef4444' },
+    ].filter(item => item.value > 0)
+  }
+
+  const getOccupancyByWorkshop = () => {
+    const occupancyMap = {}
+
+    workshops.forEach(workshop => {
+      const workshopRegs = registrations.filter(r =>
+        r.workshop_date === workshop.date &&
+        r.workshop_location === workshop.location &&
+        r.status !== 'cancelled'
+      )
+
+      const capacity = parseInt(workshop.capacity) || 0
+      const occupied = workshopRegs.length
+      const percentage = capacity > 0 ? Math.round((occupied / capacity) * 100) : 0
+
+      const key = `${workshop.date} - ${workshop.location}`
+      occupancyMap[key] = {
+        name: key,
+        obsazeno: occupied,
+        kapacita: capacity,
+        procento: percentage
+      }
+    })
+
+    return Object.values(occupancyMap).sort((a, b) => b.procento - a.procento)
   }
 
   // Rozdělení workshopů na nadcházející a proběhlé
@@ -617,6 +784,16 @@ export default function AdminPage() {
             >
               Newsletter
             </button>
+            <button
+              onClick={() => setActiveTab('email-templates')}
+              className={`pb-3 px-4 font-semibold transition-colors ${
+                activeTab === 'email-templates'
+                  ? 'text-primary-600 border-b-2 border-primary-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Email šablony
+            </button>
           </div>
         </div>
 
@@ -678,6 +855,65 @@ export default function AdminPage() {
             </div>
           </div>
         </div>
+
+        {/* Charts */}
+        {registrations.length > 0 && (
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            {/* Revenue by Workshop */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Příjem podle workshopů</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={getRevenueByWorkshop()}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} fontSize={12} />
+                  <YAxis />
+                  <Tooltip formatter={(value) => `${value.toLocaleString('cs-CZ')} Kč`} />
+                  <Bar dataKey="revenue" fill="#f49d15" name="Příjem" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Status Distribution */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Rozložení registrací podle statusu</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={getStatusDistribution()}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {getStatusDistribution().map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Occupancy by Workshop */}
+            <div className="bg-white rounded-xl shadow-sm p-6 md:col-span-2">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Obsazenost workshopů</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={getOccupancyByWorkshop()}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} fontSize={12} />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="obsazeno" fill="#10b981" name="Obsazeno" />
+                  <Bar dataKey="kapacita" fill="#e5e7eb" name="Kapacita" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
 
         {/* Workshops Tab */}
         {activeTab === 'workshops' && (
@@ -1590,14 +1826,63 @@ export default function AdminPage() {
                                         minute: '2-digit',
                                       })}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                      <button
-                                        onClick={() => handleDeleteRegistration(registration.id)}
-                                        className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
-                                        title="Smazat"
-                                      >
-                                        <Trash2 className="w-4 h-4" />
-                                      </button>
+                                    <td className="px-6 py-4 whitespace-nowrap relative">
+                                      <div className="flex items-center gap-2">
+                                        {/* Dropdown menu pro akce */}
+                                        <div className="relative">
+                                          <button
+                                            onClick={() => toggleActionMenu(registration.id)}
+                                            className="p-2 text-gray-600 hover:bg-gray-50 rounded transition-colors"
+                                            title="Akce"
+                                          >
+                                            <MoreVertical className="w-4 h-4" />
+                                          </button>
+
+                                          {/* Dropdown menu */}
+                                          {openActionMenus.has(registration.id) && (
+                                            <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                              <div className="py-1">
+                                                {/* Email akce */}
+                                                <button
+                                                  onClick={() => {
+                                                    handleResendEmail(registration.id, 'confirmation')
+                                                    toggleActionMenu(registration.id)
+                                                  }}
+                                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                                >
+                                                  <Send className="w-4 h-4" />
+                                                  Poslat potvrzovací email
+                                                </button>
+                                                <button
+                                                  onClick={() => {
+                                                    handleResendEmail(registration.id, 'payment')
+                                                    toggleActionMenu(registration.id)
+                                                  }}
+                                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                                >
+                                                  <Send className="w-4 h-4" />
+                                                  Poslat email o platbě
+                                                </button>
+
+                                                {/* Divider */}
+                                                <div className="border-t border-gray-100 my-1"></div>
+
+                                                {/* Delete akce */}
+                                                <button
+                                                  onClick={() => {
+                                                    handleDeleteRegistration(registration.id)
+                                                    toggleActionMenu(registration.id)
+                                                  }}
+                                                  className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                                                >
+                                                  <Trash2 className="w-4 h-4" />
+                                                  Smazat registraci
+                                                </button>
+                                              </div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
                                     </td>
                                   </tr>
                                 ))}
@@ -1702,6 +1987,138 @@ export default function AdminPage() {
                       ))}
                     </tbody>
                   </table>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Email Templates Tab */}
+        {activeTab === 'email-templates' && (
+          <div className="space-y-6">
+            {/* Header */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">Email šablony</h3>
+                  <p className="text-sm text-gray-600">Upravit texty automatických emailů</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Templates list */}
+            {emailTemplates.length === 0 ? (
+              <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+                <Mail className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500 mb-2">Žádné email šablony</p>
+                <p className="text-sm text-gray-400">Spusť migraci databáze pro vytvoření výchozích šablon</p>
+              </div>
+            ) : (
+              <div className="grid gap-6">
+                {emailTemplates.map(template => (
+                  <div key={template.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
+                    {/* Template header */}
+                    <div className="bg-gradient-to-r from-primary-50 to-sage-50 px-6 py-4 border-b border-gray-200">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-semibold text-gray-900">{template.name}</h4>
+                          <p className="text-sm text-gray-600 mt-1">Klíč: <code className="bg-white px-2 py-0.5 rounded text-xs">{template.template_key}</code></p>
+                        </div>
+                        <button
+                          onClick={() => setEditingTemplate(template)}
+                          className="flex items-center gap-2 px-4 py-2 bg-white text-primary-600 rounded-lg hover:bg-primary-50 transition-colors font-semibold border border-primary-200"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                          Upravit
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Template preview */}
+                    <div className="p-6">
+                      <div className="mb-4">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Předmět:</label>
+                        <p className="text-gray-900">{template.subject}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Náhled těla emailu:</label>
+                        <div className="bg-gray-50 p-4 rounded-lg max-h-60 overflow-y-auto">
+                          <div dangerouslySetInnerHTML={{ __html: template.html_body }} className="prose prose-sm max-w-none" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Edit modal */}
+            {editingTemplate && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                  <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                    <h3 className="text-xl font-semibold text-gray-900">Upravit šablonu: {editingTemplate.name}</h3>
+                    <button
+                      onClick={() => setEditingTemplate(null)}
+                      className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  <form onSubmit={handleSaveTemplate} className="p-6 space-y-6">
+                    {/* Subject */}
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Předmět emailu
+                      </label>
+                      <input
+                        type="text"
+                        name="subject"
+                        defaultValue={editingTemplate.subject}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        required
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Můžeš použít proměnné: {'{'}{'{'} workshopDate {'}'}{'}'},  {'{'}{'{'} firstName {'}'}{'}'}, atd.
+                      </p>
+                    </div>
+
+                    {/* HTML Body */}
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        HTML kód emailu
+                      </label>
+                      <textarea
+                        name="html_body"
+                        defaultValue={editingTemplate.html_body}
+                        rows={20}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono text-sm"
+                        required
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Dostupné proměnné jsou uvedeny v poli "variables": {editingTemplate.variables}
+                      </p>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex gap-3 justify-end pt-4 border-t">
+                      <button
+                        type="button"
+                        onClick={() => setEditingTemplate(null)}
+                        className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-semibold"
+                      >
+                        Zrušit
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold flex items-center gap-2"
+                      >
+                        <Save className="w-4 h-4" />
+                        Uložit změny
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
             )}
