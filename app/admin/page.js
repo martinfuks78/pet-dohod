@@ -16,6 +16,7 @@ export default function AdminPage() {
   const [showTemplateSelector, setShowTemplateSelector] = useState(false)
   const [editingNotes, setEditingNotes] = useState(null) // Registrace s editovanými poznámkami (celý objekt)
   const [notesFormData, setNotesFormData] = useState({ notes: '', tags: '' })
+  const [auditLogs, setAuditLogs] = useState([])
   const [loading, setLoading] = useState(true)
   const [password, setPassword] = useState('')
   const [authToken, setAuthToken] = useState('') // Uložené heslo pro API requesty
@@ -175,6 +176,22 @@ export default function AdminPage() {
       setWorkshopTemplates(data.templates || [])
     } catch (error) {
       setWorkshopTemplates([])
+    }
+  }
+
+  const loadAuditLogs = async () => {
+    try {
+      const response = await fetch('/api/audit-log?limit=50', {
+        headers: getAuthHeaders()
+      })
+      if (!response.ok) {
+        setAuditLogs([])
+        return
+      }
+      const data = await response.json()
+      setAuditLogs(data.logs || [])
+    } catch (error) {
+      setAuditLogs([])
     }
   }
 
@@ -633,6 +650,7 @@ export default function AdminPage() {
       loadNewsletter()
       loadEmailTemplates()
       loadWorkshopTemplates()
+      loadAuditLogs()
     }
   }, [authToken, isAuthenticated])
 
@@ -924,6 +942,16 @@ export default function AdminPage() {
               }`}
             >
               Email šablony
+            </button>
+            <button
+              onClick={() => setActiveTab('audit-log')}
+              className={`pb-3 px-4 font-semibold transition-colors ${
+                activeTab === 'audit-log'
+                  ? 'text-primary-600 border-b-2 border-primary-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Audit Log
             </button>
           </div>
         </div>
@@ -2055,6 +2083,94 @@ export default function AdminPage() {
                   )
                 })}
               </>
+            )}
+          </div>
+        )}
+
+        {/* Audit Log Tab */}
+        {activeTab === 'audit-log' && (
+          <div className="space-y-6">
+            {/* Header */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">Audit Log</h3>
+                  <p className="text-sm text-gray-600">Historie změn v admin rozhraní</p>
+                </div>
+                <button
+                  onClick={loadAuditLogs}
+                  className="flex items-center gap-2 px-4 py-2 bg-white text-gray-700 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-semibold"
+                >
+                  <Download className="w-4 h-4" />
+                  Obnovit
+                </button>
+              </div>
+            </div>
+
+            {/* Audit logs table */}
+            {auditLogs.length === 0 ? (
+              <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+                <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <p className="text-gray-500 mb-2">Žádné záznamy v audit logu</p>
+                <p className="text-sm text-gray-400">Historie změn se začne zaznamenávat automaticky</p>
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Datum
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Akce
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Entita
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Detail
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {auditLogs.map(log => (
+                        <tr key={log.id} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {new Date(log.created_at).toLocaleString('cs-CZ', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                              log.action === 'create' ? 'bg-green-100 text-green-800' :
+                              log.action === 'update' ? 'bg-blue-100 text-blue-800' :
+                              log.action === 'delete' ? 'bg-red-100 text-red-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {log.action}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {log.entity_type}
+                            {log.entity_id && <span className="text-gray-500"> #{log.entity_id}</span>}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-700">
+                            {log.entity_name || '-'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             )}
           </div>
         )}
