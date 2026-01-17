@@ -1,22 +1,27 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Users, Calendar, Mail, Phone, MapPin, Loader2, Plus, Edit2, Trash2, Save, X, ChevronDown, ChevronUp, Download } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Users, Calendar, Mail, Phone, MapPin, Loader2, Plus, Edit2, Trash2, Save, X, ChevronDown, ChevronUp, Download, Eye } from 'lucide-react'
 
 export default function AdminPage() {
+  const router = useRouter()
   const [registrations, setRegistrations] = useState([])
   const [workshops, setWorkshops] = useState([])
+  const [newsletter, setNewsletter] = useState([])
   const [loading, setLoading] = useState(true)
   const [password, setPassword] = useState('')
   const [authToken, setAuthToken] = useState('') // Uložené heslo pro API requesty
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [activeTab, setActiveTab] = useState('registrations') // 'registrations' nebo 'workshops'
+  const [activeTab, setActiveTab] = useState('registrations') // 'registrations', 'workshops' nebo 'newsletter'
   const [editingWorkshop, setEditingWorkshop] = useState(null)
   const [isCreatingWorkshop, setIsCreatingWorkshop] = useState(false)
 
   // Nové stavy pro filtry a seskupení
   const [statusFilter, setStatusFilter] = useState('all') // 'all', 'pending', 'confirmed', 'cancelled'
   const [expandedWorkshops, setExpandedWorkshops] = useState(new Set()) // Které workshopy jsou rozbalené
+  const [workshopTimeFilter, setWorkshopTimeFilter] = useState('upcoming') // 'upcoming', 'past', 'all'
+  const [selectedRegistrations, setSelectedRegistrations] = useState(new Set()) // Vybrané registrace pro bulk akce
 
   // Helper funkce pro vytvoření auth headeru
   const getAuthHeaders = () => ({
@@ -112,6 +117,22 @@ export default function AdminPage() {
       setWorkshops(data.workshops || [])
     } catch (error) {
       setWorkshops([])
+    }
+  }
+
+  const loadNewsletter = async () => {
+    try {
+      const response = await fetch('/api/newsletter/subscribers', {
+        headers: getAuthHeaders()
+      })
+      if (!response.ok) {
+        setNewsletter([])
+        return
+      }
+      const data = await response.json()
+      setNewsletter(data.subscribers || [])
+    } catch (error) {
+      setNewsletter([])
     }
   }
 
@@ -251,6 +272,119 @@ export default function AdminPage() {
     }
   }
 
+  const handleDeleteNewsletterSubscriber = async (id) => {
+    if (!confirm('Opravdu chceš odstranit tohoto odběratele?')) return
+
+    try {
+      const response = await fetch(`/api/newsletter/subscribers?id=${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      })
+
+      if (response.ok) {
+        await loadNewsletter()
+      } else {
+        alert('Nepodařilo se odstranit odběratele')
+      }
+    } catch (error) {
+      console.error('Error deleting subscriber:', error)
+      alert('Chyba při mazání odběratele')
+    }
+  }
+
+  const handleExportNewsletterCSV = () => {
+    if (newsletter.length === 0) return
+
+    // Prepare CSV data
+    const csvData = newsletter.map(sub => ({
+      'Email': sub.email,
+      'Datum přihlášení': new Date(sub.subscribed_at).toLocaleString('cs-CZ'),
+      'Aktivní': sub.is_active ? 'Ano' : 'Ne'
+    }))
+
+    // Convert to CSV
+    const headers = Object.keys(csvData[0]).join(',')
+    const rows = csvData.map(row =>
+      Object.values(row).map(val =>
+        `"${String(val).replace(/"/g, '""')}"`
+      ).join(',')
+    )
+    const csv = [headers, ...rows].join('\n')
+
+    // Add BOM for Czech characters
+    const bom = '\uFEFF'
+    const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' })
+
+    // Download
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = `newsletter-${new Date().toISOString().split('T')[0]}.csv`
+    link.click()
+  }
+
+  // Bulk actions
+  const toggleRegistrationSelection = (id) => {
+    const newSelected = new Set(selectedRegistrations)
+    if (newSelected.has(id)) {
+      newSelected.delete(id)
+    } else {
+      newSelected.add(id)
+    }
+    setSelectedRegistrations(newSelected)
+  }
+
+  const selectAllRegistrations = () => {
+    const allIds = getFilteredRegistrations().map(r => r.id)
+    setSelectedRegistrations(new Set(allIds))
+  }
+
+  const deselectAllRegistrations = () => {
+    setSelectedRegistrations(new Set())
+  }
+
+  const handleBulkStatusChange = async (newStatus) => {
+    if (selectedRegistrations.size === 0) return
+    if (!confirm(`Opravdu chceš změnit status ${selectedRegistrations.size} registrací na "${newStatus}"?`)) return
+
+    try {
+      const promises = Array.from(selectedRegistrations).map(id =>
+        fetch('/api/register', {
+          method: 'PUT',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({ id, status: newStatus }),
+        })
+      )
+
+      await Promise.all(promises)
+      await loadRegistrations()
+      setSelectedRegistrations(new Set())
+    } catch (error) {
+      console.error('Bulk status change error:', error)
+      alert('Chyba při hromadné změně statusu')
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    if (selectedRegistrations.size === 0) return
+    if (!confirm(`Opravdu chceš smazat ${selectedRegistrations.size} registrací? Tato akce je nevratná!`)) return
+
+    try {
+      const promises = Array.from(selectedRegistrations).map(id =>
+        fetch(`/api/register?id=${id}`, {
+          method: 'DELETE',
+          headers: getAuthHeaders(),
+        })
+      )
+
+      await Promise.all(promises)
+      await loadRegistrations()
+      setSelectedRegistrations(new Set())
+    } catch (error) {
+      console.error('Bulk delete error:', error)
+      alert('Chyba při hromadném mazání')
+    }
+  }
+
   const handleExportCSV = () => {
     const filtered = getFilteredRegistrations()
 
@@ -323,6 +457,7 @@ export default function AdminPage() {
     if (authToken && isAuthenticated) {
       loadRegistrations()
       loadWorkshops()
+      loadNewsletter()
     }
   }, [authToken, isAuthenticated])
 
@@ -358,6 +493,27 @@ export default function AdminPage() {
         const price = parseInt(reg.price.replace(/[^\d]/g, '')) || 0
         return sum + price
       }, 0)
+  }
+
+  // Rozdělení workshopů na nadcházející a proběhlé
+  const getUpcomingWorkshops = () => {
+    const now = new Date()
+    return workshops.filter(w => {
+      if (!w.start_date) return true // Pokud nemá datum, zobraz jako nadcházející
+      return new Date(w.start_date) >= now
+    }).sort((a, b) => {
+      if (!a.start_date) return 1
+      if (!b.start_date) return -1
+      return new Date(a.start_date) - new Date(b.start_date)
+    })
+  }
+
+  const getPastWorkshops = () => {
+    const now = new Date()
+    return workshops.filter(w => {
+      if (!w.start_date) return false
+      return new Date(w.start_date) < now
+    }).sort((a, b) => new Date(b.start_date) - new Date(a.start_date))
   }
 
   if (loading) {
@@ -450,6 +606,16 @@ export default function AdminPage() {
               }`}
             >
               Workshopy
+            </button>
+            <button
+              onClick={() => setActiveTab('newsletter')}
+              className={`pb-3 px-4 font-semibold transition-colors ${
+                activeTab === 'newsletter'
+                  ? 'text-primary-600 border-b-2 border-primary-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Newsletter
             </button>
           </div>
         </div>
@@ -750,9 +916,43 @@ export default function AdminPage() {
             {/* Workshops List */}
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
               <div className="p-6 border-b border-gray-200">
-                <h2 className="text-xl font-serif font-bold text-gray-900">
-                  Všechny workshopy
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-serif font-bold text-gray-900">
+                    Workshopy
+                  </h2>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setWorkshopTimeFilter('upcoming')}
+                      className={`px-4 py-2 rounded-lg font-semibold transition-colors text-sm ${
+                        workshopTimeFilter === 'upcoming'
+                          ? 'bg-primary-500 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      Nadcházející ({getUpcomingWorkshops().length})
+                    </button>
+                    <button
+                      onClick={() => setWorkshopTimeFilter('past')}
+                      className={`px-4 py-2 rounded-lg font-semibold transition-colors text-sm ${
+                        workshopTimeFilter === 'past'
+                          ? 'bg-primary-500 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      Proběhlé ({getPastWorkshops().length})
+                    </button>
+                    <button
+                      onClick={() => setWorkshopTimeFilter('all')}
+                      className={`px-4 py-2 rounded-lg font-semibold transition-colors text-sm ${
+                        workshopTimeFilter === 'all'
+                          ? 'bg-primary-500 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      Všechny ({workshops.length})
+                    </button>
+                  </div>
+                </div>
               </div>
 
               {workshops.length === 0 ? (
@@ -785,7 +985,9 @@ export default function AdminPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {workshops.map((workshop) => (
+                      {(workshopTimeFilter === 'upcoming' ? getUpcomingWorkshops() :
+                        workshopTimeFilter === 'past' ? getPastWorkshops() :
+                        workshops).map((workshop) => (
                         <tr key={workshop.id} className="hover:bg-gray-50">
                           {editingWorkshop?.id === workshop.id ? (
                             <td colSpan="6" className="px-6 py-6 bg-gray-50">
@@ -1049,6 +1251,13 @@ export default function AdminPage() {
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="flex gap-2">
                                   <button
+                                    onClick={() => router.push(`/admin/workshop/${workshop.id}`)}
+                                    className="p-2 text-primary-600 hover:bg-primary-50 rounded transition-colors"
+                                    title="Detail"
+                                  >
+                                    <Eye className="w-4 h-4" />
+                                  </button>
+                                  <button
                                     onClick={() => setEditingWorkshop(workshop)}
                                     className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
                                     title="Upravit"
@@ -1139,6 +1348,49 @@ export default function AdminPage() {
                   </button>
                 </div>
               </div>
+
+              {/* Bulk Actions */}
+              {selectedRegistrations.size > 0 && (
+                <div className="mt-4 p-4 bg-primary-50 border border-primary-200 rounded-lg">
+                  <div className="flex items-center justify-between flex-wrap gap-4">
+                    <div className="text-sm font-medium text-gray-900">
+                      Vybráno: {selectedRegistrations.size} registrací
+                    </div>
+                    <div className="flex gap-2 flex-wrap">
+                      <button
+                        onClick={() => handleBulkStatusChange('confirmed')}
+                        className="px-3 py-1.5 bg-green-600 text-white rounded text-sm font-semibold hover:bg-green-700 transition-colors"
+                      >
+                        Potvrdit
+                      </button>
+                      <button
+                        onClick={() => handleBulkStatusChange('pending')}
+                        className="px-3 py-1.5 bg-yellow-600 text-white rounded text-sm font-semibold hover:bg-yellow-700 transition-colors"
+                      >
+                        Nastavit čekající
+                      </button>
+                      <button
+                        onClick={() => handleBulkStatusChange('cancelled')}
+                        className="px-3 py-1.5 bg-gray-600 text-white rounded text-sm font-semibold hover:bg-gray-700 transition-colors"
+                      >
+                        Zrušit
+                      </button>
+                      <button
+                        onClick={handleBulkDelete}
+                        className="px-3 py-1.5 bg-red-600 text-white rounded text-sm font-semibold hover:bg-red-700 transition-colors"
+                      >
+                        Smazat
+                      </button>
+                      <button
+                        onClick={deselectAllRegistrations}
+                        className="px-3 py-1.5 bg-gray-200 text-gray-700 rounded text-sm font-semibold hover:bg-gray-300 transition-colors"
+                      >
+                        Zrušit výběr
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Grouped Registrations */}
@@ -1334,6 +1586,100 @@ export default function AdminPage() {
                   )
                 })}
               </>
+            )}
+          </div>
+        )}
+
+        {/* Newsletter Tab */}
+        {activeTab === 'newsletter' && (
+          <div className="space-y-6">
+            {/* Header */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">Newsletter odběratelé</h3>
+                  <p className="text-sm text-gray-600">
+                    Celkem: {newsletter.length} odběratelů
+                  </p>
+                </div>
+                <button
+                  onClick={handleExportNewsletterCSV}
+                  disabled={newsletter.length === 0}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Download className="w-4 h-4" />
+                  Export CSV
+                </button>
+              </div>
+            </div>
+
+            {/* Subscribers list */}
+            {newsletter.length === 0 ? (
+              <div className="bg-white rounded-xl shadow-sm p-12 text-center text-gray-500">
+                Zatím žádní odběratelé newsletteru
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Email
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Datum přihlášení
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Stav
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Akce
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {newsletter.map((subscriber) => (
+                        <tr key={subscriber.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <Mail className="w-4 h-4 text-gray-400 mr-2" />
+                              <span className="text-sm text-gray-900">{subscriber.email}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {new Date(subscriber.subscribed_at).toLocaleString('cs-CZ', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                              subscriber.is_active
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-gray-100 text-gray-800'
+                            }`}>
+                              {subscriber.is_active ? 'Aktivní' : 'Neaktivní'}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <button
+                              onClick={() => handleDeleteNewsletterSubscriber(subscriber.id)}
+                              className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                              title="Odstranit"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             )}
           </div>
         )}
