@@ -1985,7 +1985,168 @@ export default function AdminPage() {
                       {/* Registrations Table */}
                       {isExpanded && (
                         <div className="border-t border-gray-200">
-                          <div className="overflow-x-auto">
+                          {/* Mobile Card View */}
+                          <div className="block md:hidden space-y-4">
+                            {group.registrations.map((registration) => (
+                              <div
+                                key={registration.id}
+                                className={`
+                                  bg-white rounded-lg border-2 p-4 shadow-sm
+                                  ${registration.registration_type === 'pair'
+                                    ? 'border-blue-300 bg-blue-50'
+                                    : 'border-gray-200'}
+                                `}
+                              >
+                                {/* Header - Jméno a checkbox */}
+                                <div className="flex items-start justify-between mb-3">
+                                  <div className="flex items-start gap-3">
+                                    <input
+                                      type="checkbox"
+                                      checked={selectedRegistrations.has(registration.id)}
+                                      onChange={() => toggleRegistrationSelection(registration.id)}
+                                      className="rounded border-gray-300 mt-1 w-5 h-5"
+                                    />
+                                    <div>
+                                      <div className="flex items-center gap-2">
+                                        {registration.registration_type === 'pair' && (
+                                          <span className="text-blue-600 font-bold" title="Párová registrace">👥</span>
+                                        )}
+                                        <div className="font-semibold text-gray-900 text-lg">
+                                          {registration.first_name} {registration.last_name}
+                                        </div>
+                                      </div>
+                                      {registration.registration_type === 'pair' && registration.partner_first_name && (
+                                        <div className="text-sm text-gray-700 font-medium mt-1">
+                                          + {registration.partner_first_name} {registration.partner_last_name}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <span className={`
+                                    text-xs font-semibold px-3 py-1.5 rounded-full shrink-0
+                                    ${registration.registration_type === 'pair'
+                                      ? 'bg-blue-100 text-blue-800'
+                                      : 'bg-gray-100 text-gray-700'}
+                                  `}>
+                                    {registration.registration_type === 'pair' ? 'Pár' : '1 os.'}
+                                  </span>
+                                </div>
+
+                                {/* Kontakt */}
+                                <div className="space-y-2 mb-3 pl-8">
+                                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                                    <Mail className="w-4 h-4 shrink-0" />
+                                    <a href={`mailto:${registration.email}`} className="hover:text-primary-600 truncate">
+                                      {registration.email}
+                                    </a>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                                    <Phone className="w-4 h-4 shrink-0" />
+                                    <a href={`tel:${registration.phone}`} className="hover:text-primary-600">
+                                      {registration.phone}
+                                    </a>
+                                  </div>
+                                </div>
+
+                                {/* Poznámky */}
+                                {registration.notes && (
+                                  <div className="text-sm text-gray-600 mb-3 pl-8 italic bg-gray-50 p-2 rounded">
+                                    💬 {registration.notes}
+                                  </div>
+                                )}
+
+                                {/* Cena a Datum */}
+                                <div className="flex items-center justify-between mb-3 pl-8">
+                                  <div>
+                                    <div className="text-xs text-gray-500">Cena</div>
+                                    <div className="text-sm font-semibold text-gray-900">{registration.price}</div>
+                                  </div>
+                                  <div className="text-right">
+                                    <div className="text-xs text-gray-500">Registrace</div>
+                                    <div className="text-sm text-gray-700">
+                                      {new Date(registration.created_at).toLocaleDateString('cs-CZ', {
+                                        day: 'numeric',
+                                        month: 'short',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                      })}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Status */}
+                                <div className="mb-3 pl-8">
+                                  <div className="text-xs text-gray-500 mb-1">Status</div>
+                                  <select
+                                    value={registration.status}
+                                    onChange={(e) => handleUpdateStatus(registration.id, e.target.value)}
+                                    className={`w-full text-sm font-semibold rounded-lg px-4 py-3 border-2 cursor-pointer transition-colors ${
+                                      registration.status === 'confirmed'
+                                        ? 'bg-green-50 text-green-800 border-green-200'
+                                        : registration.status === 'pending'
+                                        ? 'bg-yellow-50 text-yellow-800 border-yellow-200'
+                                        : 'bg-red-50 text-red-800 border-red-200'
+                                    }`}
+                                  >
+                                    <option value="pending">⏳ Čeká na platbu</option>
+                                    <option value="confirmed">✅ Potvrzeno</option>
+                                    <option value="cancelled">❌ Zrušeno</option>
+                                  </select>
+                                </div>
+
+                                {/* Akce tlačítka */}
+                                <div className="flex flex-wrap gap-2 pl-8 border-t border-gray-200 pt-3">
+                                  <button
+                                    onClick={() => handleResendEmail(registration.id, 'confirmation')}
+                                    className="flex-1 min-w-[140px] px-3 py-2 text-sm bg-primary-50 text-primary-700 border border-primary-200 rounded-lg hover:bg-primary-100 transition-colors flex items-center justify-center gap-2"
+                                  >
+                                    <Send className="w-4 h-4" />
+                                    Potvrzení
+                                  </button>
+                                  <button
+                                    onClick={() => handleResendEmail(registration.id, 'payment')}
+                                    className="flex-1 min-w-[140px] px-3 py-2 text-sm bg-green-50 text-green-700 border border-green-200 rounded-lg hover:bg-green-100 transition-colors flex items-center justify-center gap-2"
+                                  >
+                                    <Send className="w-4 h-4" />
+                                    Platba
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setShowCustomEmailDialog({ registrationId: registration.id, registration })
+                                    }}
+                                    className="flex-1 min-w-[140px] px-3 py-2 text-sm bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center gap-2"
+                                  >
+                                    <Mail className="w-4 h-4" />
+                                    Vlastní
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      if (editingNotes?.id === registration.id) {
+                                        setEditingNotes(null)
+                                      } else {
+                                        setEditingNotes(registration)
+                                        setNotesFormData({ notes: registration.notes || '', tags: registration.tags || '' })
+                                      }
+                                    }}
+                                    className="flex-1 min-w-[140px] px-3 py-2 text-sm bg-gray-50 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center gap-2"
+                                  >
+                                    <StickyNote className="w-4 h-4" />
+                                    Poznámky
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteRegistration(registration.id)}
+                                    className="flex-1 min-w-[140px] px-3 py-2 text-sm bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                    Smazat
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Desktop Table View */}
+                          <div className="hidden md:block overflow-x-auto">
                             <table className="w-full">
                               <thead className="bg-gray-50">
                                 <tr>
@@ -2002,7 +2163,7 @@ export default function AdminPage() {
                                         }
                                       }}
                                       checked={group.registrations.every(r => selectedRegistrations.has(r.id))}
-                                      className="rounded border-gray-300"
+                                      className="rounded border-gray-300 w-5 h-5 cursor-pointer"
                                     />
                                   </th>
                                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -2043,7 +2204,7 @@ export default function AdminPage() {
                                         type="checkbox"
                                         checked={selectedRegistrations.has(registration.id)}
                                         onChange={() => toggleRegistrationSelection(registration.id)}
-                                        className="rounded border-gray-300"
+                                        className="rounded border-gray-300 w-5 h-5 cursor-pointer"
                                       />
                                     </td>
                                     <td className="px-6 py-4">
@@ -2101,7 +2262,7 @@ export default function AdminPage() {
                                       <select
                                         value={registration.status}
                                         onChange={(e) => handleUpdateStatus(registration.id, e.target.value)}
-                                        className={`text-xs font-semibold rounded-lg px-3 py-1.5 border-2 cursor-pointer transition-colors ${
+                                        className={`text-xs font-semibold rounded-lg px-3 py-2.5 border-2 cursor-pointer transition-colors ${
                                           registration.status === 'confirmed'
                                             ? 'bg-green-50 text-green-800 border-green-200 hover:bg-green-100'
                                             : registration.status === 'pending'

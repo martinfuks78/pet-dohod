@@ -141,9 +141,7 @@ export default function RegistrationForm({ workshop }) {
                 <img
                   src={paymentData.qrCodeUrl}
                   alt="QR kód pro platbu"
-                  className="mx-auto rounded-lg border-2 border-gray-200"
-                  width="250"
-                  height="250"
+                  className="mx-auto rounded-lg border-2 border-gray-200 w-full max-w-xs"
                 />
               </div>
             )}
@@ -170,7 +168,7 @@ export default function RegistrationForm({ workshop }) {
           <label className="block text-sm font-medium text-gray-700">
             Počet účastníků *
           </label>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <label className={`
               relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all
               ${formData.registrationType === 'single'
@@ -238,7 +236,7 @@ export default function RegistrationForm({ workshop }) {
           {formData.registrationType === 'pair' ? 'První účastník' : 'Vaše údaje'}
         </h3>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
               Jméno *
@@ -315,7 +313,7 @@ export default function RegistrationForm({ workshop }) {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
               Město *
@@ -349,10 +347,10 @@ export default function RegistrationForm({ workshop }) {
 
       {/* Partner údaje (jen pro páry) */}
       {formData.registrationType === 'pair' && (
-        <div className="space-y-4 bg-blue-50 p-6 rounded-lg border-2 border-blue-200">
+        <div className="space-y-4 bg-blue-50 p-4 sm:p-6 rounded-lg border-2 border-blue-200">
           <h3 className="font-semibold text-gray-900">Druhý účastník (partner)</h3>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="partnerFirstName" className="block text-sm font-medium text-gray-700 mb-1">
                 Jméno *
