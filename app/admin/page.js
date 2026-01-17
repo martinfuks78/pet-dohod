@@ -691,12 +691,14 @@ export default function AdminPage() {
         setIsCreatingWorkshop(false)
       }
 
-      // Tab přepínání (1-4)
+      // Tab přepínání (1-6)
       if (!e.ctrlKey && !e.metaKey && !e.altKey) {
         if (e.key === '1') setActiveTab('registrations')
-        if (e.key === '2') setActiveTab('workshops')
-        if (e.key === '3') setActiveTab('newsletter')
-        if (e.key === '4') setActiveTab('email-templates')
+        if (e.key === '2') setActiveTab('statistics')
+        if (e.key === '3') setActiveTab('workshops')
+        if (e.key === '4') setActiveTab('newsletter')
+        if (e.key === '5') setActiveTab('email-templates')
+        if (e.key === '6') setActiveTab('audit-log')
       }
 
       // Ctrl/Cmd + E = Export CSV
@@ -912,6 +914,16 @@ export default function AdminPage() {
               }`}
             >
               Registrace
+            </button>
+            <button
+              onClick={() => setActiveTab('statistics')}
+              className={`pb-3 px-4 font-semibold transition-colors ${
+                activeTab === 'statistics'
+                  ? 'text-primary-600 border-b-2 border-primary-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Statistiky
             </button>
             <button
               onClick={() => setActiveTab('workshops')}
@@ -1573,8 +1585,8 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* Registrations Tab */}
-        {activeTab === 'registrations' && (
+        {/* Statistics Tab */}
+        {activeTab === 'statistics' && (
           <div className="space-y-6">
             {/* Stats */}
             <div className="grid md:grid-cols-4 gap-6">
@@ -1636,7 +1648,7 @@ export default function AdminPage() {
             </div>
 
             {/* Charts */}
-            {registrations.length > 0 && (
+            {registrations.length > 0 ? (
               <div className="grid md:grid-cols-2 gap-6">
                 {/* Revenue by Workshop */}
                 <div className="bg-white rounded-xl shadow-sm p-6">
@@ -1692,8 +1704,21 @@ export default function AdminPage() {
                   </ResponsiveContainer>
                 </div>
               </div>
+            ) : (
+              <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+                <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <p className="text-gray-500 mb-2">Zatím žádná data ke zobrazení</p>
+                <p className="text-sm text-gray-400">Grafy se zobrazí po přidání registrací</p>
+              </div>
             )}
+          </div>
+        )}
 
+        {/* Registrations Tab */}
+        {activeTab === 'registrations' && (
+          <div className="space-y-6">
             {/* Filter bar */}
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-center justify-between flex-wrap gap-4">
@@ -2680,16 +2705,24 @@ export default function AdminPage() {
                     <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">1</kbd>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="text-sm text-gray-700">Workshopy</span>
+                    <span className="text-sm text-gray-700">Statistiky</span>
                     <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">2</kbd>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="text-sm text-gray-700">Newsletter</span>
+                    <span className="text-sm text-gray-700">Workshopy</span>
                     <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">3</kbd>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="text-sm text-gray-700">Email šablony</span>
+                    <span className="text-sm text-gray-700">Newsletter</span>
                     <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">4</kbd>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span className="text-sm text-gray-700">Email šablony</span>
+                    <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">5</kbd>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span className="text-sm text-gray-700">Audit Log</span>
+                    <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">6</kbd>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <span className="text-sm text-gray-700">Export CSV</span>
