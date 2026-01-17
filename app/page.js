@@ -9,6 +9,7 @@ import Navigation from '../components/Navigation'
 import RegistrationModal from '../components/RegistrationModal'
 import ContactForm from '../components/ContactForm'
 import StructuredData from '../components/StructuredData'
+import NewsletterForm from '../components/NewsletterForm'
 
 export default function Home() {
   const [selectedWorkshop, setSelectedWorkshop] = useState(null)
@@ -726,19 +727,26 @@ export default function Home() {
             </ul>
           </div>
           <div>
-            <h4 className="text-white font-semibold mb-4">Kontakt</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a href="mailto:kouc@martinfuks.cz" className="hover:text-primary-400 transition-colors">
-                  kouc@martinfuks.cz
-                </a>
-              </li>
-              <li>
-                <a href="https://www.martinfuks.cz" target="_blank" rel="noopener noreferrer" className="hover:text-primary-400 transition-colors">
-                  martinfuks.cz
-                </a>
-              </li>
-            </ul>
+            <h4 className="text-white font-semibold mb-4">Newsletter</h4>
+            <p className="text-sm text-gray-400 mb-4">
+              Přihlaste se k odběru novinek o nadcházejících workshopech.
+            </p>
+            <NewsletterForm />
+            <div className="mt-6">
+              <h5 className="text-white text-sm font-semibold mb-2">Kontakt</h5>
+              <ul className="space-y-1 text-sm">
+                <li>
+                  <a href="mailto:kouc@martinfuks.cz" className="hover:text-primary-400 transition-colors">
+                    kouc@martinfuks.cz
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.martinfuks.cz" target="_blank" rel="noopener noreferrer" className="hover:text-primary-400 transition-colors">
+                    martinfuks.cz
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
         <div className="border-t border-gray-800 pt-8 text-sm text-center">
