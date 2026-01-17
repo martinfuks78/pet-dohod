@@ -7,6 +7,15 @@ import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Cart
 
 export default function AdminPage() {
   const router = useRouter()
+
+  // Načíst aktivní záložku z localStorage nebo použít výchozí
+  const getInitialTab = () => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('adminActiveTab') || 'workshops'
+    }
+    return 'workshops'
+  }
+
   const [registrations, setRegistrations] = useState([])
   const [workshops, setWorkshops] = useState([])
   const [newsletter, setNewsletter] = useState([])
@@ -32,7 +41,7 @@ export default function AdminPage() {
   const [password, setPassword] = useState('')
   const [authToken, setAuthToken] = useState('') // Uložené heslo pro API requesty
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [activeTab, setActiveTab] = useState('workshops') // 'workshops', 'statistics', 'newsletter', atd.
+  const [activeTab, setActiveTab] = useState(getInitialTab()) // 'workshops', 'statistics', 'newsletter', atd.
   const [editingWorkshop, setEditingWorkshop] = useState(null)
   const [isCreatingWorkshop, setIsCreatingWorkshop] = useState(false)
 
@@ -50,6 +59,15 @@ export default function AdminPage() {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${authToken}`
   })
+
+  // Funkce pro změnu záložky s uložením do localStorage
+  const changeTab = (newTab) => {
+    setActiveTab(newTab)
+    // Uložit do localStorage pro persistenci po refreshi
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('adminActiveTab', newTab)
+    }
+  }
 
   // Pomocná funkce pro konverzi ISO timestamp na YYYY-MM-DD pro date picker
   const formatDateForInput = (isoDate) => {
@@ -704,12 +722,12 @@ export default function AdminPage() {
 
       // Tab přepínání (1-6)
       if (!e.ctrlKey && !e.metaKey && !e.altKey) {
-        if (e.key === '1') setActiveTab('workshops')
-        if (e.key === '2') setActiveTab('registrations')
-        if (e.key === '3') setActiveTab('statistics')
-        if (e.key === '4') setActiveTab('newsletter')
-        if (e.key === '5') setActiveTab('email-templates')
-        if (e.key === '6') setActiveTab('audit-log')
+        if (e.key === '1') changeTab('workshops')
+        if (e.key === '2') changeTab('registrations')
+        if (e.key === '3') changeTab('statistics')
+        if (e.key === '4') changeTab('newsletter')
+        if (e.key === '5') changeTab('email-templates')
+        if (e.key === '6') changeTab('audit-log')
       }
 
       // Ctrl/Cmd + E = Export CSV
@@ -917,7 +935,7 @@ export default function AdminPage() {
           {/* Tabs */}
           <div className="flex gap-4 mt-6 border-b border-gray-200">
             <button
-              onClick={() => setActiveTab('workshops')}
+              onClick={() => changeTab('workshops')}
               className={`pb-3 px-4 font-semibold transition-colors ${
                 activeTab === 'workshops'
                   ? 'text-primary-600 border-b-2 border-primary-600'
@@ -927,7 +945,7 @@ export default function AdminPage() {
               Workshopy
             </button>
             <button
-              onClick={() => setActiveTab('registrations')}
+              onClick={() => changeTab('registrations')}
               className={`pb-3 px-4 font-semibold transition-colors ${
                 activeTab === 'registrations'
                   ? 'text-primary-600 border-b-2 border-primary-600'
@@ -937,7 +955,7 @@ export default function AdminPage() {
               Registrace
             </button>
             <button
-              onClick={() => setActiveTab('statistics')}
+              onClick={() => changeTab('statistics')}
               className={`pb-3 px-4 font-semibold transition-colors ${
                 activeTab === 'statistics'
                   ? 'text-primary-600 border-b-2 border-primary-600'
@@ -947,7 +965,7 @@ export default function AdminPage() {
               Statistiky
             </button>
             <button
-              onClick={() => setActiveTab('newsletter')}
+              onClick={() => changeTab('newsletter')}
               className={`pb-3 px-4 font-semibold transition-colors ${
                 activeTab === 'newsletter'
                   ? 'text-primary-600 border-b-2 border-primary-600'
@@ -957,7 +975,7 @@ export default function AdminPage() {
               Newsletter
             </button>
             <button
-              onClick={() => setActiveTab('email-templates')}
+              onClick={() => changeTab('email-templates')}
               className={`pb-3 px-4 font-semibold transition-colors ${
                 activeTab === 'email-templates'
                   ? 'text-primary-600 border-b-2 border-primary-600'
@@ -967,7 +985,7 @@ export default function AdminPage() {
               Email šablony
             </button>
             <button
-              onClick={() => setActiveTab('audit-log')}
+              onClick={() => changeTab('audit-log')}
               className={`pb-3 px-4 font-semibold transition-colors ${
                 activeTab === 'audit-log'
                   ? 'text-primary-600 border-b-2 border-primary-600'
@@ -2737,7 +2755,7 @@ export default function AdminPage() {
             <div className="py-2">
               {/* Tab přepínání */}
               <button
-                onClick={() => { setActiveTab('registrations'); setShowQuickActions(false) }}
+                onClick={() => { changeTab('registrations'); setShowQuickActions(false) }}
                 className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
               >
                 <Users className="w-4 h-4" />
@@ -2745,7 +2763,7 @@ export default function AdminPage() {
                 <kbd className="ml-auto px-2 py-0.5 text-xs bg-gray-100 rounded">1</kbd>
               </button>
               <button
-                onClick={() => { setActiveTab('workshops'); setShowQuickActions(false) }}
+                onClick={() => { changeTab('workshops'); setShowQuickActions(false) }}
                 className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
               >
                 <Calendar className="w-4 h-4" />
@@ -2753,7 +2771,7 @@ export default function AdminPage() {
                 <kbd className="ml-auto px-2 py-0.5 text-xs bg-gray-100 rounded">2</kbd>
               </button>
               <button
-                onClick={() => { setActiveTab('newsletter'); setShowQuickActions(false) }}
+                onClick={() => { changeTab('newsletter'); setShowQuickActions(false) }}
                 className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
               >
                 <Mail className="w-4 h-4" />
@@ -2761,7 +2779,7 @@ export default function AdminPage() {
                 <kbd className="ml-auto px-2 py-0.5 text-xs bg-gray-100 rounded">3</kbd>
               </button>
               <button
-                onClick={() => { setActiveTab('email-templates'); setShowQuickActions(false) }}
+                onClick={() => { changeTab('email-templates'); setShowQuickActions(false) }}
                 className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
               >
                 <Mail className="w-4 h-4" />
