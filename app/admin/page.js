@@ -49,6 +49,7 @@ export default function AdminPage() {
   const [statusFilter, setStatusFilter] = useState('all') // 'all', 'pending', 'confirmed', 'cancelled'
   const [expandedWorkshops, setExpandedWorkshops] = useState(new Set()) // Které workshopy jsou rozbalené
   const [workshopTimeFilter, setWorkshopTimeFilter] = useState('upcoming') // 'upcoming', 'past', 'all'
+  const [statsWorkshopFilter, setStatsWorkshopFilter] = useState('upcoming') // Filtr pro grafy ve statistikách
   const [selectedRegistrations, setSelectedRegistrations] = useState(new Set()) // Vybrané registrace pro bulk akce
   const [openActionMenus, setOpenActionMenus] = useState(new Set()) // Otevřené dropdown menu pro akce
   const [showQuickActions, setShowQuickActions] = useState(false) // Zobrazení quick actions menu
@@ -785,17 +786,32 @@ export default function AdminPage() {
   const getRevenueByWorkshop = () => {
     const revenueMap = {}
 
+    // Filtrovat workshopy podle vybraného filtru
+    let filteredWorkshops = workshops
+    if (statsWorkshopFilter === 'upcoming') {
+      filteredWorkshops = getUpcomingWorkshops()
+    } else if (statsWorkshopFilter === 'past') {
+      filteredWorkshops = getPastWorkshops()
+    }
+
+    // Vytvořit Set klíčů workshopů pro rychlé vyhledávání
+    const workshopKeys = new Set(filteredWorkshops.map(w => `${w.date} - ${w.location}`))
+
     registrations.forEach(reg => {
       if (reg.status === 'confirmed') {
         const key = `${reg.workshop_date} - ${reg.workshop_location}`
-        const price = parseInt(reg.price.replace(/[^\d]/g, '')) || 0
 
-        if (!revenueMap[key]) {
-          revenueMap[key] = { name: key, revenue: 0, count: 0 }
+        // Zahrnout pouze registrace pro filtrované workshopy
+        if (workshopKeys.has(key)) {
+          const price = parseInt(reg.price.replace(/[^\d]/g, '')) || 0
+
+          if (!revenueMap[key]) {
+            revenueMap[key] = { name: key, revenue: 0, count: 0 }
+          }
+
+          revenueMap[key].revenue += price
+          revenueMap[key].count += 1
         }
-
-        revenueMap[key].revenue += price
-        revenueMap[key].count += 1
       }
     })
 
@@ -819,7 +835,15 @@ export default function AdminPage() {
   const getOccupancyByWorkshop = () => {
     const occupancyMap = {}
 
-    workshops.forEach(workshop => {
+    // Filtrovat workshopy podle vybraného filtru
+    let filteredWorkshops = workshops
+    if (statsWorkshopFilter === 'upcoming') {
+      filteredWorkshops = getUpcomingWorkshops()
+    } else if (statsWorkshopFilter === 'past') {
+      filteredWorkshops = getPastWorkshops()
+    }
+
+    filteredWorkshops.forEach(workshop => {
       const workshopRegs = registrations.filter(r =>
         r.workshop_date === workshop.date &&
         r.workshop_location === workshop.location &&
@@ -1676,49 +1700,50 @@ export default function AdminPage() {
               </div>
             </div>
 
+            {/* Filter pro grafy */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <h3 className="text-lg font-semibold text-gray-900">Workshopy v grafech</h3>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setStatsWorkshopFilter('upcoming')}
+                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                      statsWorkshopFilter === 'upcoming'
+                        ? 'bg-primary-500 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    Nadcházející
+                  </button>
+                  <button
+                    onClick={() => setStatsWorkshopFilter('past')}
+                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                      statsWorkshopFilter === 'past'
+                        ? 'bg-primary-500 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    Minulé
+                  </button>
+                  <button
+                    onClick={() => setStatsWorkshopFilter('all')}
+                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                      statsWorkshopFilter === 'all'
+                        ? 'bg-primary-500 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    Všechny
+                  </button>
+                </div>
+              </div>
+            </div>
+
             {/* Charts */}
             {registrations.length > 0 ? (
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Revenue by Workshop */}
+              <div className="space-y-6">
+                {/* Occupancy by Workshop - PRVNÍ GRAF (celá šířka) */}
                 <div className="bg-white rounded-xl shadow-sm p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Příjem podle workshopů</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={getRevenueByWorkshop()}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} fontSize={12} />
-                      <YAxis />
-                      <Tooltip formatter={(value) => `${value.toLocaleString('cs-CZ')} Kč`} />
-                      <Bar dataKey="revenue" fill="#f49d15" name="Příjem" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-
-                {/* Status Distribution */}
-                <div className="bg-white rounded-xl shadow-sm p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Rozložení registrací podle statusu</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={getStatusDistribution()}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {getStatusDistribution().map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-
-                {/* Occupancy by Workshop */}
-                <div className="bg-white rounded-xl shadow-sm p-6 md:col-span-2">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Obsazenost workshopů</h3>
                   <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={getOccupancyByWorkshop()}>
@@ -1731,6 +1756,47 @@ export default function AdminPage() {
                       <Bar dataKey="kapacita" fill="#e5e7eb" name="Kapacita" />
                     </BarChart>
                   </ResponsiveContainer>
+                </div>
+
+                {/* Zbývající grafy vedle sebe */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Revenue by Workshop */}
+                  <div className="bg-white rounded-xl shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Příjem podle workshopů</h3>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={getRevenueByWorkshop()}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} fontSize={12} />
+                        <YAxis />
+                        <Tooltip formatter={(value) => `${value.toLocaleString('cs-CZ')} Kč`} />
+                        <Bar dataKey="revenue" fill="#f49d15" name="Příjem" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* Status Distribution */}
+                  <div className="bg-white rounded-xl shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Rozložení registrací podle statusu</h3>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={getStatusDistribution()}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {getStatusDistribution().map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
             ) : (
