@@ -1456,6 +1456,22 @@ export default function AdminPage() {
                             <table className="w-full">
                               <thead className="bg-gray-50">
                                 <tr>
+                                  <th className="px-6 py-3 text-left">
+                                    <input
+                                      type="checkbox"
+                                      onChange={(e) => {
+                                        if (e.target.checked) {
+                                          const groupIds = group.registrations.map(r => r.id)
+                                          setSelectedRegistrations(new Set([...selectedRegistrations, ...groupIds]))
+                                        } else {
+                                          const groupIds = new Set(group.registrations.map(r => r.id))
+                                          setSelectedRegistrations(new Set([...selectedRegistrations].filter(id => !groupIds.has(id))))
+                                        }
+                                      }}
+                                      checked={group.registrations.every(r => selectedRegistrations.has(r.id))}
+                                      className="rounded border-gray-300"
+                                    />
+                                  </th>
                                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                     Účastník
                                   </th>
@@ -1489,6 +1505,14 @@ export default function AdminPage() {
                                         : 'hover:bg-gray-50'}
                                     `}
                                   >
+                                    <td className="px-6 py-4">
+                                      <input
+                                        type="checkbox"
+                                        checked={selectedRegistrations.has(registration.id)}
+                                        onChange={() => toggleRegistrationSelection(registration.id)}
+                                        className="rounded border-gray-300"
+                                      />
+                                    </td>
                                     <td className="px-6 py-4">
                                       <div className="flex items-center gap-2">
                                         {registration.registration_type === 'pair' && (
