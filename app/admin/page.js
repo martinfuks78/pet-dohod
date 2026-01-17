@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Users, Calendar, Mail, Phone, MapPin, Loader2, Plus, Edit2, Trash2, Save, X, ChevronDown, ChevronUp, Download, Eye, Send, MoreVertical } from 'lucide-react'
+import { Users, Calendar, Mail, Phone, MapPin, Loader2, Plus, Edit2, Trash2, Save, X, ChevronDown, ChevronUp, Download, Eye, Send, MoreVertical, StickyNote, Tag } from 'lucide-react'
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 export default function AdminPage() {
@@ -14,7 +14,8 @@ export default function AdminPage() {
   const [editingTemplate, setEditingTemplate] = useState(null)
   const [workshopTemplates, setWorkshopTemplates] = useState([])
   const [showTemplateSelector, setShowTemplateSelector] = useState(false)
-  const [editingNotes, setEditingNotes] = useState(null) // ID registrace s editovanými poznámkami
+  const [editingNotes, setEditingNotes] = useState(null) // Registrace s editovanými poznámkami (celý objekt)
+  const [notesFormData, setNotesFormData] = useState({ notes: '', tags: '' })
   const [loading, setLoading] = useState(true)
   const [password, setPassword] = useState('')
   const [authToken, setAuthToken] = useState('') // Uložené heslo pro API requesty
@@ -334,17 +335,33 @@ export default function AdminPage() {
     }
   }
 
-  const handleUpdateNotes = async (id, notes, tags) => {
+  const handleOpenNotes = (registration) => {
+    setEditingNotes(registration)
+    setNotesFormData({
+      notes: registration.notes || '',
+      tags: registration.tags || ''
+    })
+  }
+
+  const handleUpdateNotes = async (e) => {
+    e.preventDefault()
+    if (!editingNotes) return
+
     try {
       const response = await fetch('/api/register', {
         method: 'PUT',
         headers: getAuthHeaders(),
-        body: JSON.stringify({ id, notes, tags }),
+        body: JSON.stringify({
+          id: editingNotes.id,
+          notes: notesFormData.notes,
+          tags: notesFormData.tags
+        }),
       })
 
       if (response.ok) {
         await loadRegistrations()
         setEditingNotes(null)
+        setNotesFormData({ notes: '', tags: '' })
       } else {
         alert('Nepodařilo se aktualizovat poznámky')
       }
@@ -1992,6 +2009,24 @@ export default function AdminPage() {
                                                 {/* Divider */}
                                                 <div className="border-t border-gray-100 my-1"></div>
 
+                                                {/* Poznámky a tagy */}
+                                                <button
+                                                  onClick={() => {
+                                                    handleOpenNotes(registration)
+                                                    toggleActionMenu(registration.id)
+                                                  }}
+                                                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                                >
+                                                  <StickyNote className="w-4 h-4" />
+                                                  <span>Poznámky a tagy</span>
+                                                  {(registration.notes || registration.tags) && (
+                                                    <span className="ml-auto w-2 h-2 bg-primary-500 rounded-full"></span>
+                                                  )}
+                                                </button>
+
+                                                {/* Divider */}
+                                                <div className="border-t border-gray-100 my-1"></div>
+
                                                 {/* Delete akce */}
                                                 <button
                                                   onClick={() => {
@@ -2412,6 +2447,90 @@ export default function AdminPage() {
                   </button>
                 </>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Notes Modal */}
+        {editingNotes && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full">
+              <div className="bg-gradient-to-r from-primary-50 to-sage-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">Poznámky a tagy</h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {editingNotes.first_name} {editingNotes.last_name}
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setEditingNotes(null)
+                    setNotesFormData({ notes: '', tags: '' })
+                  }}
+                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-white rounded transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleUpdateNotes} className="p-6 space-y-4">
+                {/* Tagy */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <Tag className="w-4 h-4 inline mr-2" />
+                    Tagy (oddělené čárkami)
+                  </label>
+                  <input
+                    type="text"
+                    value={notesFormData.tags}
+                    onChange={(e) => setNotesFormData({ ...notesFormData, tags: e.target.value })}
+                    placeholder="VIP, urgentní, zaplatil hotově..."
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Například: VIP, urgentní, zaplatil hotově
+                  </p>
+                </div>
+
+                {/* Poznámky */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <StickyNote className="w-4 h-4 inline mr-2" />
+                    Interní poznámky
+                  </label>
+                  <textarea
+                    value={notesFormData.notes}
+                    onChange={(e) => setNotesFormData({ ...notesFormData, notes: e.target.value })}
+                    rows={6}
+                    placeholder="Poznámky viditelné pouze v adminu..."
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    💡 Tyto poznámky vidí pouze admin, nebudou zaslány účastníkovi
+                  </p>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-3 justify-end pt-4 border-t">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingNotes(null)
+                      setNotesFormData({ notes: '', tags: '' })
+                    }}
+                    className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-semibold"
+                  >
+                    Zrušit
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold flex items-center gap-2"
+                  >
+                    <Save className="w-4 h-4" />
+                    Uložit
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
