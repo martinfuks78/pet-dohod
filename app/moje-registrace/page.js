@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Search, CheckCircle2, Clock, XCircle, AlertCircle, Calendar, MapPin, Mail, Phone, User, Users } from 'lucide-react'
 import Link from 'next/link'
 
-export default function MyRegistration() {
+function RegistrationLookupContent() {
   const searchParams = useSearchParams()
   const [email, setEmail] = useState(searchParams.get('email') || '')
   const [vs, setVs] = useState(searchParams.get('vs') || '')
@@ -367,5 +367,20 @@ export default function MyRegistration() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function MyRegistration() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Načítám...</p>
+        </div>
+      </div>
+    }>
+      <RegistrationLookupContent />
+    </Suspense>
   )
 }
