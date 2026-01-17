@@ -956,124 +956,6 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
-                <Users className="w-6 h-6 text-primary-600" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-900">{registrations.length}</div>
-                <div className="text-sm text-gray-600">Celkem registrací</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-green-600" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-900">
-                  {registrations.filter(r => r.status === 'confirmed').length}
-                </div>
-                <div className="text-sm text-gray-600">Potvrzených</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <Loader2 className="w-6 h-6 text-yellow-600" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-900">
-                  {registrations.filter(r => r.status === 'pending').length}
-                </div>
-                <div className="text-sm text-gray-600">Čekajících na platbu</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-900">
-                  {getTotalRevenue().toLocaleString('cs-CZ')} Kč
-                </div>
-                <div className="text-sm text-gray-600">Příjem (potvrzené)</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Charts */}
-        {registrations.length > 0 && (
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            {/* Revenue by Workshop */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Příjem podle workshopů</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={getRevenueByWorkshop()}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} fontSize={12} />
-                  <YAxis />
-                  <Tooltip formatter={(value) => `${value.toLocaleString('cs-CZ')} Kč`} />
-                  <Bar dataKey="revenue" fill="#f49d15" name="Příjem" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Status Distribution */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Rozložení registrací podle statusu</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={getStatusDistribution()}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {getStatusDistribution().map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Occupancy by Workshop */}
-            <div className="bg-white rounded-xl shadow-sm p-6 md:col-span-2">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Obsazenost workshopů</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={getOccupancyByWorkshop()}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} fontSize={12} />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="obsazeno" fill="#10b981" name="Obsazeno" />
-                  <Bar dataKey="kapacita" fill="#e5e7eb" name="Kapacita" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        )}
-
         {/* Workshops Tab */}
         {activeTab === 'workshops' && (
           <div className="space-y-6">
@@ -1694,6 +1576,124 @@ export default function AdminPage() {
         {/* Registrations Tab */}
         {activeTab === 'registrations' && (
           <div className="space-y-6">
+            {/* Stats */}
+            <div className="grid md:grid-cols-4 gap-6">
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                    <Users className="w-6 h-6 text-primary-600" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-900">{registrations.length}</div>
+                    <div className="text-sm text-gray-600">Celkem registrací</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <Calendar className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-900">
+                      {registrations.filter(r => r.status === 'confirmed').length}
+                    </div>
+                    <div className="text-sm text-gray-600">Potvrzených</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                    <Loader2 className="w-6 h-6 text-yellow-600" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-900">
+                      {registrations.filter(r => r.status === 'pending').length}
+                    </div>
+                    <div className="text-sm text-gray-600">Čekajících na platbu</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-900">
+                      {getTotalRevenue().toLocaleString('cs-CZ')} Kč
+                    </div>
+                    <div className="text-sm text-gray-600">Příjem (potvrzené)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Charts */}
+            {registrations.length > 0 && (
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Revenue by Workshop */}
+                <div className="bg-white rounded-xl shadow-sm p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Příjem podle workshopů</h3>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={getRevenueByWorkshop()}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} fontSize={12} />
+                      <YAxis />
+                      <Tooltip formatter={(value) => `${value.toLocaleString('cs-CZ')} Kč`} />
+                      <Bar dataKey="revenue" fill="#f49d15" name="Příjem" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Status Distribution */}
+                <div className="bg-white rounded-xl shadow-sm p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Rozložení registrací podle statusu</h3>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={getStatusDistribution()}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {getStatusDistribution().map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Occupancy by Workshop */}
+                <div className="bg-white rounded-xl shadow-sm p-6 md:col-span-2">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Obsazenost workshopů</h3>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={getOccupancyByWorkshop()}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} fontSize={12} />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="obsazeno" fill="#10b981" name="Obsazeno" />
+                      <Bar dataKey="kapacita" fill="#e5e7eb" name="Kapacita" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            )}
+
             {/* Filter bar */}
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-center justify-between flex-wrap gap-4">
