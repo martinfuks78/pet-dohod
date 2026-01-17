@@ -14,6 +14,7 @@ export default function AdminPage() {
   const [editingTemplate, setEditingTemplate] = useState(null)
   const [workshopTemplates, setWorkshopTemplates] = useState([])
   const [showTemplateSelector, setShowTemplateSelector] = useState(false)
+  const [editingNotes, setEditingNotes] = useState(null) // ID registrace s editovanými poznámkami
   const [loading, setLoading] = useState(true)
   const [password, setPassword] = useState('')
   const [authToken, setAuthToken] = useState('') // Uložené heslo pro API requesty
@@ -330,6 +331,26 @@ export default function AdminPage() {
     } catch (error) {
       console.error('Error updating status:', error)
       alert('Chyba při aktualizaci statusu')
+    }
+  }
+
+  const handleUpdateNotes = async (id, notes, tags) => {
+    try {
+      const response = await fetch('/api/register', {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ id, notes, tags }),
+      })
+
+      if (response.ok) {
+        await loadRegistrations()
+        setEditingNotes(null)
+      } else {
+        alert('Nepodařilo se aktualizovat poznámky')
+      }
+    } catch (error) {
+      console.error('Error updating notes:', error)
+      alert('Chyba při aktualizaci poznámek')
     }
   }
 

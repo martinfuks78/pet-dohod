@@ -255,9 +255,25 @@ export async function PUT(request) {
 
   try {
     const data = await request.json()
-    const { id, status } = data
+    const { id, status, notes, tags } = data
 
-    // Validace
+    // Pokud je update poznámek nebo tagů
+    if (notes !== undefined || tags !== undefined) {
+      await sql`
+        UPDATE registrations
+        SET
+          notes = ${notes !== undefined ? notes : sql`notes`},
+          tags = ${tags !== undefined ? tags : sql`tags`}
+        WHERE id = ${id}
+      `
+
+      return NextResponse.json({
+        success: true,
+        message: 'Poznámky/tagy byly aktualizovány'
+      })
+    }
+
+    // Validace pro status update
     if (!id || !status) {
       return NextResponse.json(
         { error: 'ID a status jsou povinné' },
