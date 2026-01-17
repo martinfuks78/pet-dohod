@@ -150,16 +150,16 @@ export default function Home() {
                 Workshop pro osobní svobodu
               </motion.div>
 
-              <h1 className="text-5xl md:text-7xl font-serif font-bold text-gray-900 mb-6 leading-tight">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-gray-900 mb-6 leading-tight">
                 Pět dohod
               </h1>
 
-              <p className="text-xl md:text-2xl text-gray-600 mb-4 max-w-2xl mx-auto">
+              <p className="text-lg sm:text-xl md:text-2xl text-gray-600 mb-4 max-w-2xl mx-auto">
                 Naučte se žít bez zbytečných strachů a utrpení.
               </p>
 
-              <p className="text-lg md:text-xl text-gray-500 mb-12 max-w-2xl mx-auto">
-                Workshopy založené na moudrosti knih Čtyři dohody a Pátá dohoda.
+              <p className="text-base sm:text-lg md:text-xl text-gray-500 mb-12 max-w-2xl mx-auto">
+                Workshopy založené na moudrosti kních Čtyři dohody a Pátá dohoda.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -766,14 +766,14 @@ function AgreementCard({ agreement, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.1 }}
-      className="bg-gradient-to-br from-white to-gray-50 rounded-xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100"
+      className="bg-gradient-to-br from-white to-gray-50 rounded-xl p-4 sm:p-6 md:p-8 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100"
     >
       <div className="flex items-start gap-3 mb-4">
-        <div className="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg flex-shrink-0">
           {index + 1}
         </div>
         <div>
-          <h3 className="text-xl font-serif font-semibold text-gray-900">
+          <h3 className="text-lg sm:text-xl font-serif font-semibold text-gray-900">
             {agreement.title}
           </h3>
           {agreement.subtitle && (

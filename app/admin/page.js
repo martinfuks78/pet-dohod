@@ -957,10 +957,10 @@ export default function AdminPage() {
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-4 mt-6 border-b border-gray-200">
+          <div className="flex gap-2 sm:gap-4 mt-6 border-b border-gray-200 overflow-x-auto pb-px -mb-px scrollbar-hide">
             <button
               onClick={() => changeTab('workshops')}
-              className={`pb-3 px-4 font-semibold transition-colors ${
+              className={`pb-3 px-3 sm:px-4 font-semibold transition-colors whitespace-nowrap text-sm sm:text-base ${
                 activeTab === 'workshops'
                   ? 'text-primary-600 border-b-2 border-primary-600'
                   : 'text-gray-500 hover:text-gray-700'
@@ -970,7 +970,7 @@ export default function AdminPage() {
             </button>
             <button
               onClick={() => changeTab('registrations')}
-              className={`pb-3 px-4 font-semibold transition-colors ${
+              className={`pb-3 px-3 sm:px-4 font-semibold transition-colors whitespace-nowrap text-sm sm:text-base ${
                 activeTab === 'registrations'
                   ? 'text-primary-600 border-b-2 border-primary-600'
                   : 'text-gray-500 hover:text-gray-700'
@@ -980,7 +980,7 @@ export default function AdminPage() {
             </button>
             <button
               onClick={() => changeTab('statistics')}
-              className={`pb-3 px-4 font-semibold transition-colors ${
+              className={`pb-3 px-3 sm:px-4 font-semibold transition-colors whitespace-nowrap text-sm sm:text-base ${
                 activeTab === 'statistics'
                   ? 'text-primary-600 border-b-2 border-primary-600'
                   : 'text-gray-500 hover:text-gray-700'
@@ -990,7 +990,7 @@ export default function AdminPage() {
             </button>
             <button
               onClick={() => changeTab('newsletter')}
-              className={`pb-3 px-4 font-semibold transition-colors ${
+              className={`pb-3 px-3 sm:px-4 font-semibold transition-colors whitespace-nowrap text-sm sm:text-base ${
                 activeTab === 'newsletter'
                   ? 'text-primary-600 border-b-2 border-primary-600'
                   : 'text-gray-500 hover:text-gray-700'
@@ -1000,7 +1000,7 @@ export default function AdminPage() {
             </button>
             <button
               onClick={() => changeTab('email-templates')}
-              className={`pb-3 px-4 font-semibold transition-colors ${
+              className={`pb-3 px-3 sm:px-4 font-semibold transition-colors whitespace-nowrap text-sm sm:text-base ${
                 activeTab === 'email-templates'
                   ? 'text-primary-600 border-b-2 border-primary-600'
                   : 'text-gray-500 hover:text-gray-700'
@@ -1010,7 +1010,7 @@ export default function AdminPage() {
             </button>
             <button
               onClick={() => changeTab('audit-log')}
-              className={`pb-3 px-4 font-semibold transition-colors ${
+              className={`pb-3 px-3 sm:px-4 font-semibold transition-colors whitespace-nowrap text-sm sm:text-base ${
                 activeTab === 'audit-log'
                   ? 'text-primary-600 border-b-2 border-primary-600'
                   : 'text-gray-500 hover:text-gray-700'
@@ -1268,15 +1268,15 @@ export default function AdminPage() {
 
             {/* Workshops List */}
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex items-center justify-between mb-4">
+              <div className="p-4 sm:p-6 border-b border-gray-200">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                   <h2 className="text-xl font-serif font-bold text-gray-900">
                     Workshopy
                   </h2>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => setWorkshopTimeFilter('upcoming')}
-                      className={`px-4 py-2 rounded-lg font-semibold transition-colors text-sm ${
+                      className={`px-3 sm:px-4 py-2 rounded-lg font-semibold transition-colors text-sm whitespace-nowrap ${
                         workshopTimeFilter === 'upcoming'
                           ? 'bg-primary-500 text-white'
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -1286,7 +1286,7 @@ export default function AdminPage() {
                     </button>
                     <button
                       onClick={() => setWorkshopTimeFilter('past')}
-                      className={`px-4 py-2 rounded-lg font-semibold transition-colors text-sm ${
+                      className={`px-3 sm:px-4 py-2 rounded-lg font-semibold transition-colors text-sm whitespace-nowrap ${
                         workshopTimeFilter === 'past'
                           ? 'bg-primary-500 text-white'
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -1296,7 +1296,7 @@ export default function AdminPage() {
                     </button>
                     <button
                       onClick={() => setWorkshopTimeFilter('all')}
-                      className={`px-4 py-2 rounded-lg font-semibold transition-colors text-sm ${
+                      className={`px-3 sm:px-4 py-2 rounded-lg font-semibold transition-colors text-sm whitespace-nowrap ${
                         workshopTimeFilter === 'all'
                           ? 'bg-primary-500 text-white'
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -1701,13 +1701,13 @@ export default function AdminPage() {
             </div>
 
             {/* Filter pro grafy */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <h3 className="text-lg font-semibold text-gray-900">Workshopy v grafech</h3>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => setStatsWorkshopFilter('upcoming')}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                    className={`px-3 sm:px-4 py-2 rounded-lg font-semibold transition-colors text-sm whitespace-nowrap ${
                       statsWorkshopFilter === 'upcoming'
                         ? 'bg-primary-500 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -1717,7 +1717,7 @@ export default function AdminPage() {
                   </button>
                   <button
                     onClick={() => setStatsWorkshopFilter('past')}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                    className={`px-3 sm:px-4 py-2 rounded-lg font-semibold transition-colors text-sm whitespace-nowrap ${
                       statsWorkshopFilter === 'past'
                         ? 'bg-primary-500 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -1727,7 +1727,7 @@ export default function AdminPage() {
                   </button>
                   <button
                     onClick={() => setStatsWorkshopFilter('all')}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                    className={`px-3 sm:px-4 py-2 rounded-lg font-semibold transition-colors text-sm whitespace-nowrap ${
                       statsWorkshopFilter === 'all'
                         ? 'bg-primary-500 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -1815,18 +1815,18 @@ export default function AdminPage() {
         {activeTab === 'registrations' && (
           <div className="space-y-6">
             {/* Filter bar */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-1">Filtry</h3>
                   <p className="text-sm text-gray-600">
                     Zobrazeno: {getFilteredRegistrations().length} z {registrations.length} registrací
                   </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => setStatusFilter('all')}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                    className={`px-3 sm:px-4 py-2 rounded-lg font-semibold transition-colors text-sm whitespace-nowrap ${
                       statusFilter === 'all'
                         ? 'bg-primary-500 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -1836,7 +1836,7 @@ export default function AdminPage() {
                   </button>
                   <button
                     onClick={() => setStatusFilter('pending')}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                    className={`px-3 sm:px-4 py-2 rounded-lg font-semibold transition-colors text-sm whitespace-nowrap ${
                       statusFilter === 'pending'
                         ? 'bg-yellow-500 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -1846,7 +1846,7 @@ export default function AdminPage() {
                   </button>
                   <button
                     onClick={() => setStatusFilter('confirmed')}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                    className={`px-3 sm:px-4 py-2 rounded-lg font-semibold transition-colors text-sm whitespace-nowrap ${
                       statusFilter === 'confirmed'
                         ? 'bg-green-500 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -1856,7 +1856,7 @@ export default function AdminPage() {
                   </button>
                   <button
                     onClick={() => setStatusFilter('cancelled')}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                    className={`px-3 sm:px-4 py-2 rounded-lg font-semibold transition-colors text-sm whitespace-nowrap ${
                       statusFilter === 'cancelled'
                         ? 'bg-red-500 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -1867,10 +1867,11 @@ export default function AdminPage() {
                   <button
                     onClick={handleExportCSV}
                     disabled={getFilteredRegistrations().length === 0}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-sm whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     <Download className="w-4 h-4" />
-                    Export CSV
+                    <span className="hidden sm:inline">Export CSV</span>
+                    <span className="sm:hidden">CSV</span>
                   </button>
                 </div>
               </div>
