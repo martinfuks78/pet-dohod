@@ -26,6 +26,8 @@ export default function AdminPage() {
   const [workshopTimeFilter, setWorkshopTimeFilter] = useState('upcoming') // 'upcoming', 'past', 'all'
   const [selectedRegistrations, setSelectedRegistrations] = useState(new Set()) // Vybrané registrace pro bulk akce
   const [openActionMenus, setOpenActionMenus] = useState(new Set()) // Otevřené dropdown menu pro akce
+  const [showQuickActions, setShowQuickActions] = useState(false) // Zobrazení quick actions menu
+  const [showKeyboardHelp, setShowKeyboardHelp] = useState(false) // Zobrazení nápovědy klávesových zkratek
 
   // Helper funkce pro vytvoření auth headeru
   const getAuthHeaders = () => ({
@@ -566,6 +568,57 @@ export default function AdminPage() {
     document.addEventListener('click', handleClickOutside)
     return () => document.removeEventListener('click', handleClickOutside)
   }, [openActionMenus])
+
+  // Klávesové zkratky
+  useEffect(() => {
+    const handleKeyboard = (e) => {
+      // Ignorovat pokud je uživatel v input poli
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
+
+      // Ctrl/Cmd + K = Otevřít/zavřít quick actions
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault()
+        setShowQuickActions(prev => !prev)
+      }
+
+      // ? = Zobrazit nápovědu
+      if (e.key === '?' && !e.shiftKey) {
+        e.preventDefault()
+        setShowKeyboardHelp(prev => !prev)
+      }
+
+      // Escape = Zavřít všechny modaly
+      if (e.key === 'Escape') {
+        setShowQuickActions(false)
+        setShowKeyboardHelp(false)
+        setEditingTemplate(null)
+        setIsCreatingWorkshop(false)
+      }
+
+      // Tab přepínání (1-4)
+      if (!e.ctrlKey && !e.metaKey && !e.altKey) {
+        if (e.key === '1') setActiveTab('registrations')
+        if (e.key === '2') setActiveTab('workshops')
+        if (e.key === '3') setActiveTab('newsletter')
+        if (e.key === '4') setActiveTab('email-templates')
+      }
+
+      // Ctrl/Cmd + E = Export CSV
+      if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+        e.preventDefault()
+        if (activeTab === 'registrations') {
+          handleExportCSV()
+        } else if (activeTab === 'newsletter') {
+          handleExportNewsletterCSV()
+        }
+      }
+    }
+
+    if (isAuthenticated) {
+      document.addEventListener('keydown', handleKeyboard)
+      return () => document.removeEventListener('keydown', handleKeyboard)
+    }
+  }, [isAuthenticated, activeTab])
 
   // Pomocné funkce pro zpracování dat
   const getFilteredRegistrations = () => {
@@ -2122,6 +2175,179 @@ export default function AdminPage() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Quick Actions Floating Button */}
+        <button
+          onClick={() => setShowQuickActions(!showQuickActions)}
+          className="fixed bottom-8 right-8 w-14 h-14 bg-primary-500 text-white rounded-full shadow-lg hover:bg-primary-600 transition-all transform hover:scale-110 flex items-center justify-center z-40"
+          title="Quick Actions (Ctrl+K)"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </button>
+
+        {/* Quick Actions Menu */}
+        {showQuickActions && (
+          <div className="fixed bottom-24 right-8 w-72 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+            <div className="p-4 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-gray-900">Rychlé akce</h3>
+                <button
+                  onClick={() => setShowKeyboardHelp(true)}
+                  className="text-gray-400 hover:text-gray-600"
+                  title="Klávesové zkratky"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div className="py-2">
+              {/* Tab přepínání */}
+              <button
+                onClick={() => { setActiveTab('registrations'); setShowQuickActions(false) }}
+                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+              >
+                <Users className="w-4 h-4" />
+                <span>Registrace</span>
+                <kbd className="ml-auto px-2 py-0.5 text-xs bg-gray-100 rounded">1</kbd>
+              </button>
+              <button
+                onClick={() => { setActiveTab('workshops'); setShowQuickActions(false) }}
+                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+              >
+                <Calendar className="w-4 h-4" />
+                <span>Workshopy</span>
+                <kbd className="ml-auto px-2 py-0.5 text-xs bg-gray-100 rounded">2</kbd>
+              </button>
+              <button
+                onClick={() => { setActiveTab('newsletter'); setShowQuickActions(false) }}
+                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+              >
+                <Mail className="w-4 h-4" />
+                <span>Newsletter</span>
+                <kbd className="ml-auto px-2 py-0.5 text-xs bg-gray-100 rounded">3</kbd>
+              </button>
+              <button
+                onClick={() => { setActiveTab('email-templates'); setShowQuickActions(false) }}
+                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+              >
+                <Mail className="w-4 h-4" />
+                <span>Email šablony</span>
+                <kbd className="ml-auto px-2 py-0.5 text-xs bg-gray-100 rounded">4</kbd>
+              </button>
+
+              <div className="border-t border-gray-100 my-2"></div>
+
+              {/* Akce */}
+              <button
+                onClick={() => {
+                  if (activeTab === 'registrations') handleExportCSV()
+                  else if (activeTab === 'newsletter') handleExportNewsletterCSV()
+                  setShowQuickActions(false)
+                }}
+                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+              >
+                <Download className="w-4 h-4" />
+                <span>Export CSV</span>
+                <kbd className="ml-auto px-2 py-0.5 text-xs bg-gray-100 rounded">⌘E</kbd>
+              </button>
+
+              {activeTab === 'workshops' && (
+                <button
+                  onClick={() => { setIsCreatingWorkshop(true); setShowQuickActions(false) }}
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Nový workshop</span>
+                </button>
+              )}
+
+              {selectedRegistrations.size > 0 && (
+                <>
+                  <div className="border-t border-gray-100 my-2"></div>
+                  <div className="px-4 py-2 text-xs text-gray-500">
+                    {selectedRegistrations.size} vybraných registrací
+                  </div>
+                  <button
+                    onClick={() => { handleBulkStatusChange('confirmed'); setShowQuickActions(false) }}
+                    className="w-full px-4 py-2 text-left text-sm text-green-700 hover:bg-green-50 flex items-center gap-2"
+                  >
+                    Potvrdit vybrané
+                  </button>
+                  <button
+                    onClick={() => { handleBulkDelete(); setShowQuickActions(false) }}
+                    className="w-full px-4 py-2 text-left text-sm text-red-700 hover:bg-red-50 flex items-center gap-2"
+                  >
+                    Smazat vybrané
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Keyboard Help Modal */}
+        {showKeyboardHelp && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full">
+              <div className="bg-gradient-to-r from-primary-50 to-sage-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 className="text-xl font-semibold text-gray-900">Klávesové zkratky</h3>
+                <button
+                  onClick={() => setShowKeyboardHelp(false)}
+                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-white rounded transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span className="text-sm text-gray-700">Quick Actions</span>
+                    <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">⌘K</kbd>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span className="text-sm text-gray-700">Nápověda</span>
+                    <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">?</kbd>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span className="text-sm text-gray-700">Registrace</span>
+                    <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">1</kbd>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span className="text-sm text-gray-700">Workshopy</span>
+                    <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">2</kbd>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span className="text-sm text-gray-700">Newsletter</span>
+                    <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">3</kbd>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span className="text-sm text-gray-700">Email šablony</span>
+                    <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">4</kbd>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span className="text-sm text-gray-700">Export CSV</span>
+                    <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">⌘E</kbd>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span className="text-sm text-gray-700">Zavřít</span>
+                    <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">ESC</kbd>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-gray-200">
+                  <p className="text-sm text-gray-600">
+                    💡 Tip: Klávesové zkratky nefungují když jsi v textovém poli.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
