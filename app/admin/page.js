@@ -32,7 +32,7 @@ export default function AdminPage() {
   const [password, setPassword] = useState('')
   const [authToken, setAuthToken] = useState('') // Uložené heslo pro API requesty
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [activeTab, setActiveTab] = useState('registrations') // 'registrations', 'workshops' nebo 'newsletter'
+  const [activeTab, setActiveTab] = useState('workshops') // 'workshops', 'statistics', 'newsletter', atd.
   const [editingWorkshop, setEditingWorkshop] = useState(null)
   const [isCreatingWorkshop, setIsCreatingWorkshop] = useState(false)
 
@@ -704,12 +704,11 @@ export default function AdminPage() {
 
       // Tab přepínání (1-6)
       if (!e.ctrlKey && !e.metaKey && !e.altKey) {
-        if (e.key === '1') setActiveTab('registrations')
+        if (e.key === '1') setActiveTab('workshops')
         if (e.key === '2') setActiveTab('statistics')
-        if (e.key === '3') setActiveTab('workshops')
-        if (e.key === '4') setActiveTab('newsletter')
-        if (e.key === '5') setActiveTab('email-templates')
-        if (e.key === '6') setActiveTab('audit-log')
+        if (e.key === '3') setActiveTab('newsletter')
+        if (e.key === '4') setActiveTab('email-templates')
+        if (e.key === '5') setActiveTab('audit-log')
       }
 
       // Ctrl/Cmd + E = Export CSV
@@ -917,14 +916,14 @@ export default function AdminPage() {
           {/* Tabs */}
           <div className="flex gap-4 mt-6 border-b border-gray-200">
             <button
-              onClick={() => setActiveTab('registrations')}
+              onClick={() => setActiveTab('workshops')}
               className={`pb-3 px-4 font-semibold transition-colors ${
-                activeTab === 'registrations'
+                activeTab === 'workshops'
                   ? 'text-primary-600 border-b-2 border-primary-600'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              Registrace
+              Workshopy
             </button>
             <button
               onClick={() => setActiveTab('statistics')}
@@ -935,16 +934,6 @@ export default function AdminPage() {
               }`}
             >
               Statistiky
-            </button>
-            <button
-              onClick={() => setActiveTab('workshops')}
-              className={`pb-3 px-4 font-semibold transition-colors ${
-                activeTab === 'workshops'
-                  ? 'text-primary-600 border-b-2 border-primary-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Workshopy
             </button>
             <button
               onClick={() => setActiveTab('newsletter')}
@@ -2928,7 +2917,7 @@ export default function AdminPage() {
                     <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">?</kbd>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="text-sm text-gray-700">Registrace</span>
+                    <span className="text-sm text-gray-700">Workshopy</span>
                     <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">1</kbd>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -2936,20 +2925,16 @@ export default function AdminPage() {
                     <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">2</kbd>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="text-sm text-gray-700">Workshopy</span>
+                    <span className="text-sm text-gray-700">Newsletter</span>
                     <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">3</kbd>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="text-sm text-gray-700">Newsletter</span>
+                    <span className="text-sm text-gray-700">Email šablony</span>
                     <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">4</kbd>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="text-sm text-gray-700">Email šablony</span>
-                    <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">5</kbd>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <span className="text-sm text-gray-700">Audit Log</span>
-                    <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">6</kbd>
+                    <kbd className="px-3 py-1 bg-white border border-gray-300 rounded text-sm">5</kbd>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <span className="text-sm text-gray-700">Export CSV</span>
