@@ -968,13 +968,13 @@ function WorkshopCard({ workshop, index, onRegister }) {
               {workshop.program && (
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">Program</h4>
-                  <p className="text-gray-600 text-sm whitespace-pre-line">{workshop.program}</p>
+                  <p className="text-gray-600 text-sm whitespace-pre-line break-words">{workshop.program}</p>
                 </div>
               )}
               {workshop.address && (
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">Adresa</h4>
-                  <p className="text-gray-600 text-sm whitespace-pre-line">
+                  <p className="text-gray-600 text-sm whitespace-pre-line break-words">
                     {workshop.address.split('\n').map((line, i) => {
                       // Detekce URL v textu
                       const urlRegex = /(https?:\/\/[^\s]+)/g
@@ -1008,13 +1008,13 @@ function WorkshopCard({ workshop, index, onRegister }) {
               {workshop.whatToBring && (
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">Co si vzít s sebou</h4>
-                  <p className="text-gray-600 text-sm whitespace-pre-line">{workshop.whatToBring}</p>
+                  <p className="text-gray-600 text-sm whitespace-pre-line break-words">{workshop.whatToBring}</p>
                 </div>
               )}
               {workshop.instructorInfo && (
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">Lektor</h4>
-                  <p className="text-gray-600 text-sm whitespace-pre-line">{workshop.instructorInfo}</p>
+                  <p className="text-gray-600 text-sm whitespace-pre-line break-words">{workshop.instructorInfo}</p>
                 </div>
               )}
             </div>
