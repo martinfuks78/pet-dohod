@@ -1165,8 +1165,9 @@ function VideoPlayer() {
             playsInline
             className="w-full h-full object-cover"
             aria-label="Ukázka z firemního workshopu Čtyři dohody pro Ant Studio"
+            onError={(e) => console.error('Video load error:', e)}
           >
-            <source src="/ant-studio-workshop.mp4" type="video/mp4" />
+            <source src="https://www.martinfuks.cz/wp-content/uploads/2025/11/mf-only-logo.mp4" type="video/mp4" />
             Váš prohlížeč nepodporuje přehrávání videa.
           </video>
 
