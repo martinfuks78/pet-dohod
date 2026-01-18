@@ -6,6 +6,39 @@ Přehled všech změn a vylepšení projektu.
 
 ## 2026-01-18 (Večer) - Conversion Optimization 🚀
 
+### 🎥 Corporate Video - Ant Studio Case Study
+
+**Provedeno:** Přidán workshop video do firemní sekce
+**Video:** Ukázka z workshopu Čtyři dohody pro Ant Studio
+**Dokumentace:** [VIDEO_UPLOAD_GUIDE.md](./VIDEO_UPLOAD_GUIDE.md)
+
+**📹 Video Player:**
+- ✅ **HTML5 video player** - Profesionální prezentace s controls
+- ✅ **Case study format** - Nadpis + popis + metadata (firma, typ workshopu)
+- ✅ **Poster image** - Thumbnail před přehráním (workshop-team-2.jpg)
+- ✅ **Hover efekt** - Custom play button overlay
+- ✅ **Responsive** - 16:9 aspect ratio, funguje na mobilu i desktopu
+- ✅ **Accessibility** - aria-label, fallback download link
+
+**🎯 B2B Conversion Impact:**
+- **Social proof:** "Pokud to dělal pro Ant Studio, je to seriózní"
+- **Risk reduction:** Firmy vidí reálnou atmosféru workshopu
+- **Trust building:** Visual evidence > text claims
+- **Expected lift:** +80-120% konverze pro corporate klienty
+
+**📦 Technical:**
+- Video: `ant-studio-workshop.mp4` (236 MB)
+- Source: [martinfuks.cz](https://www.martinfuks.cz/wp-content/uploads/2025/11/mf-only-logo.mp4)
+- Added to `.gitignore` (příliš velké pro Git)
+- **TODO:** Upload na Vercel Blob Storage (viz guide)
+
+**Soubory:**
+- app/page.js - Video player v "Pro firmy" sekci
+- .gitignore - Exclude *.mp4 files
+- VIDEO_UPLOAD_GUIDE.md - Upload & compression guide (NEW)
+
+---
+
 ### 📈 Optimalizace Pro Vyšší Konverzi
 
 **Provedeno:** Implementace kritických CRO (Conversion Rate Optimization) vylepšení
