@@ -231,6 +231,14 @@ robots: {
 - [ ] Newsletter subscribe funguje
 - [ ] Kontaktní formulář funguje
 
+## Dokumentace
+
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Kompletní deployment guide
+- **[CSRF_PROTECTION.md](./CSRF_PROTECTION.md)** - CSRF ochrana implementace
+- **[RATE_LIMITING.md](./RATE_LIMITING.md)** - Rate limiting konfigurace
+- **[EMAIL_MONITORING.md](./EMAIL_MONITORING.md)** - Email delivery monitoring
+- **[SECURITY.md](./SECURITY.md)** - Security best practices
+
 ## Support
 
 Pro technickou podporu kontaktujte:
