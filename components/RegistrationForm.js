@@ -480,6 +480,11 @@ export default function RegistrationForm({ workshop }) {
 
       <p className="text-sm text-gray-500 text-center">
         Po odeslání ti přijde email s platebními údaji. Platba je splatná do 7 dnů.
+        <br />
+        Přečti si{' '}
+        <a href="/stornovaci-podminky" target="_blank" className="text-primary-600 hover:underline">
+          stornovací podmínky
+        </a>.
       </p>
     </form>
   )
