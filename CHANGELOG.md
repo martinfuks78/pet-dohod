@@ -4,7 +4,41 @@ Přehled všech změn a vylepšení projektu.
 
 ---
 
-## 2026-01-18 - Major Security & UX Update
+## 2026-01-18 (Odpoledne) - Mobile UX Perfection 📱
+
+### 🎯 Kompletní Mobilní UX Audit & Opravy
+
+**Provedeno:** Důkladný audit mobilní verze + oprava všech problémů
+**Výsledek:** Web splňuje WCAG 2.1 AA standard pro touch targets
+**Dokumentace:** [MOBILE_UX_FIXES.md](./MOBILE_UX_FIXES.md)
+
+**🔴 Kritické opravy:**
+- ✅ **RegistrationForm** - 17 input fields: py-2 → py-3 (touch area 38px → 44px)
+- ✅ **Admin záložky** - 6 tabů: py-2.5 px-3 → py-3 px-4 (38x32px → 44x44px)
+- ✅ **Newsletter form** - responsive padding: py-2 → py-2 sm:py-3
+
+**🟡 Vysoká priorita:**
+- ✅ **Workshop Cards** - "Více informací" button: py-2 → py-3
+- ✅ **Mobile Navigation** - menu links: py-2 → py-3
+- ✅ **Admin buttons** - action buttons: py-2 → py-3
+- ✅ **Long URLs** - přidán break-words (žádný horizontal scroll)
+- ✅ **Modal close** - button: p-2 → p-2.5 (40px → 44px)
+
+**🟢 Střední priorita:**
+- ✅ **Autocomplete** - přidány HTML5 attributes (given-name, email, tel, atd.)
+- ✅ **Responsive typography** - h1/h2 v policy stránkách (text-3xl sm:text-4xl)
+
+**Statistiky:**
+- 60+ prvků opraveno
+- 11 samostatných git commitů
+- 7 souborů změněno
+- 100% touch targets ≥44px
+
+**Testovací checklist:** viz [SUMMARY_MOBILE_FIXES.md](./SUMMARY_MOBILE_FIXES.md)
+
+---
+
+## 2026-01-18 (Dopoledne) - Major Security & UX Update
 
 ### 🎨 Mobilní UX Vylepšení Admin Rozhraní
 
