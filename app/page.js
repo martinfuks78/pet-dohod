@@ -501,7 +501,8 @@ export default function Home() {
                     width={400}
                     height={400}
                     className="object-cover w-full h-full"
-                    priority
+                    quality={80}
+                    loading="lazy"
                   />
                 </div>
               </div>
@@ -546,9 +547,24 @@ export default function Home() {
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
               Co říkají účastníci
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
               Reálné příběhy lidí, kteří prošli workshopem Pět dohod
             </p>
+            {/* Social Proof Statistics */}
+            <div className="flex flex-wrap justify-center gap-8 mt-8 mb-4">
+              <div className="text-center">
+                <div className="text-4xl font-bold text-primary-600">500+</div>
+                <div className="text-sm text-gray-600 mt-1">spokojených účastníků</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-primary-600">95%</div>
+                <div className="text-sm text-gray-600 mt-1">doporučuje workshopy</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-primary-600">22 let</div>
+                <div className="text-sm text-gray-600 mt-1">zkušeností s lidmi</div>
+              </div>
+            </div>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8 mb-16">
@@ -591,6 +607,8 @@ export default function Home() {
                 width={400}
                 height={300}
                 className="object-cover w-full h-64"
+                quality={75}
+                loading="lazy"
               />
             </motion.div>
             <motion.div
@@ -606,6 +624,8 @@ export default function Home() {
                 width={400}
                 height={300}
                 className="object-cover w-full h-64"
+                quality={75}
+                loading="lazy"
               />
             </motion.div>
             <motion.div
@@ -621,9 +641,38 @@ export default function Home() {
                 width={400}
                 height={300}
                 className="object-cover w-full h-64"
+                quality={75}
+                loading="lazy"
               />
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* Guarantee Section */}
+      <section className="py-16 px-4 bg-gradient-to-br from-primary-50 to-white">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-white rounded-2xl p-8 md:p-12 shadow-lg border-2 border-primary-200"
+          >
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-500 rounded-full mb-6">
+                <CheckCircle2 className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-3xl font-serif font-bold text-gray-900 mb-4">
+                100% Garance spokojenosti
+              </h3>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                Pokud z jakéhokoliv důvodu nebudete s workshopem spokojeni, stačí mi to říct během prvního dne a vrátím vám celou částku. Bez otázek, bez problémů.
+              </p>
+              <p className="text-sm text-gray-500 mt-4">
+                Jsem si jistý, že workshop přinese hodnotu. Proto nabízím tuto záruku.
+              </p>
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -932,6 +981,12 @@ function WorkshopCard({ workshop, index, onRegister }) {
             <div className={`text-3xl font-bold ${spotsColor}`}>
               {isFull ? 'Naplněno' : workshop.spots}
             </div>
+            {/* Urgency badge */}
+            {!isFull && workshop.spots <= 3 && workshop.spots > 0 && (
+              <div className="mt-2 px-2 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-full inline-block animate-pulse">
+                Téměř plno!
+              </div>
+            )}
           </div>
         )}
       </div>
