@@ -974,12 +974,9 @@ export default function AdminPage() {
         <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-serif font-bold text-gray-900 mb-2">
-                Admin Dashboard
+              <h1 className="text-3xl font-serif font-bold text-gray-900">
+                Admin
               </h1>
-              <p className="text-gray-600">
-                Správa registrací a workshopů Pět dohod
-              </p>
             </div>
             <button
               onClick={() => {
@@ -990,56 +987,72 @@ export default function AdminPage() {
               }}
               className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
             >
-              Odhlásit se
+              Odhlásit
             </button>
           </div>
 
-          {/* Tabs - Mobile (Primary + Dropdown) */}
-          <div className="mt-6 md:hidden space-y-3">
-            {/* Primary tabs (hlavní 3) */}
-            <div className="flex gap-2">
-              <button
-                onClick={() => changeTab('workshops')}
-                className={`flex-1 py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
-                  activeTab === 'workshops'
-                    ? 'bg-primary-500 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                📋 Workshopy
-              </button>
-              <button
-                onClick={() => changeTab('registrations')}
-                className={`flex-1 py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
-                  activeTab === 'registrations'
-                    ? 'bg-primary-500 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                👥 Registrace
-              </button>
-              <button
-                onClick={() => changeTab('statistics')}
-                className={`flex-1 py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
-                  activeTab === 'statistics'
-                    ? 'bg-primary-500 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                📊 Statistiky
-              </button>
-            </div>
-            {/* Secondary tabs (dropdown) */}
-            <select
-              value={activeTab}
-              onChange={(e) => changeTab(e.target.value)}
-              className="w-full px-4 py-2.5 bg-white border-2 border-gray-200 rounded-lg font-semibold text-gray-700 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+          {/* Tabs - Mobile (All 6 tabs stacked) */}
+          <div className="mt-6 md:hidden grid grid-cols-2 gap-2">
+            <button
+              onClick={() => changeTab('workshops')}
+              className={`py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
+                activeTab === 'workshops'
+                  ? 'bg-primary-500 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
             >
-              <option value="" disabled>Další sekce...</option>
-              <option value="newsletter">📧 Newsletter</option>
-              <option value="email-templates">✉️ Email šablony</option>
-              <option value="audit-log">📝 Audit Log</option>
-            </select>
+              📋 Workshopy
+            </button>
+            <button
+              onClick={() => changeTab('registrations')}
+              className={`py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
+                activeTab === 'registrations'
+                  ? 'bg-primary-500 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              👥 Registrace
+            </button>
+            <button
+              onClick={() => changeTab('statistics')}
+              className={`py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
+                activeTab === 'statistics'
+                  ? 'bg-primary-500 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              📊 Statistiky
+            </button>
+            <button
+              onClick={() => changeTab('newsletter')}
+              className={`py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
+                activeTab === 'newsletter'
+                  ? 'bg-primary-500 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              📧 Newsletter
+            </button>
+            <button
+              onClick={() => changeTab('email-templates')}
+              className={`py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
+                activeTab === 'email-templates'
+                  ? 'bg-primary-500 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              ✉️ Email šablony
+            </button>
+            <button
+              onClick={() => changeTab('audit-log')}
+              className={`py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
+                activeTab === 'audit-log'
+                  ? 'bg-primary-500 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              📝 Audit Log
+            </button>
           </div>
 
           {/* Tabs - Desktop */}
@@ -1359,7 +1372,18 @@ export default function AdminPage() {
                   <h2 className="text-xl font-serif font-bold text-gray-900">
                     Workshopy
                   </h2>
-                  <div className="flex flex-wrap gap-2">
+                  {/* Mobile - Dropdown */}
+                  <select
+                    value={workshopTimeFilter}
+                    onChange={(e) => setWorkshopTimeFilter(e.target.value)}
+                    className="sm:hidden w-full px-4 py-2.5 bg-white border-2 border-gray-200 rounded-lg font-semibold text-gray-700 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+                  >
+                    <option value="upcoming">Nadcházející ({getUpcomingWorkshops().length})</option>
+                    <option value="past">Proběhlé ({getPastWorkshops().length})</option>
+                    <option value="all">Všechny ({workshops.length})</option>
+                  </select>
+                  {/* Desktop - Buttons */}
+                  <div className="hidden sm:flex flex-wrap gap-2">
                     <button
                       onClick={() => setWorkshopTimeFilter('upcoming')}
                       className={`px-3 sm:px-4 py-2 rounded-lg font-semibold transition-colors text-sm whitespace-nowrap ${
@@ -1903,7 +1927,15 @@ export default function AdminPage() {
                   <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={getOccupancyByWorkshop()}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} fontSize={12} />
+                      <XAxis
+                        dataKey="name"
+                        angle={0}
+                        textAnchor="middle"
+                        height={60}
+                        fontSize={11}
+                        interval={0}
+                        tick={{ fontSize: 10 }}
+                      />
                       <YAxis />
                       <Tooltip />
                       <Legend />
@@ -1921,7 +1953,15 @@ export default function AdminPage() {
                     <ResponsiveContainer width="100%" height={300}>
                       <BarChart data={getRevenueByWorkshop()}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} fontSize={12} />
+                        <XAxis
+                          dataKey="name"
+                          angle={0}
+                          textAnchor="middle"
+                          height={60}
+                          fontSize={11}
+                          interval={0}
+                          tick={{ fontSize: 10 }}
+                        />
                         <YAxis />
                         <Tooltip formatter={(value) => `${value.toLocaleString('cs-CZ')} Kč`} />
                         <Bar dataKey="revenue" fill="#f49d15" name="Příjem" />
@@ -1971,14 +2011,37 @@ export default function AdminPage() {
           <div className="space-y-6">
             {/* Filter bar */}
             <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">Filtry</h3>
-                  <p className="text-sm text-gray-600">
-                    Zobrazeno: {getFilteredRegistrations().length} z {registrations.length} registrací
-                  </p>
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">Filtry</h3>
+                    <p className="text-sm text-gray-600">
+                      Zobrazeno: {getFilteredRegistrations().length} z {registrations.length} registrací
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleExportCSV}
+                    disabled={getFilteredRegistrations().length === 0}
+                    className="px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-sm whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span className="hidden sm:inline">Export CSV</span>
+                    <span className="sm:hidden">CSV</span>
+                  </button>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                {/* Mobile - Dropdown */}
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="sm:hidden w-full px-4 py-2.5 bg-white border-2 border-gray-200 rounded-lg font-semibold text-gray-700 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+                >
+                  <option value="all">Všechny</option>
+                  <option value="pending">Čekající</option>
+                  <option value="confirmed">Potvrzené</option>
+                  <option value="cancelled">Zrušené</option>
+                </select>
+                {/* Desktop - Buttons */}
+                <div className="hidden sm:flex flex-wrap gap-2">
                   <button
                     onClick={() => setStatusFilter('all')}
                     className={`px-3 sm:px-4 py-2 rounded-lg font-semibold transition-colors text-sm whitespace-nowrap ${
@@ -2018,15 +2081,6 @@ export default function AdminPage() {
                     }`}
                   >
                     Zrušené
-                  </button>
-                  <button
-                    onClick={handleExportCSV}
-                    disabled={getFilteredRegistrations().length === 0}
-                    className="px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-sm whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    <span className="hidden sm:inline">Export CSV</span>
-                    <span className="sm:hidden">CSV</span>
                   </button>
                 </div>
               </div>
