@@ -8,17 +8,19 @@ Přehled všech změn a vylepšení projektu.
 
 ### 🎥 Corporate Video - Ant Studio Case Study
 
-**Provedeno:** Přidán workshop video do firemní sekce
+**Provedeno:** Přidán workshop video s auto-play funkčností
 **Video:** Ukázka z workshopu Čtyři dohody pro Ant Studio
-**Dokumentace:** [VIDEO_UPLOAD_GUIDE.md](./VIDEO_UPLOAD_GUIDE.md)
+**Dokumentace:** [QUICK_VIDEO_SETUP.md](./QUICK_VIDEO_SETUP.md) | [VIDEO_UPLOAD_GUIDE.md](./VIDEO_UPLOAD_GUIDE.md)
 
-**📹 Video Player:**
-- ✅ **HTML5 video player** - Profesionální prezentace s controls
-- ✅ **Case study format** - Nadpis + popis + metadata (firma, typ workshopu)
-- ✅ **Poster image** - Thumbnail před přehráním (workshop-team-2.jpg)
-- ✅ **Hover efekt** - Custom play button overlay
+**📹 Video Player s Auto-Play:**
+- ✅ **Automatické přehrání při scrollu** - Spustí se, když je 50% videa viditelné
+- ✅ **Muted mode** - Začíná ztlumené (respektuje UX best practices)
+- ✅ **Zvukové tlačítko** - Viditelná ikona pro zapnutí/vypnutí zvuku s tooltipem
+- ✅ **LIVE indikátor** - Červený badge když video hraje
+- ✅ **Loop mode** - Video se neustále opakuje
+- ✅ **Intersection Observer** - Zastaví video když zmizí z obrazovky
 - ✅ **Responsive** - 16:9 aspect ratio, funguje na mobilu i desktopu
-- ✅ **Accessibility** - aria-label, fallback download link
+- ✅ **Accessibility** - aria-label, semantic HTML
 
 **🎯 B2B Conversion Impact:**
 - **Social proof:** "Pokud to dělal pro Ant Studio, je to seriózní"
