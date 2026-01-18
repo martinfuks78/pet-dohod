@@ -249,7 +249,7 @@ export default function RegistrationForm({ workshop }) {
               required
               value={formData.firstName}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
             />
           </div>
           <div>
@@ -263,7 +263,7 @@ export default function RegistrationForm({ workshop }) {
               required
               value={formData.lastName}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
             />
           </div>
         </div>
@@ -279,7 +279,7 @@ export default function RegistrationForm({ workshop }) {
             required
             value={formData.email}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
           />
         </div>
 
@@ -294,7 +294,7 @@ export default function RegistrationForm({ workshop }) {
             required
             value={formData.phone}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
           />
         </div>
 
@@ -310,7 +310,7 @@ export default function RegistrationForm({ workshop }) {
             value={formData.address}
             onChange={handleChange}
             placeholder="Ulice a číslo popisné"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
           />
         </div>
 
@@ -326,7 +326,7 @@ export default function RegistrationForm({ workshop }) {
               required
               value={formData.city}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
             />
           </div>
           <div>
@@ -340,7 +340,7 @@ export default function RegistrationForm({ workshop }) {
               required
               value={formData.zip}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
             />
           </div>
         </div>
@@ -363,7 +363,7 @@ export default function RegistrationForm({ workshop }) {
                 required
                 value={formData.partnerFirstName}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
               />
             </div>
             <div>
@@ -377,7 +377,7 @@ export default function RegistrationForm({ workshop }) {
                 required
                 value={formData.partnerLastName}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
               />
             </div>
           </div>
@@ -393,7 +393,7 @@ export default function RegistrationForm({ workshop }) {
               value={formData.partnerEmail}
               onChange={handleChange}
               placeholder="email@example.com (nepovinné)"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
             />
             <p className="text-xs text-gray-500 mt-1">
               Pokud vyplníte, partner dostane také potvrzovací email
@@ -414,7 +414,7 @@ export default function RegistrationForm({ workshop }) {
           value={formData.notes}
           onChange={handleChange}
           placeholder="Máte nějaké speciální požadavky nebo otázky?"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none resize-none"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none resize-none"
         />
       </div>
 
