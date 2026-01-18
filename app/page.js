@@ -946,7 +946,7 @@ function WorkshopCard({ workshop, index, onRegister }) {
       {hasDetails && (
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center justify-between w-full px-4 py-2 mb-4 text-primary-600 hover:text-primary-700 transition-colors border border-primary-200 rounded-lg hover:bg-primary-50"
+          className="flex items-center justify-between w-full px-4 py-3 mb-4 text-primary-600 hover:text-primary-700 transition-colors border border-primary-200 rounded-lg hover:bg-primary-50"
         >
           <span className="font-semibold">Více informací</span>
           <ChevronDown
