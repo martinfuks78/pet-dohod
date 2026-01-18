@@ -405,6 +405,48 @@ export default function Home() {
             </p>
           </motion.div>
 
+          {/* Video Case Study */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-12"
+          >
+            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-lg">
+              <div className="mb-6">
+                <h3 className="text-2xl font-serif font-bold text-gray-900 mb-2">
+                  Ukázka z workshopu Čtyři dohody pro Ant Studio
+                </h3>
+                <p className="text-gray-600">
+                  Podívejte se, jak probíhal firemní workshop pro kreativní tým Ant Studio
+                </p>
+              </div>
+              <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-900 shadow-xl group">
+                <video
+                  controls
+                  preload="metadata"
+                  playsInline
+                  className="w-full h-full object-cover"
+                  poster="/workshop-team-2.jpg"
+                  aria-label="Ukázka z firemního workshopu Čtyři dohody pro Ant Studio"
+                >
+                  <source src="/ant-studio-workshop.mp4" type="video/mp4" />
+                  Váš prohlížeč nepodporuje přehrávání videa. <a href="/ant-studio-workshop.mp4" className="text-primary-400 underline">Stáhnout video</a>
+                </video>
+                {/* Play button overlay hint */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="w-20 h-20 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center">
+                    <div className="w-0 h-0 border-l-[20px] border-l-white border-y-[12px] border-y-transparent ml-1"></div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 flex items-center justify-between text-sm text-gray-500">
+                <span>💼 Ant Studio - kreativní agentura</span>
+                <span>📅 Workshop Čtyři dohody</span>
+              </div>
+            </div>
+          </motion.div>
+
           <div className="bg-white rounded-2xl p-8 md:p-12 shadow-lg">
             <div className="grid md:grid-cols-2 gap-12">
               <div>

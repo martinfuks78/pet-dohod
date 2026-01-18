@@ -35,3 +35,7 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Finder (MacOS) folder config
 .DS_Store
+
+# Large video files (uploaded manually to Vercel/hosting)
+public/*.mp4
+public/**/*.mp4
