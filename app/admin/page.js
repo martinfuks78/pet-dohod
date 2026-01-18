@@ -34,6 +34,7 @@ export default function AdminPage() {
   const [editingNotes, setEditingNotes] = useState(null) // Registrace s editovanými poznámkami (celý objekt)
   const [notesFormData, setNotesFormData] = useState({ notes: '', tags: '' })
   const [auditLogs, setAuditLogs] = useState([])
+  const [auditLogsLoading, setAuditLogsLoading] = useState(false)
   const [showCustomEmailDialog, setShowCustomEmailDialog] = useState(null) // {registrationId, registration}
   const [selectedCustomTemplate, setSelectedCustomTemplate] = useState('')
   const [showBulkEmailDialog, setShowBulkEmailDialog] = useState(false)
@@ -210,18 +211,23 @@ export default function AdminPage() {
   }
 
   const loadAuditLogs = async () => {
+    setAuditLogsLoading(true)
     try {
       const response = await fetch('/api/audit-log?limit=50', {
         headers: getAuthHeaders()
       })
       if (!response.ok) {
+        console.error('Failed to load audit logs:', response.status)
         setAuditLogs([])
         return
       }
       const data = await response.json()
       setAuditLogs(data.logs || [])
     } catch (error) {
+      console.error('Error loading audit logs:', error)
       setAuditLogs([])
+    } finally {
+      setAuditLogsLoading(false)
     }
   }
 
@@ -2547,16 +2553,22 @@ export default function AdminPage() {
                 </div>
                 <button
                   onClick={loadAuditLogs}
-                  className="flex items-center gap-2 px-4 py-2 bg-white text-gray-700 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-semibold"
+                  disabled={auditLogsLoading}
+                  className="flex items-center gap-2 px-4 py-2 bg-white text-gray-700 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Download className="w-4 h-4" />
-                  Obnovit
+                  <Download className={`w-4 h-4 ${auditLogsLoading ? 'animate-spin' : ''}`} />
+                  {auditLogsLoading ? 'Načítám...' : 'Obnovit'}
                 </button>
               </div>
             </div>
 
             {/* Audit logs table */}
-            {auditLogs.length === 0 ? (
+            {auditLogsLoading ? (
+              <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+                <p className="text-gray-500">Načítám audit log...</p>
+              </div>
+            ) : auditLogs.length === 0 ? (
               <div className="bg-white rounded-xl shadow-sm p-12 text-center">
                 <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
