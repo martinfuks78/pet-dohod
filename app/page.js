@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowRight, Calendar, Users, Building2, CheckCircle2, ChevronDown } from 'lucide-react'
+import { ArrowRight, Calendar, Users, Building2, CheckCircle2, ChevronDown, Volume2, VolumeX } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import Navigation from '../components/Navigation'
@@ -406,46 +406,7 @@ export default function Home() {
           </motion.div>
 
           {/* Video Case Study */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-12"
-          >
-            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-lg">
-              <div className="mb-6">
-                <h3 className="text-2xl font-serif font-bold text-gray-900 mb-2">
-                  Ukázka z workshopu Čtyři dohody pro Ant Studio
-                </h3>
-                <p className="text-gray-600">
-                  Podívejte se, jak probíhal firemní workshop pro kreativní tým Ant Studio
-                </p>
-              </div>
-              <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-900 shadow-xl group">
-                <video
-                  controls
-                  preload="metadata"
-                  playsInline
-                  className="w-full h-full object-cover"
-                  poster="/workshop-team-2.jpg"
-                  aria-label="Ukázka z firemního workshopu Čtyři dohody pro Ant Studio"
-                >
-                  <source src="/ant-studio-workshop.mp4" type="video/mp4" />
-                  Váš prohlížeč nepodporuje přehrávání videa. <a href="/ant-studio-workshop.mp4" className="text-primary-400 underline">Stáhnout video</a>
-                </video>
-                {/* Play button overlay hint */}
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="w-20 h-20 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center">
-                    <div className="w-0 h-0 border-l-[20px] border-l-white border-y-[12px] border-y-transparent ml-1"></div>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-4 flex items-center justify-between text-sm text-gray-500">
-                <span>💼 Ant Studio - kreativní agentura</span>
-                <span>📅 Workshop Čtyři dohody</span>
-              </div>
-            </div>
-          </motion.div>
+          <VideoPlayer />
 
           <div className="bg-white rounded-2xl p-8 md:p-12 shadow-lg">
             <div className="grid md:grid-cols-2 gap-12">
@@ -1130,6 +1091,115 @@ function WorkshopCard({ workshop, index, onRegister }) {
       >
         {isFull ? 'Obsazeno' : 'Registrovat se'}
       </button>
+    </motion.div>
+  )
+}
+
+// Video Player Component with auto-play on scroll
+function VideoPlayer() {
+  const videoRef = useRef(null)
+  const [isMuted, setIsMuted] = useState(true)
+  const [isPlaying, setIsPlaying] = useState(false)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    // Intersection Observer pro auto-play při scrollu
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Video je viditelné - spusť s muted
+            video.play().catch((error) => {
+              console.log('Auto-play prevented:', error)
+            })
+            setIsPlaying(true)
+          } else {
+            // Video zmizelo z obrazovky - zastaví
+            video.pause()
+            setIsPlaying(false)
+          }
+        })
+      },
+      {
+        threshold: 0.5, // Spustí, když je 50% videa viditelné
+      }
+    )
+
+    observer.observe(video)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted
+      setIsMuted(!isMuted)
+    }
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="mb-12"
+    >
+      <div className="bg-white rounded-2xl p-6 md:p-8 shadow-lg">
+        <div className="mb-6">
+          <h3 className="text-2xl font-serif font-bold text-gray-900 mb-2">
+            Ukázka z workshopu Čtyři dohody pro Ant Studio
+          </h3>
+          <p className="text-gray-600">
+            Video se přehraje automaticky při scrollování. Klikněte na ikonu zvuku pro zapnutí.
+          </p>
+        </div>
+        <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-900 shadow-xl">
+          <video
+            ref={videoRef}
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+            aria-label="Ukázka z firemního workshopu Čtyři dohody pro Ant Studio"
+          >
+            <source src="/ant-studio-workshop.mp4" type="video/mp4" />
+            Váš prohlížeč nepodporuje přehrávání videa.
+          </video>
+
+          {/* Sound toggle button */}
+          <button
+            onClick={toggleMute}
+            className="absolute bottom-4 right-4 w-12 h-12 bg-black/60 hover:bg-black/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all z-10 group"
+            aria-label={isMuted ? 'Zapnout zvuk' : 'Vypnout zvuk'}
+          >
+            {isMuted ? (
+              <VolumeX className="w-6 h-6 text-white" />
+            ) : (
+              <Volume2 className="w-6 h-6 text-white" />
+            )}
+            {/* Tooltip */}
+            <span className="absolute bottom-full mb-2 px-3 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              {isMuted ? 'Zapnout zvuk' : 'Vypnout zvuk'}
+            </span>
+          </button>
+
+          {/* Playing indicator */}
+          {isPlaying && (
+            <div className="absolute top-4 left-4 px-3 py-1 bg-red-500 text-white text-xs font-semibold rounded-full flex items-center gap-1">
+              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              LIVE
+            </div>
+          )}
+        </div>
+        <div className="mt-4 flex items-center justify-between text-sm text-gray-500">
+          <span>💼 Ant Studio - kreativní agentura</span>
+          <span>📅 Workshop Čtyři dohody</span>
+        </div>
+      </div>
     </motion.div>
   )
 }
