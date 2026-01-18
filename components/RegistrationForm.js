@@ -18,6 +18,7 @@ export default function RegistrationForm({ workshop }) {
     partnerLastName: '',
     partnerEmail: '',
     notes: '',
+    website: '', // Honeypot pole (skryté pro uživatele, viditelné pro boty)
   })
 
   const [status, setStatus] = useState('idle') // idle, loading, success, error
@@ -416,6 +417,24 @@ export default function RegistrationForm({ workshop }) {
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none resize-none"
         />
       </div>
+
+      {/* Honeypot pole - skryté pro uživatele, viditelné pro boty */}
+      <input
+        type="text"
+        name="website"
+        value={formData.website}
+        onChange={handleChange}
+        tabIndex={-1}
+        autoComplete="off"
+        style={{
+          position: 'absolute',
+          left: '-9999px',
+          width: '1px',
+          height: '1px',
+          opacity: 0,
+        }}
+        aria-hidden="true"
+      />
 
       {/* Error message */}
       {status === 'error' && (

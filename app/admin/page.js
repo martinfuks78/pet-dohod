@@ -2720,7 +2720,52 @@ export default function AdminPage() {
               </div>
             ) : (
               <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
+                {/* Mobile Card View */}
+                <div className="block md:hidden divide-y divide-gray-200">
+                  {newsletter.map((subscriber) => (
+                    <div key={subscriber.id} className="p-4 hover:bg-gray-50">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                            <span className="text-sm font-medium text-gray-900 break-all">
+                              {subscriber.email}
+                            </span>
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            {new Date(subscriber.subscribed_at).toLocaleDateString('cs-CZ', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric',
+                            })} v {new Date(subscriber.subscribed_at).toLocaleTimeString('cs-CZ', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </div>
+                          <div className="mt-2">
+                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                              subscriber.is_active
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-gray-100 text-gray-800'
+                            }`}>
+                              {subscriber.is_active ? 'Aktivní' : 'Neaktivní'}
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleDeleteNewsletterSubscriber(subscriber.id)}
+                          className="ml-3 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
+                          title="Odstranit"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto scrollbar-thin">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>

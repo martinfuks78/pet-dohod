@@ -25,6 +25,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@sentry/nextjs": "^10.34.0",
     "@vercel/postgres": "^0.10.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

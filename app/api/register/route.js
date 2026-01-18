@@ -3,6 +3,51 @@ import { sql } from '@vercel/postgres'
 import { createRegistration, getAllRegistrations, updateRegistrationStatus, deleteRegistration } from '../../../lib/db'
 import { sendRegistrationConfirmation, sendAdminNotification, sendPaymentConfirmation, sendWaitlistConfirmation } from '../../../lib/email'
 
+// Rate limiting - sledování IP adres a timestampů registrací
+const rateLimitMap = new Map()
+const RATE_LIMIT_WINDOW = 15 * 60 * 1000 // 15 minut
+const MAX_REQUESTS = 5 // max 5 registrací za 15 minut
+
+// Helper funkce pro kontrolu rate limitu
+function checkRateLimit(ip) {
+  const now = Date.now()
+
+  if (!rateLimitMap.has(ip)) {
+    rateLimitMap.set(ip, [now])
+    return { allowed: true }
+  }
+
+  // Vyčistit staré záznamy (starší než 15 minut)
+  const timestamps = rateLimitMap.get(ip).filter(time => now - time < RATE_LIMIT_WINDOW)
+
+  if (timestamps.length >= MAX_REQUESTS) {
+    const oldestTimestamp = Math.min(...timestamps)
+    const retryAfter = Math.ceil((oldestTimestamp + RATE_LIMIT_WINDOW - now) / 1000)
+    return {
+      allowed: false,
+      retryAfter,
+      error: `Příliš mnoho pokusů o registraci. Zkuste to prosím za ${Math.ceil(retryAfter / 60)} minut.`
+    }
+  }
+
+  timestamps.push(now)
+  rateLimitMap.set(ip, timestamps)
+  return { allowed: true }
+}
+
+// Periodické čištění rate limit mapy (každých 30 minut)
+setInterval(() => {
+  const now = Date.now()
+  for (const [ip, timestamps] of rateLimitMap.entries()) {
+    const validTimestamps = timestamps.filter(time => now - time < RATE_LIMIT_WINDOW)
+    if (validTimestamps.length === 0) {
+      rateLimitMap.delete(ip)
+    } else {
+      rateLimitMap.set(ip, validTimestamps)
+    }
+  }
+}, 30 * 60 * 1000)
+
 // Helper funkce pro ověření autentizace
 function checkAuth(request) {
   const authHeader = request.headers.get('authorization')
@@ -32,17 +77,51 @@ function checkAuth(request) {
 
 export async function POST(request) {
   try {
+    // Získat IP adresu pro rate limiting
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0] ||
+               request.headers.get('x-real-ip') ||
+               'unknown'
+
+    // Kontrola rate limitu
+    const rateLimitCheck = checkRateLimit(ip)
+    if (!rateLimitCheck.allowed) {
+      return NextResponse.json(
+        { error: rateLimitCheck.error },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': rateLimitCheck.retryAfter.toString()
+          }
+        }
+      )
+    }
+
     const data = await request.json()
+
+    // HONEYPOT KONTROLA - pokud je pole "website" vyplněné, je to bot
+    if (data.website && data.website.trim() !== '') {
+      console.warn('🤖 Bot detected - honeypot field filled:', {
+        ip,
+        website: data.website,
+        email: data.email
+      })
+      // Vrátit success response aby bot nevěděl, že byl detekován
+      return NextResponse.json({
+        success: true,
+        message: 'Registrace byla úspěšně odeslána'
+      })
+    }
 
     // DEBUG - log received data
     console.log('📝 Registration data received:', {
       workshopId: data.workshopId,
       workshopDate: data.workshopDate,
       workshopLocation: data.workshopLocation,
-      email: data.email
+      email: data.email,
+      ip
     })
 
-    // Validace
+    // Validace povinných polí
     if (!data.firstName || !data.lastName || !data.email || !data.phone) {
       return NextResponse.json(
         { error: 'Vyplň prosím všechna povinná pole' },

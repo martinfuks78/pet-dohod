@@ -44,6 +44,8 @@ Profesionální web pro správu workshopů osobního rozvoje založených na mou
 - **Styling**: Tailwind CSS
 - **Animation**: Framer Motion
 - **Hosting**: Vercel
+- **Error Tracking**: Sentry
+- **Security**: Rate limiting, Honeypot, Security headers
 
 ## Požadované Environment Variables
 
@@ -67,6 +69,67 @@ ADMIN_EMAIL="kouc@martinfuks.cz"
 
 # Admin
 ADMIN_PASSWORD="silne_heslo_zde"
+
+# Sentry (error tracking) - optional
+NEXT_PUBLIC_SENTRY_DSN="https://...@sentry.io/..."
+SENTRY_ORG="tvoje-organizace"
+SENTRY_PROJECT="pet-dohod"
+SENTRY_AUTH_TOKEN="..." # Pro upload source maps
+```
+
+## Bezpečnost
+
+### Ochrana proti botům a spamu
+- **Rate limiting**: Max 5 registrací za 15 minut z jedné IP adresy
+- **Honeypot pole**: Skryté pole v registračním formuláři detekuje boty
+- **Duplikace check**: Stejný email nemůže registrovat na stejný workshop vícekrát
+
+### Security headers
+- `X-Frame-Options: DENY` - Ochrana proti clickjacking
+- `X-Content-Type-Options: nosniff` - Ochrana proti MIME sniffing
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `X-XSS-Protection: 1; mode=block`
+- `Permissions-Policy: camera=(), microphone=(), geolocation=()`
+
+### Autentizace
+- Bearer token pro admin API
+- HTTPS only (automaticky přes Vercel)
+- SQL injection ochrana (prepared statements)
+
+## Error Tracking (Sentry)
+
+1. Vytvoř projekt na [sentry.io](https://sentry.io)
+2. Copy DSN do `NEXT_PUBLIC_SENTRY_DSN`
+3. Errors se automaticky logují
+4. Dashboard: sentry.io/organizations/...
+
+## Údržba
+
+### Týdenně (5 min)
+- ✅ Zkontroluj Sentry errors
+- ✅ Zkontroluj spam registrace (admin → Registrace)
+- ✅ Zkontroluj email delivery (Resend dashboard)
+
+### Měsíčně (30 min)
+- ✅ `npm audit` - security vulnerabilities
+- ✅ Databázový export (admin → Export CSV)
+- ✅ Review Vercel Analytics
+
+### Čtvrtletně (1-2 hodiny)
+- ✅ `npm outdated` - zkontroluj zastaralé balíčky
+- ✅ `npm update` - update minor/patch verzí
+- ✅ Test na mobilních zařízeních
+- ✅ Review Next.js changelog
+
+```bash
+# Security check
+npm audit
+
+# Safe updates
+npm audit fix
+
+# All updates (TESTOVAT!)
+npm audit fix --force
 ```
 
 ## Instalace a spuštění
