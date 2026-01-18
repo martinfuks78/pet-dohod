@@ -1095,11 +1095,16 @@ function WorkshopCard({ workshop, index, onRegister }) {
   )
 }
 
-// Video Player Component with auto-play on scroll
+// Video Player Component with auto-play on scroll and YouTube-like controls
 function VideoPlayer() {
   const videoRef = useRef(null)
+  const progressBarRef = useRef(null)
   const [isMuted, setIsMuted] = useState(true)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [showControls, setShowControls] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [duration, setDuration] = useState(0)
+  const [currentTime, setCurrentTime] = useState(0)
 
   useEffect(() => {
     const video = videoRef.current
@@ -1110,35 +1115,93 @@ function VideoPlayer() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            // Video je viditelné - spusť s muted
             video.play().catch((error) => {
               console.log('Auto-play prevented:', error)
             })
-            setIsPlaying(true)
           } else {
-            // Video zmizelo z obrazovky - zastaví
             video.pause()
-            setIsPlaying(false)
           }
         })
       },
-      {
-        threshold: 0.5, // Spustí, když je 50% videa viditelné
-      }
+      { threshold: 0.5 }
     )
 
     observer.observe(video)
 
+    // Event listeners pro video
+    const updateProgress = () => {
+      if (video.duration) {
+        setProgress((video.currentTime / video.duration) * 100)
+        setCurrentTime(video.currentTime)
+      }
+    }
+
+    const handleLoadedMetadata = () => {
+      setDuration(video.duration)
+    }
+
+    const handlePlay = () => setIsPlaying(true)
+    const handlePause = () => setIsPlaying(false)
+
+    video.addEventListener('timeupdate', updateProgress)
+    video.addEventListener('loadedmetadata', handleLoadedMetadata)
+    video.addEventListener('play', handlePlay)
+    video.addEventListener('pause', handlePause)
+
     return () => {
       observer.disconnect()
+      video.removeEventListener('timeupdate', updateProgress)
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata)
+      video.removeEventListener('play', handlePlay)
+      video.removeEventListener('pause', handlePause)
     }
   }, [])
+
+  const togglePlayPause = () => {
+    const video = videoRef.current
+    if (!video) return
+
+    if (video.paused) {
+      video.play()
+    } else {
+      video.pause()
+    }
+  }
 
   const toggleMute = () => {
     if (videoRef.current) {
       videoRef.current.muted = !isMuted
       setIsMuted(!isMuted)
     }
+  }
+
+  const toggleFullscreen = () => {
+    const video = videoRef.current
+    if (!video) return
+
+    if (document.fullscreenElement) {
+      document.exitFullscreen()
+    } else {
+      video.requestFullscreen()
+    }
+  }
+
+  const handleProgressBarClick = (e) => {
+    const video = videoRef.current
+    const progressBar = progressBarRef.current
+    if (!video || !progressBar) return
+
+    const rect = progressBar.getBoundingClientRect()
+    const clickX = e.clientX - rect.left
+    const percentage = clickX / rect.width
+    video.currentTime = percentage * video.duration
+  }
+
+  const formatTime = (seconds) => {
+    if (isNaN(seconds)) return '0:00'
+    const mins = Math.floor(seconds / 60)
+    const secs = Math.floor(seconds % 60)
+    return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
   return (
@@ -1150,55 +1213,118 @@ function VideoPlayer() {
     >
       <div className="bg-white rounded-2xl p-6 md:p-8 shadow-lg">
         <div className="mb-6">
-          <h3 className="text-2xl font-serif font-bold text-gray-900 mb-2">
-            Ukázka z workshopu Čtyři dohody pro Ant Studio
+          <h3 className="text-2xl font-serif font-bold text-gray-900">
+            Ukázka z workshopu ČTYŘI DOHODY pro agenturu (ant)
           </h3>
-          <p className="text-gray-600">
-            Video se přehraje automaticky při scrollování. Klikněte na ikonu zvuku pro zapnutí.
-          </p>
         </div>
-        <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-900 shadow-xl">
+        <div
+          className="relative aspect-video rounded-xl overflow-hidden bg-gray-900 shadow-xl group"
+          onMouseEnter={() => setShowControls(true)}
+          onMouseLeave={() => setShowControls(false)}
+        >
           <video
             ref={videoRef}
             loop
             muted
             playsInline
-            className="w-full h-full object-cover"
-            aria-label="Ukázka z firemního workshopu Čtyři dohody pro Ant Studio"
+            className="w-full h-full object-cover cursor-pointer"
+            aria-label="Ukázka z firemního workshopu Čtyři dohody pro agenturu (ant)"
             onError={(e) => console.error('Video load error:', e)}
+            onClick={togglePlayPause}
           >
             <source src="https://www.martinfuks.cz/wp-content/uploads/2025/11/mf-only-logo.mp4" type="video/mp4" />
             Váš prohlížeč nepodporuje přehrávání videa.
           </video>
 
-          {/* Sound toggle button */}
-          <button
-            onClick={toggleMute}
-            className="absolute bottom-4 right-4 w-12 h-12 bg-black/60 hover:bg-black/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all z-10 group"
-            aria-label={isMuted ? 'Zapnout zvuk' : 'Vypnout zvuk'}
+          {/* Custom Video Controls - YouTube style */}
+          <div
+            className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4 transition-all duration-300 ${
+              showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+            }`}
           >
-            {isMuted ? (
-              <VolumeX className="w-6 h-6 text-white" />
-            ) : (
-              <Volume2 className="w-6 h-6 text-white" />
-            )}
-            {/* Tooltip */}
-            <span className="absolute bottom-full mb-2 px-3 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-              {isMuted ? 'Zapnout zvuk' : 'Vypnout zvuk'}
-            </span>
-          </button>
+            {/* Progress Bar */}
+            <div
+              ref={progressBarRef}
+              className="w-full h-1 bg-white/30 rounded-full cursor-pointer mb-3 group/progress hover:h-1.5 transition-all"
+              onClick={handleProgressBarClick}
+            >
+              <div
+                className="h-full bg-primary-500 rounded-full relative transition-all"
+                style={{ width: `${progress}%` }}
+              >
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-primary-500 rounded-full opacity-0 group-hover/progress:opacity-100 transition-opacity"></div>
+              </div>
+            </div>
 
-          {/* Playing indicator */}
-          {isPlaying && (
-            <div className="absolute top-4 left-4 px-3 py-1 bg-red-500 text-white text-xs font-semibold rounded-full flex items-center gap-1">
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-              LIVE
+            {/* Controls Row */}
+            <div className="flex items-center justify-between gap-4">
+              {/* Left controls */}
+              <div className="flex items-center gap-3">
+                {/* Play/Pause */}
+                <button
+                  onClick={togglePlayPause}
+                  className="w-8 h-8 flex items-center justify-center hover:bg-white/10 rounded transition-colors"
+                  aria-label={isPlaying ? 'Pozastavit' : 'Přehrát'}
+                >
+                  {isPlaying ? (
+                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  )}
+                </button>
+
+                {/* Volume */}
+                <button
+                  onClick={toggleMute}
+                  className="w-8 h-8 flex items-center justify-center hover:bg-white/10 rounded transition-colors"
+                  aria-label={isMuted ? 'Zapnout zvuk' : 'Vypnout zvuk'}
+                >
+                  {isMuted ? (
+                    <VolumeX className="w-5 h-5 text-white" />
+                  ) : (
+                    <Volume2 className="w-5 h-5 text-white" />
+                  )}
+                </button>
+
+                {/* Time */}
+                <div className="text-white text-sm font-medium">
+                  {formatTime(currentTime)} / {formatTime(duration)}
+                </div>
+              </div>
+
+              {/* Right controls */}
+              <div className="flex items-center gap-2">
+                {/* Fullscreen */}
+                <button
+                  onClick={toggleFullscreen}
+                  className="w-8 h-8 flex items-center justify-center hover:bg-white/10 rounded transition-colors"
+                  aria-label="Celá obrazovka"
+                >
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Center Play Button (when paused) */}
+          {!isPlaying && (
+            <div
+              className="absolute inset-0 flex items-center justify-center bg-black/20 cursor-pointer"
+              onClick={togglePlayPause}
+            >
+              <div className="w-20 h-20 bg-white/90 hover:bg-white rounded-full flex items-center justify-center transition-all transform hover:scale-110">
+                <svg className="w-10 h-10 text-gray-900 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </div>
             </div>
           )}
-        </div>
-        <div className="mt-4 flex items-center justify-between text-sm text-gray-500">
-          <span>💼 Ant Studio - kreativní agentura</span>
-          <span>📅 Workshop Čtyři dohody</span>
         </div>
       </div>
     </motion.div>
