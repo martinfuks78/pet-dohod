@@ -246,6 +246,7 @@ export default function RegistrationForm({ workshop }) {
               type="text"
               id="firstName"
               name="firstName"
+              autoComplete="given-name"
               required
               value={formData.firstName}
               onChange={handleChange}
@@ -260,6 +261,7 @@ export default function RegistrationForm({ workshop }) {
               type="text"
               id="lastName"
               name="lastName"
+              autoComplete="family-name"
               required
               value={formData.lastName}
               onChange={handleChange}
@@ -276,6 +278,7 @@ export default function RegistrationForm({ workshop }) {
             type="email"
             id="email"
             name="email"
+            autoComplete="email"
             required
             value={formData.email}
             onChange={handleChange}
@@ -291,6 +294,7 @@ export default function RegistrationForm({ workshop }) {
             type="tel"
             id="phone"
             name="phone"
+            autoComplete="tel"
             required
             value={formData.phone}
             onChange={handleChange}
@@ -306,6 +310,7 @@ export default function RegistrationForm({ workshop }) {
             type="text"
             id="address"
             name="address"
+            autoComplete="street-address"
             required
             value={formData.address}
             onChange={handleChange}
@@ -323,6 +328,7 @@ export default function RegistrationForm({ workshop }) {
               type="text"
               id="city"
               name="city"
+              autoComplete="address-level2"
               required
               value={formData.city}
               onChange={handleChange}
@@ -337,6 +343,7 @@ export default function RegistrationForm({ workshop }) {
               type="text"
               id="zip"
               name="zip"
+              autoComplete="postal-code"
               required
               value={formData.zip}
               onChange={handleChange}
