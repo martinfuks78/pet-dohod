@@ -7,13 +7,13 @@ export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-gray-50 py-16">
       <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-4xl font-serif font-bold text-gray-900 mb-8">
+        <h1 className="text-3xl sm:text-4xl font-serif font-bold text-gray-900 mb-8">
           Ochrana osobních údajů
         </h1>
 
         <div className="bg-white rounded-xl shadow-sm p-8 space-y-8">
           <section>
-            <h2 className="text-2xl font-serif font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 mb-4">
               1. Správce osobních údajů
             </h2>
             <div className="text-gray-700 space-y-2">
@@ -25,7 +25,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-serif font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 mb-4">
               2. Rozsah zpracování osobních údajů
             </h2>
             <div className="text-gray-700 space-y-4">
@@ -47,7 +47,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-serif font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 mb-4">
               3. Účel zpracování osobních údajů
             </h2>
             <div className="text-gray-700 space-y-2">
@@ -62,7 +62,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-serif font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 mb-4">
               4. Právní základ zpracování
             </h2>
             <div className="text-gray-700 space-y-2">
@@ -77,7 +77,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-serif font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 mb-4">
               5. Doba uložení osobních údajů
             </h2>
             <div className="text-gray-700 space-y-2">
@@ -94,7 +94,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-serif font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 mb-4">
               6. Vaše práva
             </h2>
             <div className="text-gray-700 space-y-2">
@@ -116,7 +116,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-serif font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 mb-4">
               7. Předávání osobních údajů třetím stranám
             </h2>
             <div className="text-gray-700 space-y-2">
@@ -133,7 +133,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-serif font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 mb-4">
               8. Zabezpečení osobních údajů
             </h2>
             <div className="text-gray-700 space-y-2">
@@ -148,7 +148,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-serif font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 mb-4">
               9. Cookies
             </h2>
             <div className="text-gray-700 space-y-2">
@@ -160,7 +160,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-serif font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 mb-4">
               10. Kontakt
             </h2>
             <div className="text-gray-700 space-y-2">

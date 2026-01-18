@@ -8,13 +8,13 @@ export default function CancellationPolicy() {
     <div className="min-h-screen bg-gray-50 py-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-2xl shadow-sm p-8 md:p-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-8">
             Stornovací podmínky
           </h1>
 
           <div className="prose prose-lg max-w-none">
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">
                 Storno ze strany účastníka
               </h2>
 
@@ -77,7 +77,7 @@ export default function CancellationPolicy() {
             </section>
 
             <section className="mb-8 bg-blue-50 rounded-lg p-6">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">
                 Náhradník místo Vás
               </h2>
               <p className="text-gray-700 mb-4">
@@ -96,7 +96,7 @@ export default function CancellationPolicy() {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">
                 Storno ze strany pořadatele
               </h2>
               <p className="text-gray-700 mb-4">
@@ -123,7 +123,7 @@ export default function CancellationPolicy() {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">
                 Přesunutí na jiný termín
               </h2>
               <p className="text-gray-700 mb-4">
@@ -144,7 +144,7 @@ export default function CancellationPolicy() {
             </section>
 
             <section className="mb-8 bg-gray-50 rounded-lg p-6">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">
                 Časté dotazy ke stornování
               </h2>
 
@@ -193,7 +193,7 @@ export default function CancellationPolicy() {
             </section>
 
             <section className="border-t pt-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">
                 Kontakt pro stornování
               </h2>
               <div className="bg-primary-50 rounded-lg p-6">
