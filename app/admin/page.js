@@ -956,16 +956,48 @@ export default function AdminPage() {
             </button>
           </div>
 
-          {/* Tabs - Mobile Dropdown */}
-          <div className="mt-6 md:hidden">
+          {/* Tabs - Mobile (Primary + Dropdown) */}
+          <div className="mt-6 md:hidden space-y-3">
+            {/* Primary tabs (hlavní 3) */}
+            <div className="flex gap-2">
+              <button
+                onClick={() => changeTab('workshops')}
+                className={`flex-1 py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
+                  activeTab === 'workshops'
+                    ? 'bg-primary-500 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                📋 Workshopy
+              </button>
+              <button
+                onClick={() => changeTab('registrations')}
+                className={`flex-1 py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
+                  activeTab === 'registrations'
+                    ? 'bg-primary-500 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                👥 Registrace
+              </button>
+              <button
+                onClick={() => changeTab('statistics')}
+                className={`flex-1 py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
+                  activeTab === 'statistics'
+                    ? 'bg-primary-500 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                📊 Statistiky
+              </button>
+            </div>
+            {/* Secondary tabs (dropdown) */}
             <select
               value={activeTab}
               onChange={(e) => changeTab(e.target.value)}
-              className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg font-semibold text-gray-900 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+              className="w-full px-4 py-2.5 bg-white border-2 border-gray-200 rounded-lg font-semibold text-gray-700 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
             >
-              <option value="workshops">📋 Workshopy</option>
-              <option value="registrations">👥 Registrace</option>
-              <option value="statistics">📊 Statistiky</option>
+              <option value="" disabled>Další sekce...</option>
               <option value="newsletter">📧 Newsletter</option>
               <option value="email-templates">✉️ Email šablony</option>
               <option value="audit-log">📝 Audit Log</option>
@@ -1329,7 +1361,75 @@ export default function AdminPage() {
                   Zatím žádné workshopy
                 </div>
               ) : (
-                <div className="overflow-x-auto">
+                <>
+                  {/* Mobile Card View */}
+                  <div className="block md:hidden divide-y divide-gray-200">
+                    {(workshopTimeFilter === 'upcoming' ? getUpcomingWorkshops() :
+                      workshopTimeFilter === 'past' ? getPastWorkshops() :
+                      workshops).map((workshop) => {
+                        const fillPercentage = workshop.capacity ? (workshop.registrationCount / workshop.capacity) * 100 : 0
+                        return (
+                          <div key={workshop.id} className="p-4 hover:bg-gray-50">
+                            <div className="space-y-3">
+                              {/* Header - Datum a Místo */}
+                              <div>
+                                <div className="font-bold text-gray-900 text-base">{workshop.date}</div>
+                                <div className="text-sm text-gray-600 mt-1">{workshop.location}</div>
+                              </div>
+
+                              {/* Stats */}
+                              <div className="flex gap-4 text-sm">
+                                <div>
+                                  <span className="text-gray-500">Kapacita:</span>
+                                  <span className="ml-1 font-medium text-gray-900">{workshop.capacity || '-'}</span>
+                                </div>
+                                <div>
+                                  <span className="text-gray-500">Registrace:</span>
+                                  <span className={`ml-1 font-semibold ${
+                                    fillPercentage >= 100 ? 'text-red-600' :
+                                    fillPercentage > 50 ? 'text-yellow-600' :
+                                    'text-green-600'
+                                  }`}>
+                                    {workshop.registrationCount || 0} {workshop.capacity ? `/ ${workshop.capacity}` : ''}
+                                  </span>
+                                </div>
+                                <div>
+                                  <span className="text-gray-500">Cena:</span>
+                                  <span className="ml-1 font-medium text-gray-900">{workshop.price_single} Kč</span>
+                                </div>
+                              </div>
+
+                              {/* Actions */}
+                              <div className="flex gap-2 pt-2">
+                                <button
+                                  onClick={() => router.push(`/admin/workshop/${workshop.id}`)}
+                                  className="flex-1 px-3 py-2 bg-primary-50 text-primary-700 rounded-lg hover:bg-primary-100 transition-colors font-medium text-sm flex items-center justify-center gap-1"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                  Detail
+                                </button>
+                                <button
+                                  onClick={() => setEditingWorkshop(workshop)}
+                                  className="flex-1 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors font-medium text-sm flex items-center justify-center gap-1"
+                                >
+                                  <Edit2 className="w-4 h-4" />
+                                  Upravit
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteWorkshop(workshop.id)}
+                                  className="px-3 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors font-medium text-sm"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                  </div>
+
+                  {/* Desktop Table View */}
+                  <div className="hidden md:block overflow-x-auto scrollbar-thin">
                   <table className="w-full">
                     <thead className="bg-gray-50">
                       <tr>
@@ -1648,7 +1748,8 @@ export default function AdminPage() {
                       ))}
                     </tbody>
                   </table>
-                </div>
+                  </div>
+                </>
               )}
             </div>
           </div>
