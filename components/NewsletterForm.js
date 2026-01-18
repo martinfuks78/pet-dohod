@@ -58,13 +58,13 @@ export default function NewsletterForm() {
             placeholder="Váš email"
             required
             disabled={status === 'loading'}
-            className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none text-sm disabled:opacity-50"
+            className="w-full pl-10 pr-4 py-2 sm:py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none text-sm disabled:opacity-50"
           />
         </div>
         <button
           type="submit"
           disabled={status === 'loading'}
-          className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 sm:py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {status === 'loading' ? 'Odesílám...' : 'Odebírat'}
         </button>
