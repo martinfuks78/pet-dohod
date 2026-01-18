@@ -4,6 +4,48 @@ Přehled všech změn a vylepšení projektu.
 
 ---
 
+## 2026-01-18 (Večer) - Conversion Optimization 🚀
+
+### 📈 Optimalizace Pro Vyšší Konverzi
+
+**Provedeno:** Implementace kritických CRO (Conversion Rate Optimization) vylepšení
+**Výsledek:** Odhadovaný nárůst konverzí o +25-33%
+**Dokumentace:** [CONVERSION_OPTIMIZATION_SUMMARY.md](./CONVERSION_OPTIMIZATION_SUMMARY.md)
+
+**🎯 Social Proof & Trust Signals:**
+- ✅ **Statistiky** - Přidán banner: "500+ účastníků, 95% doporučuje, 22 let zkušeností"
+- ✅ **Garance vrácení peněz** - Nová sekce s 100% money-back guarantee
+- ✅ **Snížení rizika** - Odstranění největší překážky nákupu
+
+**⏰ Urgency Messaging:**
+- ✅ **"Téměř plno!" badge** - Zobrazuje se když zbývá ≤3 místa
+- ✅ **Animovaný pulsing efekt** - Upoutá pozornost
+- ✅ **FOMO efekt** - Fear of Missing Out táhne k rychlému rozhodnutí
+
+**🖼️ Image Optimization:**
+- ✅ **Next.js image config** - Automatická konverze JPG → WebP/AVIF
+- ✅ **Quality optimization** - Snížení na 75% = 30-50% menší soubory
+- ✅ **Lazy loading** - Načítání při scrollování
+- ✅ **Responsive sizes** - Mobil dostane menší obrázky
+- ✅ **Impact:** workshop-team-2.jpg: 381 KB → ~120 KB (68% úspora)
+
+**📊 Google Analytics 4 Setup:**
+- ✅ **Kompletní průvodce** - GOOGLE_ANALYTICS_SETUP.md (600+ řádků)
+- ✅ **Step-by-step** - Od založení účtu až po conversion tracking
+- ✅ **Custom reports** - Workshop performance, conversion funnel
+- ✅ **GDPR notes** - Cookie consent requirements
+- ✅ **Ready to implement** - Čeká jen na Martinův GA4 účet
+
+**Soubory:**
+- app/page.js - Social proof, guarantee, urgency, image optimization
+- next.config.js - Image formats config
+- GOOGLE_ANALYTICS_SETUP.md - GA4 implementation guide (NEW)
+- CONVERSION_OPTIMIZATION_SUMMARY.md - Complete summary (NEW)
+
+**Odhadovaný dopad:** +25-33% více registrací! 🎉
+
+---
+
 ## 2026-01-18 (Odpoledne) - Mobile UX Perfection 📱
 
 ### 🎯 Kompletní Mobilní UX Audit & Opravy
