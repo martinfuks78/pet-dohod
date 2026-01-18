@@ -40,7 +40,7 @@ export default function RegistrationModal({ isOpen, onClose, workshop }) {
                 </div>
                 <button
                   onClick={onClose}
-                  className="text-white hover:bg-white/20 rounded-lg p-2 transition-colors"
+                  className="text-white hover:bg-white/20 rounded-lg p-2.5 transition-colors"
                   aria-label="Zavřít"
                 >
                   <X className="w-6 h-6" />
