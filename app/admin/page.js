@@ -956,8 +956,24 @@ export default function AdminPage() {
             </button>
           </div>
 
-          {/* Tabs */}
-          <div className="flex gap-2 sm:gap-4 mt-6 border-b border-gray-200 overflow-x-auto pb-px -mb-px scrollbar-hide">
+          {/* Tabs - Mobile Dropdown */}
+          <div className="mt-6 md:hidden">
+            <select
+              value={activeTab}
+              onChange={(e) => changeTab(e.target.value)}
+              className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg font-semibold text-gray-900 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none"
+            >
+              <option value="workshops">📋 Workshopy</option>
+              <option value="registrations">👥 Registrace</option>
+              <option value="statistics">📊 Statistiky</option>
+              <option value="newsletter">📧 Newsletter</option>
+              <option value="email-templates">✉️ Email šablony</option>
+              <option value="audit-log">📝 Audit Log</option>
+            </select>
+          </div>
+
+          {/* Tabs - Desktop */}
+          <div className="hidden md:flex gap-2 sm:gap-4 mt-6 border-b border-gray-200 overflow-x-auto pb-px -mb-px scrollbar-thin">
             <button
               onClick={() => changeTab('workshops')}
               className={`pb-3 px-3 sm:px-4 font-semibold transition-colors whitespace-nowrap text-sm sm:text-base ${
