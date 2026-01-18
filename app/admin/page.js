@@ -684,6 +684,38 @@ export default function AdminPage() {
     }
   }, [authToken, isAuthenticated])
 
+  // Automaticky rozbalit první nadcházející workshop při načtení registrací
+  useEffect(() => {
+    if (registrations.length > 0 && workshops.length > 0) {
+      const grouped = getGroupedRegistrations()
+      const workshopKeys = Object.keys(grouped)
+
+      if (workshopKeys.length > 0) {
+        // Najít první nadcházející workshop
+        const now = new Date()
+        const upcomingWorkshops = workshopKeys
+          .map(key => {
+            const group = grouped[key]
+            // Najít odpovídající workshop z workshops array
+            const workshop = workshops.find(w =>
+              w.date === group.date && w.location === group.location
+            )
+            return { key, workshop, group }
+          })
+          .filter(({ workshop }) => workshop && new Date(workshop.start_date) >= now)
+          .sort((a, b) => new Date(a.workshop.start_date) - new Date(b.workshop.start_date))
+
+        // Rozbalit první nadcházející workshop
+        if (upcomingWorkshops.length > 0) {
+          setExpandedWorkshops(new Set([upcomingWorkshops[0].key]))
+        } else {
+          // Pokud nejsou žádné nadcházející, rozbalit první v seznamu
+          setExpandedWorkshops(new Set([workshopKeys[0]]))
+        }
+      }
+    }
+  }, [registrations, workshops])
+
   // Zavřít dropdown menu při kliknutí mimo
   useEffect(() => {
     const handleClickOutside = (event) => {
