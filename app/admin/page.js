@@ -995,7 +995,7 @@ export default function AdminPage() {
           <div className="mt-6 md:hidden grid grid-cols-2 gap-2">
             <button
               onClick={() => changeTab('workshops')}
-              className={`py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
+              className={`py-3 px-4 rounded-lg font-semibold text-sm transition-colors ${
                 activeTab === 'workshops'
                   ? 'bg-primary-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -1005,7 +1005,7 @@ export default function AdminPage() {
             </button>
             <button
               onClick={() => changeTab('registrations')}
-              className={`py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
+              className={`py-3 px-4 rounded-lg font-semibold text-sm transition-colors ${
                 activeTab === 'registrations'
                   ? 'bg-primary-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -1015,7 +1015,7 @@ export default function AdminPage() {
             </button>
             <button
               onClick={() => changeTab('statistics')}
-              className={`py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
+              className={`py-3 px-4 rounded-lg font-semibold text-sm transition-colors ${
                 activeTab === 'statistics'
                   ? 'bg-primary-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -1025,7 +1025,7 @@ export default function AdminPage() {
             </button>
             <button
               onClick={() => changeTab('newsletter')}
-              className={`py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
+              className={`py-3 px-4 rounded-lg font-semibold text-sm transition-colors ${
                 activeTab === 'newsletter'
                   ? 'bg-primary-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -1035,7 +1035,7 @@ export default function AdminPage() {
             </button>
             <button
               onClick={() => changeTab('email-templates')}
-              className={`py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
+              className={`py-3 px-4 rounded-lg font-semibold text-sm transition-colors ${
                 activeTab === 'email-templates'
                   ? 'bg-primary-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -1045,7 +1045,7 @@ export default function AdminPage() {
             </button>
             <button
               onClick={() => changeTab('audit-log')}
-              className={`py-2.5 px-3 rounded-lg font-semibold text-sm transition-colors ${
+              className={`py-3 px-4 rounded-lg font-semibold text-sm transition-colors ${
                 activeTab === 'audit-log'
                   ? 'bg-primary-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
