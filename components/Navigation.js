@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Menu, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -38,7 +37,7 @@ export default function Navigation() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center hover:opacity-80 transition-opacity"
+            className="font-serif text-2xl font-bold text-gray-900 hover:text-primary-600 transition-colors tracking-wide"
             onClick={() => {
               setIsOpen(false)
               // Clear saved scroll position and scroll to top when logo is clicked
@@ -46,14 +45,7 @@ export default function Navigation() {
               window.scrollTo(0, 0)
             }}
           >
-            <Image
-              src="/logo.png"
-              alt="Pět dohod - Čtyři dohody a Pátá dohoda"
-              width={160}
-              height={160}
-              priority
-              className="h-12 w-auto"
-            />
+            Pět dohod
           </Link>
 
           {/* Desktop Navigation */}

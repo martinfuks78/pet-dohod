@@ -106,7 +106,7 @@ export default function Home() {
       />
       <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-earth-50 via-white to-sage-50 px-4 overflow-hidden">
+      <section className="relative min-h-[90vh] lg:min-h-screen flex items-center justify-center bg-gradient-to-br from-earth-50 via-white to-sage-50 px-4 py-12 lg:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-[url('/patterns/subtle-grid.svg')] opacity-5"></div>
 
         <div className="max-w-7xl mx-auto w-full relative z-10">
@@ -119,7 +119,7 @@ export default function Home() {
               className="hidden lg:block relative"
               style={{ transformOrigin: 'center right' }}
             >
-              <div className="relative w-48 xl:w-56 transform hover:scale-105 transition-transform duration-300">
+              <div className="relative w-40 xl:w-48 transform hover:scale-105 transition-transform duration-300">
                 <div className="relative aspect-[2/3] rounded-lg shadow-xl overflow-hidden">
                   <Image
                     src="/ctyri-dohody.jpg"
@@ -141,17 +141,25 @@ export default function Home() {
               transition={{ duration: 0.8 }}
               className="max-w-4xl mx-auto text-center"
             >
+              {/* Grafické logo */}
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="inline-block px-4 py-2 bg-primary-100 rounded-full text-primary-800 text-sm font-medium mb-8"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8 }}
+                className="mb-8"
               >
-                Workshop pro osobní svobodu
+                <Image
+                  src="/logo.png"
+                  alt="Pět dohod - Čtyři dohody a Pátá dohoda"
+                  width={800}
+                  height={800}
+                  priority
+                  className="w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto h-auto"
+                />
               </motion.div>
 
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-gray-900 mb-6 leading-tight">
-                Pět dohod
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-gray-900 mb-6 leading-tight">
+                Pět dohod: Čtyři dohody a Pátá dohoda
               </h1>
 
               <p className="text-lg sm:text-xl md:text-2xl text-gray-600 mb-6 max-w-2xl mx-auto font-semibold">
@@ -159,7 +167,7 @@ export default function Home() {
               </p>
 
               <div className="text-base sm:text-lg text-gray-600 mb-8 max-w-2xl mx-auto space-y-2">
-                <p>Praktické workshopy podle knih Čtyři dohody a Pátá dohoda, inspirované divadelním představením.</p>
+                <p>Praktické workshopy podle knih a představení Čtyři dohody a Pátá dohoda.</p>
                 <p className="font-medium">Bez omáčky. Bez ezoteriky. S reálnou změnou v každodenním životě.</p>
               </div>
 
@@ -208,7 +216,7 @@ export default function Home() {
               className="hidden lg:block relative"
               style={{ transformOrigin: 'center left' }}
             >
-              <div className="relative w-48 xl:w-56 transform hover:scale-105 transition-transform duration-300">
+              <div className="relative w-40 xl:w-48 transform hover:scale-105 transition-transform duration-300">
                 <div className="relative aspect-[2/3] rounded-lg shadow-xl overflow-hidden">
                   <Image
                     src="/pata-dohoda.jpg"
