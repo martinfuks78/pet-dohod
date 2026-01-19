@@ -154,13 +154,14 @@ export default function Home() {
                 Pět dohod
               </h1>
 
-              <p className="text-lg sm:text-xl md:text-2xl text-gray-600 mb-4 max-w-2xl mx-auto">
-                Naučte se žít bez zbytečných strachů a utrpení.
+              <p className="text-lg sm:text-xl md:text-2xl text-gray-600 mb-6 max-w-2xl mx-auto font-semibold">
+                Jak přestat zbytečně trpět a začít naplno žít
               </p>
 
-              <p className="text-base sm:text-lg md:text-xl text-gray-500 mb-12 max-w-2xl mx-auto">
-                Workshopy založené na moudrosti kních Čtyři dohody a Pátá dohoda.
-              </p>
+              <div className="text-base sm:text-lg text-gray-600 mb-8 max-w-2xl mx-auto space-y-2">
+                <p>Praktické workshopy podle knih Čtyři dohody a Pátá dohoda, inspirované divadelním představením.</p>
+                <p className="font-medium">Bez omáčky. Bez ezoteriky. S reálnou změnou v každodenním životě.</p>
+              </div>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
@@ -186,7 +187,7 @@ export default function Home() {
               >
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
-                  <span>2 dny</span>
+                  <span>1 - 5 dní</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4" />
@@ -247,11 +248,10 @@ export default function Home() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
-              Co je Pět dohod?
+              Co je PĚT DOHOD?
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Pět jednoduchých principů, které mění život.<br />
-              Nejde o teorii - jde o to se naučit dohody žít a přestat zbytečně trpět.
+              Pět jednoduchých principů, které mění život.
             </p>
           </motion.div>
 
@@ -269,7 +269,7 @@ export default function Home() {
           >
             <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
               Každá dohoda je jednoduchá. Ale dát ji do praxe? To chce trénink a zkušenost.<br />
-              Přesně to dostanete na workshopu.
+              Přesně to získáte na našich workshopech.
             </p>
           </motion.div>
         </div>
@@ -847,7 +847,7 @@ const agreements = [
   {
     title: 'Nehřešte slovem',
     subtitle: 'Miřte slovy přesně',
-    description: 'Slova mají sílu. Mohou tvořit nebo škodit. Naučte se vyjadřovat správně a přesně.'
+    description: 'Slova mají sílu. Mohou tvořit nebo bořit. Naučte se vyjadřovat, abyste nezraňovali sebe ani druhé.'
   },
   {
     title: 'Neberte si nic osobně',
@@ -863,7 +863,7 @@ const agreements = [
   },
   {
     title: 'Buďte skeptičtí, ale naslouchejte',
-    description: 'Nevěřte všemu, co slyšíte. Ani tomu, co říkáte sami sobě. Začněte naslouchat.'
+    description: 'Nevěřte všemu, co slyšíte. Ani tomu, co říkáte sami sobě. Učte se naslouchat.'
   },
 ]
 
@@ -874,15 +874,15 @@ const reasons = [
   },
   {
     title: 'Dostanete konkrétní kroky',
-    description: 'Žádná teorie naoko. Každá dohoda dostane jasný postup - co s ní dělat hned druhý den po workshopu. Pracujeme s reálnými příklady z Vašeho života.'
+    description: 'Žádná teorie o ideálních situacích. Získáte jasný postup a co dělat hned druhý den po workshopu. Pracujeme s reálnými příklady z Vašeho života.'
   },
   {
     title: 'Změníte vztahy',
-    description: 'S partnerem, dětmi, rodiči, kolegy. Když změníte sebe, změní se i to, jak komunikujete. A tím se změní všechno okolo.'
+    description: 'S partnerem, dětmi, rodiči nebo kolegy. Přestanete narážet na stejné konflikty pořád dokola. Když změníte to, jak komunikujete, změní se všechno ostatní.'
   },
   {
-    title: 'Zažijete AHA momenty',
-    description: 'Ty momenty, kdy Vám dojde, proč děláte to, co děláte. A jak to změnit. Abyste se konečně posunuli dál.'
+    title: 'Zažijete hluboké AHA momenty',
+    description: 'Momenty, kdy Vám dojde, proč děláte to, co děláte. A pochopíte, jak to změnit. Abyste se konečně posunuli dál.'
   },
 ]
 
