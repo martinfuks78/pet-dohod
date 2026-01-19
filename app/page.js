@@ -146,7 +146,7 @@ export default function Home() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8 }}
-                className="mb-8"
+                className="-mt-6 mb-3"
               >
                 <Image
                   src="/logo.png"
@@ -163,7 +163,7 @@ export default function Home() {
                 Pět dohod - Čtyři dohody a Pátá dohoda - Workshopy pro osobní svobodu
               </h1>
 
-              <p className="text-lg sm:text-xl md:text-2xl text-gray-600 mb-6 max-w-2xl mx-auto font-semibold">
+              <p className="text-xl sm:text-2xl md:text-3xl text-gray-900 mb-5 max-w-2xl mx-auto font-bold leading-tight">
                 Jak přestat zbytečně trpět a začít naplno žít
               </p>
 
