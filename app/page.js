@@ -1211,17 +1211,11 @@ function VideoPlayer() {
       viewport={{ once: true }}
       className="mb-12"
     >
-      <div className="bg-white rounded-2xl p-6 md:p-8 shadow-lg">
-        <div className="mb-6">
-          <h3 className="text-2xl font-serif font-bold text-gray-900">
-            Ukázka z workshopu ČTYŘI DOHODY pro agenturu (ant)
-          </h3>
-        </div>
-        <div
-          className="relative aspect-video rounded-xl overflow-hidden bg-gray-900 shadow-xl group"
-          onMouseEnter={() => setShowControls(true)}
-          onMouseLeave={() => setShowControls(false)}
-        >
+      <div
+        className="relative aspect-video rounded-xl overflow-hidden bg-gray-900 shadow-xl group"
+        onMouseEnter={() => setShowControls(true)}
+        onMouseLeave={() => setShowControls(false)}
+      >
           <video
             ref={videoRef}
             loop
@@ -1325,7 +1319,6 @@ function VideoPlayer() {
               </div>
             </div>
           )}
-        </div>
       </div>
     </motion.div>
   )
