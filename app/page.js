@@ -146,7 +146,7 @@ export default function Home() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8 }}
-                className="-mt-6 mb-3"
+                className="mb-0 -mb-8"
               >
                 <Image
                   src="/logo.png"
@@ -163,14 +163,13 @@ export default function Home() {
                 Pět dohod - Čtyři dohody a Pátá dohoda - Workshopy pro osobní svobodu
               </h1>
 
-              <p className="text-xl sm:text-2xl md:text-3xl text-gray-900 mb-5 max-w-2xl mx-auto font-bold leading-tight">
-                Jak přestat zbytečně trpět a začít naplno žít
+              <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-700 mb-3 max-w-3xl mx-auto font-bold leading-tight">
+                Jak se změnit a přestat zbytečně trpět
               </p>
 
-              <div className="text-base sm:text-lg text-gray-600 mb-8 max-w-2xl mx-auto space-y-2">
-                <p>Praktické workshopy podle knih a představení Čtyři dohody a Pátá dohoda.</p>
-                <p className="font-medium">Bez omáčky. Bez ezoteriky. S reálnou změnou v každodenním životě.</p>
-              </div>
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+                Praktické workshopy podle knih i představení Čtyři dohody a Pátá dohoda.
+              </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
