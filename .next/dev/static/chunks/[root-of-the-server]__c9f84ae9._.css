@@ -855,6 +855,10 @@
     margin-top: calc(var(--spacing) * 16);
   }
 
+  .mt-20 {
+    margin-top: calc(var(--spacing) * 20);
+  }
+
   .mr-2 {
     margin-right: calc(var(--spacing) * 2);
   }
@@ -1164,6 +1168,10 @@
 
   .max-w-\[242px\] {
     max-width: 242px;
+  }
+
+  .max-w-\[290px\] {
+    max-width: 290px;
   }
 
   .max-w-md {
@@ -2930,6 +2938,18 @@
   @media (min-width: 48rem) {
     .md\:col-span-2 {
       grid-column: span 2 / span 2;
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .md\:mt-14 {
+      margin-top: calc(var(--spacing) * 14);
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .md\:mt-16 {
+      margin-top: calc(var(--spacing) * 16);
     }
   }
 

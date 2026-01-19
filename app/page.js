@@ -154,7 +154,7 @@ export default function Home() {
                   width={800}
                   height={600}
                   priority
-                  className="w-full max-w-[242px] sm:max-w-[290px] md:max-w-[339px] lg:max-w-[387px] mx-auto h-auto"
+                  className="w-full max-w-[290px] sm:max-w-[290px] md:max-w-[339px] lg:max-w-[387px] mx-auto h-auto"
                 />
               </motion.div>
 
@@ -163,11 +163,11 @@ export default function Home() {
                 Pět dohod - Čtyři dohody a Pátá dohoda - Workshopy pro osobní svobodu
               </h1>
 
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700 font-semibold mb-3 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-lg sm:text-lg md:text-xl lg:text-2xl text-gray-700 font-semibold mb-3 max-w-3xl mx-auto leading-relaxed">
                 Praktické workshopy podle knih Čtyři dohody a Pátá dohoda.
               </p>
 
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-lg sm:text-base md:text-lg lg:text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
                 Přestaňte zbytečně trpět a začněte naplno žít.
               </p>
 
@@ -191,17 +191,17 @@ export default function Home() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6 }}
-                className="mt-16 flex items-center justify-center gap-8 text-sm text-gray-500"
+                className="mt-16 md:mt-14 flex items-center justify-center gap-8 text-sm text-gray-500"
               >
-                <div className="flex items-center gap-2">
+                <div className="hidden md:flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
                   <span>1 - 5 dní</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="hidden md:flex items-center gap-2">
                   <Users className="w-4 h-4" />
                   <span>Malé skupiny</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="hidden md:flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4" />
                   <span>Praxe, ne teorie</span>
                 </div>
