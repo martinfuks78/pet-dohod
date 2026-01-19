@@ -158,8 +158,9 @@ export default function Home() {
                 />
               </motion.div>
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-gray-900 mb-6 leading-tight">
-                Pět dohod: Čtyři dohody a Pátá dohoda
+              {/* H1 skryté vizuálně, ale viditelné pro SEO a accessibility */}
+              <h1 className="sr-only">
+                Pět dohod - Čtyři dohody a Pátá dohoda - Workshopy pro osobní svobodu
               </h1>
 
               <p className="text-lg sm:text-xl md:text-2xl text-gray-600 mb-6 max-w-2xl mx-auto font-semibold">
