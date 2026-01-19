@@ -146,7 +146,7 @@ export default function Home() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8 }}
-                className="mb-0 -mb-8"
+                className="mb-0 -mb-10"
               >
                 <Image
                   src="/logo.png"
@@ -163,11 +163,11 @@ export default function Home() {
                 Pět dohod - Čtyři dohody a Pátá dohoda - Workshopy pro osobní svobodu
               </h1>
 
-              <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-700 mb-3 max-w-3xl mx-auto font-bold leading-tight">
+              <p className="text-xl sm:text-2xl md:text-3xl text-gray-700 mb-2 mx-auto font-bold">
                 Jak se změnit a přestat zbytečně trpět
               </p>
 
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-6 mx-auto">
                 Praktické workshopy podle knih i představení Čtyři dohody a Pátá dohoda.
               </p>
 
@@ -181,7 +181,7 @@ export default function Home() {
                 </Link>
                 <Link
                   href="#dohody"
-                  className="px-8 py-4 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-200 border-2 border-gray-200"
+                  className="px-8 py-4 bg-white text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-200 border-2 border-gray-200"
                 >
                   Co jsou dohody?
                 </Link>
@@ -255,7 +255,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-700 mb-6">
               Co je PĚT DOHOD?
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
@@ -292,7 +292,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-700 mb-6">
               Proč se zúčastnit?
             </h2>
           </motion.div>
@@ -312,7 +312,7 @@ export default function Home() {
                     <CheckCircle2 className="w-6 h-6 text-primary-600" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-serif font-semibold text-gray-900 mb-2">
+                    <h3 className="text-xl font-serif font-semibold text-gray-700 mb-2">
                       {reason.title}
                     </h3>
                     <p className="text-gray-600">
@@ -335,7 +335,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-700 mb-6">
               Nadcházející termíny
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -405,7 +405,7 @@ export default function Home() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-500 rounded-full mb-6">
               <Building2 className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-700 mb-6">
               Firemní workshop nebo teambuilding
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -419,7 +419,7 @@ export default function Home() {
           <div className="bg-white rounded-2xl p-8 md:p-12 shadow-lg">
             <div className="grid md:grid-cols-2 gap-12">
               <div>
-                <h3 className="text-2xl font-serif font-semibold text-gray-900 mb-6">
+                <h3 className="text-2xl font-serif font-semibold text-gray-700 mb-6">
                   Co získáte
                 </h3>
                 <ul className="space-y-4">
@@ -432,7 +432,7 @@ export default function Home() {
                 </ul>
               </div>
               <div>
-                <h3 className="text-2xl font-serif font-semibold text-gray-900 mb-6">
+                <h3 className="text-2xl font-serif font-semibold text-gray-700 mb-6">
                   Jak to funguje
                 </h3>
                 <div className="space-y-6">
@@ -441,7 +441,7 @@ export default function Home() {
                       <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
                         1
                       </div>
-                      <h4 className="font-semibold text-gray-900">Úvodní konzultace</h4>
+                      <h4 className="font-semibold text-gray-700">Úvodní konzultace</h4>
                     </div>
                     <p className="text-gray-600 ml-11">
                       Probereme, co potřebuje váš tým a upravíme workshop přesně na míru.
@@ -452,7 +452,7 @@ export default function Home() {
                       <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
                         2
                       </div>
-                      <h4 className="font-semibold text-gray-900">Workshop nebo teambuilding</h4>
+                      <h4 className="font-semibold text-gray-700">Workshop nebo teambuilding</h4>
                     </div>
                     <p className="text-gray-600 ml-11">
                       Akce Pět dohod plných intenzivní práce, praktických cvičení a AHA momentů.
@@ -463,7 +463,7 @@ export default function Home() {
                       <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
                         3
                       </div>
-                      <h4 className="font-semibold text-gray-900">Follow-up</h4>
+                      <h4 className="font-semibold text-gray-700">Follow-up</h4>
                     </div>
                     <p className="text-gray-600 ml-11">
                       Následná podpora, aby se změny skutečně propsaly do praxe.
@@ -497,7 +497,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-700 mb-6">
               Kdo stojí za workshopem
             </h2>
           </motion.div>
@@ -555,7 +555,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-700 mb-6">
               Co říkají účastníci
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
@@ -593,7 +593,7 @@ export default function Home() {
                     {testimonial.name.charAt(0)}
                   </div>
                   <div>
-                    <div className="font-semibold text-gray-900">{testimonial.name}</div>
+                    <div className="font-semibold text-gray-700">{testimonial.name}</div>
                     <div className="text-sm text-gray-500">{testimonial.role}</div>
                   </div>
                 </div>
@@ -673,7 +673,7 @@ export default function Home() {
               <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-500 rounded-full mb-6">
                 <CheckCircle2 className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-3xl font-serif font-bold text-gray-900 mb-4">
+              <h3 className="text-3xl font-serif font-bold text-gray-700 mb-4">
                 100% Garance spokojenosti
               </h3>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
@@ -696,7 +696,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-700 mb-6">
               Časté otázky
             </h2>
           </motion.div>
@@ -711,7 +711,7 @@ export default function Home() {
                 transition={{ delay: index * 0.1 }}
                 className="bg-white rounded-xl p-6 shadow-sm"
               >
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                <h3 className="text-lg font-semibold text-gray-700 mb-3">
                   {faq.question}
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
@@ -753,7 +753,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-700 mb-6">
               Máš otázku?
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -833,7 +833,7 @@ function AgreementCard({ agreement, index }) {
           {index + 1}
         </div>
         <div>
-          <h3 className="text-lg sm:text-xl font-serif font-semibold text-gray-900">
+          <h3 className="text-lg sm:text-xl font-serif font-semibold text-gray-700">
             {agreement.title}
           </h3>
           {agreement.subtitle && (
@@ -982,7 +982,7 @@ function WorkshopCard({ workshop, index, onRegister }) {
           <div className="inline-block px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold mb-3">
             {workshop.location}
           </div>
-          <div className="text-2xl font-serif font-bold text-gray-900 mb-2">
+          <div className="text-2xl font-serif font-bold text-gray-700 mb-2">
             {workshop.date}
           </div>
         </div>
@@ -1005,7 +1005,7 @@ function WorkshopCard({ workshop, index, onRegister }) {
       <div className="space-y-3 mb-6">
         <div className="flex justify-between items-center">
           <span className="text-gray-600">Cena:</span>
-          <span className="text-xl font-bold text-gray-900">{workshop.price}</span>
+          <span className="text-xl font-bold text-gray-700">{workshop.price}</span>
         </div>
       </div>
 
@@ -1033,13 +1033,13 @@ function WorkshopCard({ workshop, index, onRegister }) {
             <div className="space-y-4 pt-2 pb-4 border-t border-gray-200">
               {workshop.program && (
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Program</h4>
+                  <h4 className="font-semibold text-gray-700 mb-2">Program</h4>
                   <p className="text-gray-600 text-sm whitespace-pre-line break-words">{workshop.program}</p>
                 </div>
               )}
               {workshop.address && (
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Adresa</h4>
+                  <h4 className="font-semibold text-gray-700 mb-2">Adresa</h4>
                   <p className="text-gray-600 text-sm whitespace-pre-line break-words">
                     {workshop.address.split('\n').map((line, i) => {
                       // Detekce URL v textu
@@ -1073,13 +1073,13 @@ function WorkshopCard({ workshop, index, onRegister }) {
               )}
               {workshop.whatToBring && (
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Co si vzít s sebou</h4>
+                  <h4 className="font-semibold text-gray-700 mb-2">Co si vzít s sebou</h4>
                   <p className="text-gray-600 text-sm whitespace-pre-line break-words">{workshop.whatToBring}</p>
                 </div>
               )}
               {workshop.instructorInfo && (
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Lektor</h4>
+                  <h4 className="font-semibold text-gray-700 mb-2">Lektor</h4>
                   <p className="text-gray-600 text-sm whitespace-pre-line break-words">{workshop.instructorInfo}</p>
                 </div>
               )}
@@ -1321,7 +1321,7 @@ function VideoPlayer() {
               onClick={togglePlayPause}
             >
               <div className="w-20 h-20 bg-white/90 hover:bg-white rounded-full flex items-center justify-center transition-all transform hover:scale-110">
-                <svg className="w-10 h-10 text-gray-900 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-10 h-10 text-gray-700 ml-1" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z"/>
                 </svg>
               </div>
