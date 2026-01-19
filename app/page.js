@@ -116,10 +116,10 @@ export default function Home() {
               initial={{ opacity: 0, x: -50, rotate: 0 }}
               animate={{ opacity: 1, x: 0, rotate: -8 }}
               transition={{ duration: 1, delay: 0.3 }}
-              className="hidden lg:block relative"
+              className="hidden lg:block relative translate-y-16"
               style={{ transformOrigin: 'center right' }}
             >
-              <div className="relative w-40 xl:w-48 transform hover:scale-105 transition-transform duration-300">
+              <div className="relative w-44 xl:w-[13.2rem] transform hover:scale-105 transition-transform duration-300">
                 <div className="relative aspect-[2/3] rounded-lg shadow-xl overflow-hidden">
                   <Image
                     src="/ctyri-dohody.jpg"
@@ -146,34 +146,29 @@ export default function Home() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8 }}
-                className="mb-6"
+                className="mb-8"
               >
                 <Image
-                  src="/logo-book-only.png"
-                  alt="Kniha s pěti pírky - symbol Pěti dohod"
+                  src="/logo.png"
+                  alt="Logo Pět dohod - workshopy podle knih Čtyři dohody a Pátá dohoda"
                   width={800}
                   height={600}
                   priority
-                  className="w-full max-w-[200px] sm:max-w-[240px] md:max-w-[280px] lg:max-w-[320px] mx-auto h-auto"
+                  className="w-full max-w-[242px] sm:max-w-[290px] md:max-w-[339px] lg:max-w-[387px] mx-auto h-auto"
                 />
               </motion.div>
 
-              {/* Viditelný H1 s textovým logem */}
-              <h1 className="font-serif text-center mb-6">
-                <span className="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-700 uppercase tracking-wide">
-                  Pět dohod
-                </span>
-                <span className="block text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 mt-2">
-                  Čtyři dohody a Pátá dohoda
-                </span>
+              {/* Neviditelný H1 pro SEO */}
+              <h1 className="sr-only">
+                Pět dohod - Čtyři dohody a Pátá dohoda - Workshopy pro osobní svobodu
               </h1>
 
-              <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-700 mb-4 mx-auto font-bold leading-tight">
-                Jak se změnit a přestat zbytečně trpět
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700 font-semibold mb-3 max-w-3xl mx-auto leading-relaxed">
+                Praktické workshopy podle knih Čtyři dohody a Pátá dohoda.
               </p>
 
-              <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
-                Praktické workshopy podle knih i představení Čtyři dohody a Pátá dohoda.
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+                Přestaňte zbytečně trpět a začněte naplno žít.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -218,10 +213,10 @@ export default function Home() {
               initial={{ opacity: 0, x: 50, rotate: 0 }}
               animate={{ opacity: 1, x: 0, rotate: 8 }}
               transition={{ duration: 1, delay: 0.3 }}
-              className="hidden lg:block relative"
+              className="hidden lg:block relative translate-y-16"
               style={{ transformOrigin: 'center left' }}
             >
-              <div className="relative w-40 xl:w-48 transform hover:scale-105 transition-transform duration-300">
+              <div className="relative w-44 xl:w-[13.2rem] transform hover:scale-105 transition-transform duration-300">
                 <div className="relative aspect-[2/3] rounded-lg shadow-xl overflow-hidden">
                   <Image
                     src="/pata-dohoda.jpg"
@@ -245,9 +240,18 @@ export default function Home() {
           transition={{ delay: 1, repeat: Infinity, duration: 2 }}
           className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
         >
-          <div className="w-6 h-10 border-2 border-gray-300 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-gray-400 rounded-full mt-2 animate-bounce"></div>
-          </div>
+          <Link
+            href="#dohody"
+            className="block cursor-pointer hover:scale-110 transition-transform"
+            onClick={(e) => {
+              e.preventDefault()
+              document.getElementById('dohody')?.scrollIntoView({ behavior: 'smooth' })
+            }}
+          >
+            <div className="w-6 h-10 border-2 border-gray-300 rounded-full flex justify-center">
+              <div className="w-1 h-3 bg-gray-400 rounded-full mt-2 animate-bounce"></div>
+            </div>
+          </Link>
         </motion.div>
       </section>
 
