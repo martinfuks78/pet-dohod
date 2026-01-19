@@ -1,10 +1,4 @@
 {
-  "/api/auth/login/route": "app/api/auth/login/route.js",
-  "/api/newsletter/route": "app/api/newsletter/route.js",
-  "/api/register/route": "app/api/register/route.js",
-  "/api/registration-lookup/route": "app/api/registration-lookup/route.js",
   "/api/workshops/route": "app/api/workshops/route.js",
-  "/page": "app/page.js",
-  "/robots.txt/route": "app/robots.txt/route.js",
-  "/sitemap.xml/route": "app/sitemap.xml/route.js"
+  "/page": "app/page.js"
 }

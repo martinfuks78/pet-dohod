@@ -149,25 +149,30 @@ export default function Home() {
                 className="mb-6"
               >
                 <Image
-                  src="/logo.png"
-                  alt="Pět dohod - Čtyři dohody a Pátá dohoda"
+                  src="/logo-book-only.png"
+                  alt="Kniha s pěti pírky - symbol Pěti dohod"
                   width={800}
                   height={600}
                   priority
-                  className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl mx-auto h-auto"
+                  className="w-full max-w-[200px] sm:max-w-[240px] md:max-w-[280px] lg:max-w-[320px] mx-auto h-auto"
                 />
               </motion.div>
 
-              {/* H1 skryté vizuálně, ale viditelné pro SEO a accessibility */}
-              <h1 className="sr-only">
-                Pět dohod - Čtyři dohody a Pátá dohoda - Workshopy pro osobní svobodu
+              {/* Viditelný H1 s textovým logem */}
+              <h1 className="font-serif text-center mb-6">
+                <span className="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-700 uppercase tracking-wide">
+                  Pět dohod
+                </span>
+                <span className="block text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 mt-2">
+                  Čtyři dohody a Pátá dohoda
+                </span>
               </h1>
 
-              <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-700 mb-4 mx-auto font-bold leading-tight">
+              <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-700 mb-4 mx-auto font-bold leading-tight">
                 Jak se změnit a přestat zbytečně trpět
               </p>
 
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
+              <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
                 Praktické workshopy podle knih i představení Čtyři dohody a Pátá dohoda.
               </p>
 

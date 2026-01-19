@@ -1,3 +1,4 @@
+;!function(){try { var e="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof global?global:"undefined"!=typeof window?window:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&((e._debugIds|| (e._debugIds={}))[n]="65f78db9-1cd9-2303-6c16-60f2a1dcf33a")}catch(e){}}();
 module.exports = [
 "[next]/internal/font/google/inter_a869fe2d.module.css [app-rsc] (css module)", ((__turbopack_context__) => {
 
@@ -131,4 +132,5 @@ module.exports = __turbopack_context__.r("[project]/node_modules/next/dist/serve
 }),
 ];
 
+//# debugId=65f78db9-1cd9-2303-6c16-60f2a1dcf33a
 //# sourceMappingURL=%5Broot-of-the-server%5D__b4f359f3._.js.map
