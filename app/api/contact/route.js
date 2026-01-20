@@ -26,7 +26,6 @@ export async function POST(request) {
       // Bez JS: redirect s error parametrem (303 See Other)
       if (!contentType?.includes('application/json')) {
         const redirectUrl = new URL('/', request.url)
-        redirectUrl.hash = 'kontakt'
         redirectUrl.searchParams.set('contact', 'error')
         return Response.redirect(redirectUrl.toString(), 303)
       }
@@ -42,7 +41,6 @@ export async function POST(request) {
       // Bez JS: redirect s error parametrem (303 See Other)
       if (!contentType?.includes('application/json')) {
         const redirectUrl = new URL('/', request.url)
-        redirectUrl.hash = 'kontakt'
         redirectUrl.searchParams.set('contact', 'error')
         return Response.redirect(redirectUrl.toString(), 303)
       }
@@ -54,15 +52,13 @@ export async function POST(request) {
 
     // Odeslání emailu (pokud je RESEND_API_KEY nastavený)
     if (process.env.RESEND_API_KEY) {
-      try {
-        await sendContactEmail(data)
-        console.log('Contact email sent successfully')
-      } catch (emailError) {
-        console.error('Contact email send failed:', emailError)
+      const emailResult = await sendContactEmail(data)
+
+      if (!emailResult.success) {
+        console.error('Contact email send failed:', emailResult.error)
         // Bez JS: redirect s error parametrem (303 See Other)
         if (!contentType?.includes('application/json')) {
           const redirectUrl = new URL('/', request.url)
-          redirectUrl.hash = 'kontakt'
           redirectUrl.searchParams.set('contact', 'error')
           return Response.redirect(redirectUrl.toString(), 303)
         }
@@ -71,13 +67,16 @@ export async function POST(request) {
           { status: 500 }
         )
       }
+
+      console.log('Contact email sent successfully')
+    } else {
+      console.warn('⚠️  RESEND_API_KEY not set, skipping contact email send')
     }
 
     // Úspěch!
     // Bez JS: redirect s success parametrem (303 See Other)
     if (!contentType?.includes('application/json')) {
       const redirectUrl = new URL('/', request.url)
-      redirectUrl.hash = 'kontakt'
       redirectUrl.searchParams.set('contact', 'success')
       return Response.redirect(redirectUrl.toString(), 303)
     }
@@ -92,7 +91,6 @@ export async function POST(request) {
     const contentType = request.headers.get('content-type')
     if (!contentType?.includes('application/json')) {
       const redirectUrl = new URL('/', request.url)
-      redirectUrl.hash = 'kontakt'
       redirectUrl.searchParams.set('contact', 'error')
       return Response.redirect(redirectUrl.toString(), 303)
     }

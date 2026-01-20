@@ -155,8 +155,8 @@ export async function POST(request) {
       // Bez JS: redirect s error parametrem (303 See Other)
       if (!contentType?.includes('application/json')) {
         const redirectUrl = new URL('/', request.url)
-        redirectUrl.hash = 'workshopy'
         redirectUrl.searchParams.set('registration', 'error')
+        redirectUrl.searchParams.set('workshop', data.workshopId)
         redirectUrl.searchParams.set('message', 'Vyplň prosím všechna povinná pole')
         return Response.redirect(redirectUrl.toString(), 303)
       }
@@ -172,8 +172,8 @@ export async function POST(request) {
       // Bez JS: redirect s error parametrem (303 See Other)
       if (!contentType?.includes('application/json')) {
         const redirectUrl = new URL('/', request.url)
-        redirectUrl.hash = 'workshopy'
         redirectUrl.searchParams.set('registration', 'error')
+        redirectUrl.searchParams.set('workshop', data.workshopId)
         redirectUrl.searchParams.set('message', 'Zadej platný email')
         return Response.redirect(redirectUrl.toString(), 303)
       }
@@ -197,8 +197,8 @@ export async function POST(request) {
       // Bez JS: redirect s error parametrem (303 See Other)
       if (!contentType?.includes('application/json')) {
         const redirectUrl = new URL('/', request.url)
-        redirectUrl.hash = 'workshopy'
         redirectUrl.searchParams.set('registration', 'error')
+        redirectUrl.searchParams.set('workshop', data.workshopId)
         redirectUrl.searchParams.set('message', 'Už jsi zaregistrován/a na tento workshop')
         return Response.redirect(redirectUrl.toString(), 303)
       }
@@ -222,8 +222,8 @@ export async function POST(request) {
       // Bez JS: redirect s error parametrem (303 See Other)
       if (!contentType?.includes('application/json')) {
         const redirectUrl = new URL('/', request.url)
-        redirectUrl.hash = 'workshopy'
         redirectUrl.searchParams.set('registration', 'error')
+        redirectUrl.searchParams.set('workshop', data.workshopId)
         redirectUrl.searchParams.set('message', 'Workshop nebyl nalezen')
         return Response.redirect(redirectUrl.toString(), 303)
       }
@@ -343,8 +343,9 @@ export async function POST(request) {
     // Bez JS: redirect s parametry (303 See Other)
     if (!contentType?.includes('application/json')) {
       const redirectUrl = new URL('/', request.url)
-      redirectUrl.hash = 'workshopy'
+      // Nepoužíváme hash - způsobuje scroll, použijeme jen query params
       redirectUrl.searchParams.set('registration', 'success')
+      redirectUrl.searchParams.set('workshop', data.workshopId)
       if (isWaitlist) {
         redirectUrl.searchParams.set('waitlist', 'true')
       }
@@ -371,7 +372,6 @@ export async function POST(request) {
     const contentType = request.headers.get('content-type')
     if (!contentType?.includes('application/json')) {
       const redirectUrl = new URL('/', request.url)
-      redirectUrl.hash = 'workshopy'
       redirectUrl.searchParams.set('registration', 'error')
       redirectUrl.searchParams.set('message', 'Něco se pokazilo, zkus to znovu')
       return Response.redirect(redirectUrl.toString(), 303)

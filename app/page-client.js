@@ -17,6 +17,7 @@ export default function HomeClient({ workshops }) {
   const [registrationStatus, setRegistrationStatus] = useState(null) // 'success', 'error', or null
   const [registrationMessage, setRegistrationMessage] = useState('')
   const [registrationData, setRegistrationData] = useState(null) // VS, price, account
+  const [registrationWorkshopId, setRegistrationWorkshopId] = useState(null) // ID workshopu pro zobrazení hlášky
 
   // Check URL for registration success/error status (for no-JS fallback)
   useEffect(() => {
@@ -26,6 +27,7 @@ export default function HomeClient({ workshops }) {
 
       if (status === 'success') {
         setRegistrationStatus('success')
+        setRegistrationWorkshopId(params.get('workshop'))
         const isWaitlist = params.get('waitlist') === 'true'
         if (isWaitlist) {
           setRegistrationMessage('Jste na náhradnické listině! Pokud se uvolní místo, ozveme se vám.')
@@ -38,6 +40,7 @@ export default function HomeClient({ workshops }) {
         }
       } else if (status === 'error') {
         setRegistrationStatus('error')
+        setRegistrationWorkshopId(params.get('workshop'))
         const message = params.get('message')
         setRegistrationMessage(message || 'Něco se pokazilo. Zkuste to prosím znovu.')
       }
@@ -340,113 +343,6 @@ export default function HomeClient({ workshops }) {
             </p>
           </motion.div>
 
-          {/* Registration Success/Error Messages (no-JS fallback) */}
-          {registrationStatus === 'success' && (
-            <>
-              {/* S JS: motion.div s animací */}
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="js:block hidden max-w-4xl mx-auto mb-8 bg-green-50 border-2 border-green-200 rounded-xl p-6"
-              >
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      {registrationData ? '✅ Registrace proběhla úspěšně!' : '⏳ Jste na náhradnické listině!'}
-                    </h3>
-                    <p className="text-gray-700 mb-4">{registrationMessage}</p>
-
-                    {registrationData && (
-                      <div className="bg-white rounded-lg p-4 border-2 border-green-300">
-                        <h4 className="font-semibold text-gray-900 mb-3">💳 Platební údaje</h4>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Číslo účtu:</span>
-                            <strong className="text-gray-900">{registrationData.account}</strong>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Variabilní symbol:</span>
-                            <strong className="text-gray-900 text-lg">{registrationData.vs}</strong>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Částka:</span>
-                            <strong className="text-gray-900 text-lg">{parseInt(registrationData.price).toLocaleString('cs-CZ')} Kč</strong>
-                          </div>
-                        </div>
-                        <p className="text-xs text-gray-600 mt-3">Platba je splatná do 7 dnů.</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Bez JS: normální div */}
-              <div className="no-js:block js:hidden max-w-4xl mx-auto mb-8 bg-green-50 border-2 border-green-200 rounded-xl p-6">
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      {registrationData ? '✅ Registrace proběhla úspěšně!' : '⏳ Jste na náhradnické listině!'}
-                    </h3>
-                    <p className="text-gray-700 mb-4">{registrationMessage}</p>
-
-                    {registrationData && (
-                      <div className="bg-white rounded-lg p-4 border-2 border-green-300">
-                        <h4 className="font-semibold text-gray-900 mb-3">💳 Platební údaje</h4>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Číslo účtu:</span>
-                            <strong className="text-gray-900">{registrationData.account}</strong>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Variabilní symbol:</span>
-                            <strong className="text-gray-900 text-lg">{registrationData.vs}</strong>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Částka:</span>
-                            <strong className="text-gray-900 text-lg">{parseInt(registrationData.price).toLocaleString('cs-CZ')} Kč</strong>
-                          </div>
-                        </div>
-                        <p className="text-xs text-gray-600 mt-3">Platba je splatná do 7 dnů.</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-
-          {registrationStatus === 'error' && (
-            <>
-              {/* S JS: motion.div s animací */}
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="js:block hidden max-w-4xl mx-auto mb-8 bg-red-50 border-2 border-red-200 rounded-xl p-6"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 text-red-600 flex-shrink-0 mt-1 text-2xl">⚠️</div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Chyba při registraci</h3>
-                    <p className="text-gray-700">{registrationMessage}</p>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Bez JS: normální div */}
-              <div className="no-js:block js:hidden max-w-4xl mx-auto mb-8 bg-red-50 border-2 border-red-200 rounded-xl p-6">
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 text-red-600 flex-shrink-0 mt-1 text-2xl">⚠️</div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Chyba při registraci</h3>
-                    <p className="text-gray-700">{registrationMessage}</p>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {workshops.length === 0 ? (
               // No workshops message
@@ -462,6 +358,9 @@ export default function HomeClient({ workshops }) {
                   workshop={workshop}
                   index={index}
                   onRegister={openRegistration}
+                  registrationStatus={registrationWorkshopId === String(workshop.id) ? registrationStatus : null}
+                  registrationMessage={registrationWorkshopId === String(workshop.id) ? registrationMessage : ''}
+                  registrationData={registrationWorkshopId === String(workshop.id) ? registrationData : null}
                 />
               ))
             )}
@@ -1048,7 +947,7 @@ const faqs = [
 ]
 
 // Workshop Card Component
-function WorkshopCard({ workshop, index, onRegister }) {
+function WorkshopCard({ workshop, index, onRegister, registrationStatus, registrationMessage, registrationData }) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   // Calculate capacity color
@@ -1067,6 +966,95 @@ function WorkshopCard({ workshop, index, onRegister }) {
       transition={{ delay: index * 0.1 }}
       className="bg-white rounded-xl p-8 shadow-lg border-2 border-gray-100 hover:border-primary-300 transition-all"
     >
+      {/* Registration Success/Error Messages (no-JS fallback) */}
+      {registrationStatus === 'success' && (
+        <>
+          {/* S JS: motion.div */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="js:flex hidden items-start gap-2 p-4 bg-green-50 border-2 border-green-200 rounded-lg mb-6"
+          >
+            <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1 text-sm">
+              <p className="font-semibold text-green-900 mb-1">
+                {registrationData ? '✅ Registrace proběhla úspěšně!' : '⏳ Jste na náhradnické listině!'}
+              </p>
+              <p className="text-green-800 mb-2">{registrationMessage}</p>
+              {registrationData && (
+                <div className="bg-white rounded p-3 border border-green-300 space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-600">Účet:</span>
+                    <strong>{registrationData.account}</strong>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-600">VS:</span>
+                    <strong className="text-base">{registrationData.vs}</strong>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-600">Částka:</span>
+                    <strong className="text-base">{parseInt(registrationData.price).toLocaleString('cs-CZ')} Kč</strong>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">Platba splatná do 7 dnů</p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+          {/* Bez JS: normal div */}
+          <div className="no-js:flex js:hidden items-start gap-2 p-4 bg-green-50 border-2 border-green-200 rounded-lg mb-6">
+            <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1 text-sm">
+              <p className="font-semibold text-green-900 mb-1">
+                {registrationData ? '✅ Registrace proběhla úspěšně!' : '⏳ Jste na náhradnické listině!'}
+              </p>
+              <p className="text-green-800 mb-2">{registrationMessage}</p>
+              {registrationData && (
+                <div className="bg-white rounded p-3 border border-green-300 space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-600">Účet:</span>
+                    <strong>{registrationData.account}</strong>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-600">VS:</span>
+                    <strong className="text-base">{registrationData.vs}</strong>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-600">Částka:</span>
+                    <strong className="text-base">{parseInt(registrationData.price).toLocaleString('cs-CZ')} Kč</strong>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">Platba splatná do 7 dnů</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {registrationStatus === 'error' && (
+        <>
+          {/* S JS: motion.div */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="js:flex hidden items-start gap-2 p-4 bg-red-50 border-2 border-red-200 rounded-lg mb-6"
+          >
+            <div className="text-2xl mt-0.5">⚠️</div>
+            <div className="flex-1 text-sm">
+              <p className="font-semibold text-red-900 mb-1">Chyba při registraci</p>
+              <p className="text-red-800">{registrationMessage}</p>
+            </div>
+          </motion.div>
+          {/* Bez JS: normal div */}
+          <div className="no-js:flex js:hidden items-start gap-2 p-4 bg-red-50 border-2 border-red-200 rounded-lg mb-6">
+            <div className="text-2xl mt-0.5">⚠️</div>
+            <div className="flex-1 text-sm">
+              <p className="font-semibold text-red-900 mb-1">Chyba při registraci</p>
+              <p className="text-red-800">{registrationMessage}</p>
+            </div>
+          </div>
+        </>
+      )}
+
       <div className="flex items-start justify-between mb-4">
         <div>
           {workshop.name && (
