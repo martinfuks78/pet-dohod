@@ -6,6 +6,15 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Zajistit viditelnost obsahu bez JavaScriptu pro SEO a boty */
+/* Pokud JS neběží (html má class "no-js"), zobrazit vše */
+.no-js * {
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+  transition: none !important;
+}
+
 /* Vlastní selection barvy */
 ::selection {
   background-color: #f49d15;

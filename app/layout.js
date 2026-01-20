@@ -46,22 +46,16 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="cs" className={`${inter.variable} ${lora.variable}`}>
+    <html lang="cs" className={`${inter.variable} ${lora.variable} no-js`}>
+      <head>
+        {/* Odstranit no-js class jakmile JS běží */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.classList.remove('no-js');document.documentElement.classList.add('js');`
+          }}
+        />
+      </head>
       <body className="antialiased">
-        <noscript>
-          <style>{`
-            /* Statický obsah bez animací pro boty a uživatele bez JS */
-            [data-animate] {
-              opacity: 1 !important;
-              transform: none !important;
-            }
-            /* Framer Motion elementy by default viditelné */
-            * {
-              animation: none !important;
-              transition: none !important;
-            }
-          `}</style>
-        </noscript>
         {children}
       </body>
     </html>
