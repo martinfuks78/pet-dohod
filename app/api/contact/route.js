@@ -3,10 +3,30 @@ import { sendContactEmail } from '../../../lib/email'
 
 export async function POST(request) {
   try {
-    const data = await request.json()
+    // Detekovat, zda je to JSON (s JS) nebo form data (bez JS)
+    const contentType = request.headers.get('content-type')
+    let data
+
+    if (contentType?.includes('application/json')) {
+      // S JavaScriptem - JSON data
+      data = await request.json()
+    } else {
+      // Bez JavaScriptu - form data
+      const formData = await request.formData()
+      data = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone') || '',
+        message: formData.get('message'),
+      }
+    }
 
     // Validace
     if (!data.name || !data.email || !data.message) {
+      // Bez JS: redirect s error parametrem
+      if (!contentType?.includes('application/json')) {
+        return NextResponse.redirect(new URL('/#kontakt?contact=error', request.url))
+      }
       return NextResponse.json(
         { error: 'Vyplň prosím všechna povinná pole' },
         { status: 400 }
@@ -16,6 +36,10 @@ export async function POST(request) {
     // Validace emailu
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(data.email)) {
+      // Bez JS: redirect s error parametrem
+      if (!contentType?.includes('application/json')) {
+        return NextResponse.redirect(new URL('/#kontakt?contact=error', request.url))
+      }
       return NextResponse.json(
         { error: 'Zadej platný email' },
         { status: 400 }
@@ -29,11 +53,21 @@ export async function POST(request) {
         console.log('Contact email sent successfully')
       } catch (emailError) {
         console.error('Contact email send failed:', emailError)
+        // Bez JS: redirect s error parametrem
+        if (!contentType?.includes('application/json')) {
+          return NextResponse.redirect(new URL('/#kontakt?contact=error', request.url))
+        }
         return NextResponse.json(
           { error: 'Nepodařilo se odeslat zprávu. Zkus to prosím znovu nebo napiš přímo na kouc@martinfuks.cz' },
           { status: 500 }
         )
       }
+    }
+
+    // Úspěch!
+    // Bez JS: redirect s success parametrem
+    if (!contentType?.includes('application/json')) {
+      return NextResponse.redirect(new URL('/#kontakt?contact=success', request.url))
     }
 
     return NextResponse.json({
@@ -42,6 +76,11 @@ export async function POST(request) {
     })
   } catch (error) {
     console.error('Contact error:', error)
+    // Bez JS: redirect s error parametrem
+    const contentType = request.headers.get('content-type')
+    if (!contentType?.includes('application/json')) {
+      return NextResponse.redirect(new URL('/#kontakt?contact=error', request.url))
+    }
     return NextResponse.json(
       { error: 'Něco se pokazilo. Zkus to prosím znovu.' },
       { status: 500 }

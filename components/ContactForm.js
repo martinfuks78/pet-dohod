@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Send, CheckCircle2, Mail } from 'lucide-react'
 
@@ -13,6 +13,19 @@ export default function ContactForm() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState(null) // 'success' | 'error' | null
+
+  // Check URL for success/error status (for no-JS fallback)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const status = params.get('contact')
+      if (status === 'success') {
+        setSubmitStatus('success')
+      } else if (status === 'error') {
+        setSubmitStatus('error')
+      }
+    }
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -32,8 +45,8 @@ export default function ContactForm() {
         setSubmitStatus('success')
         setFormData({ name: '', email: '', phone: '', message: '' })
 
-        // Reset success message after 5 seconds
-        setTimeout(() => setSubmitStatus(null), 5000)
+        // Reset success message after 60 seconds (1 minute)
+        setTimeout(() => setSubmitStatus(null), 60000)
       } else {
         setSubmitStatus('error')
         console.error('Contact form error:', data.error)
@@ -55,7 +68,12 @@ export default function ContactForm() {
 
   return (
     <div className="bg-white rounded-2xl p-8 md:p-12 shadow-lg max-w-2xl mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form
+        onSubmit={handleSubmit}
+        action="/api/contact"
+        method="POST"
+        className="space-y-6"
+      >
         <div className="grid md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
