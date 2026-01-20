@@ -36,6 +36,13 @@ html {
   opacity: 0.2 !important;
 }
 
+/* Hover efekt pro knihy - obnovit barvu a plnou opacity */
+.no-js section img[src*="ctyri-dohody"]:hover,
+.no-js section img[src*="pata-dohoda"]:hover {
+  filter: grayscale(0%) brightness(1) !important;
+  opacity: 1 !important;
+}
+
 /* Vlastní selection barvy */
 ::selection {
   background-color: #f49d15;
