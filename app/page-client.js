@@ -145,7 +145,7 @@ export default function HomeClient({ workshops }) {
                   width={800}
                   height={600}
                   priority
-                  className="w-full max-w-[290px] sm:max-w-[290px] md:max-w-[339px] lg:max-w-[387px] mx-auto h-auto"
+                  className="w-full max-w-[334px] sm:max-w-[334px] md:max-w-[390px] lg:max-w-[445px] mx-auto h-auto"
                 />
               </motion.div>
 
