@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowRight, Calendar, Users, Building2, CheckCircle2, ChevronDown, Volume2, VolumeX } from 'lucide-react'
+import { ArrowRight, Building2, CheckCircle2, ChevronDown, Volume2, VolumeX } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import Navigation from '../components/Navigation'
@@ -178,25 +178,6 @@ export default function HomeClient({ workshops }) {
                 </Link>
               </div>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-                className="mt-16 md:mt-14 flex items-center justify-center gap-8 text-sm text-gray-500"
-              >
-                <div className="hidden md:flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
-                  <span>1 - 5 dní</span>
-                </div>
-                <div className="hidden md:flex items-center gap-2">
-                  <Users className="w-4 h-4" />
-                  <span>Malé skupiny</span>
-                </div>
-                <div className="hidden md:flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Praxe, ne teorie</span>
-                </div>
-              </motion.div>
             </motion.div>
 
             {/* Pravá kniha - Pátá dohoda */}
