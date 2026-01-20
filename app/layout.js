@@ -47,7 +47,23 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="cs" className={`${inter.variable} ${lora.variable}`}>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <noscript>
+          <style>{`
+            /* Statický obsah bez animací pro boty a uživatele bez JS */
+            [data-animate] {
+              opacity: 1 !important;
+              transform: none !important;
+            }
+            /* Framer Motion elementy by default viditelné */
+            * {
+              animation: none !important;
+              transition: none !important;
+            }
+          `}</style>
+        </noscript>
+        {children}
+      </body>
     </html>
   )
 }
