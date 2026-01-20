@@ -969,27 +969,25 @@ function WorkshopCard({ workshop, index, onRegister }) {
       </div>
 
       {hasDetails && (
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center justify-between w-full px-4 py-3 mb-4 text-primary-600 hover:text-primary-700 transition-colors border border-primary-200 rounded-lg hover:bg-primary-50"
-        >
-          <span className="font-semibold">Více informací</span>
-          <ChevronDown
-            className={`w-5 h-5 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-          />
-        </button>
-      )}
-
-      <AnimatePresence>
-        {isExpanded && hasDetails && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="overflow-hidden mb-6"
+        <>
+          {/* S JS: button + AnimatePresence */}
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="js:flex hidden items-center justify-between w-full px-4 py-3 mb-4 text-primary-600 hover:text-primary-700 transition-colors border border-primary-200 rounded-lg hover:bg-primary-50"
           >
-            <div className="space-y-4 pt-2 pb-4 border-t border-gray-200">
+            <span className="font-semibold">Více informací</span>
+            <ChevronDown
+              className={`w-5 h-5 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+            />
+          </button>
+
+          {/* Bez JS: details element */}
+          <details className="no-js:block js:hidden mb-4 border border-primary-200 rounded-lg">
+            <summary className="flex items-center justify-between w-full px-4 py-3 text-primary-600 hover:text-primary-700 cursor-pointer hover:bg-primary-50 rounded-lg">
+              <span className="font-semibold">Více informací</span>
+              <ChevronDown className="w-5 h-5" />
+            </summary>
+            <div className="space-y-4 px-4 pt-2 pb-4 border-t border-gray-200">
               {workshop.program && (
                 <div>
                   <h4 className="font-semibold text-gray-700 mb-2">Program</h4>
@@ -1043,14 +1041,81 @@ function WorkshopCard({ workshop, index, onRegister }) {
                 </div>
               )}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </details>
 
+          {/* S JS: AnimatePresence s motion.div */}
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden mb-6 js:block hidden"
+              >
+                <div className="space-y-4 pt-2 pb-4 border-t border-gray-200">
+                  {workshop.program && (
+                    <div>
+                      <h4 className="font-semibold text-gray-700 mb-2">Program</h4>
+                      <p className="text-gray-600 text-sm whitespace-pre-line break-words">{workshop.program}</p>
+                    </div>
+                  )}
+                  {workshop.address && (
+                    <div>
+                      <h4 className="font-semibold text-gray-700 mb-2">Adresa</h4>
+                      <p className="text-gray-600 text-sm whitespace-pre-line break-words">
+                        {workshop.address.split('\n').map((line, i) => {
+                          const urlRegex = /(https?:\/\/[^\s]+)/g
+                          const parts = line.split(urlRegex)
+                          return (
+                            <span key={i}>
+                              {parts.map((part, j) => {
+                                if (part.match(urlRegex)) {
+                                  return (
+                                    <a
+                                      key={j}
+                                      href={part}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-primary-600 hover:text-primary-700 underline"
+                                    >
+                                      {part}
+                                    </a>
+                                  )
+                                }
+                                return <span key={j}>{part}</span>
+                              })}
+                              {i < workshop.address.split('\n').length - 1 && <br />}
+                            </span>
+                          )
+                        })}
+                      </p>
+                    </div>
+                  )}
+                  {workshop.whatToBring && (
+                    <div>
+                      <h4 className="font-semibold text-gray-700 mb-2">Co si vzít s sebou</h4>
+                      <p className="text-gray-600 text-sm whitespace-pre-line break-words">{workshop.whatToBring}</p>
+                    </div>
+                  )}
+                  {workshop.instructorInfo && (
+                    <div>
+                      <h4 className="font-semibold text-gray-700 mb-2">Lektor</h4>
+                      <p className="text-gray-600 text-sm whitespace-pre-line break-words">{workshop.instructorInfo}</p>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </>
+      )}
+
+      {/* S JS: button s modal */}
       <button
         onClick={() => onRegister(workshop)}
         disabled={isFull}
-        className={`block w-full px-6 py-3 rounded-lg font-semibold text-center transition-colors ${
+        className={`js:block hidden w-full px-6 py-3 rounded-lg font-semibold text-center transition-colors ${
           isFull
             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
             : 'bg-primary-500 text-white hover:bg-primary-600'
@@ -1058,6 +1123,18 @@ function WorkshopCard({ workshop, index, onRegister }) {
       >
         {isFull ? 'Obsazeno' : 'Registrovat se'}
       </button>
+
+      {/* Bez JS: mailto link */}
+      <a
+        href={`mailto:kouc@martinfuks.cz?subject=Registrace na workshop ${workshop.name} - ${workshop.date}&body=Dobrý den,%0D%0A%0D%0Aměl/a bych zájem o registraci na workshop:%0D%0A${workshop.name}%0D%0ATermín: ${workshop.date}%0D%0AMísto: ${workshop.location}%0D%0A%0D%0AJméno:%0D%0AEmail:%0D%0ATelefon:%0D%0A%0D%0AČeká na vyplnění...`}
+        className={`no-js:block js:hidden w-full px-6 py-3 rounded-lg font-semibold text-center transition-colors ${
+          isFull
+            ? 'bg-gray-300 text-gray-500 pointer-events-none'
+            : 'bg-primary-500 text-white hover:bg-primary-600'
+        }`}
+      >
+        {isFull ? 'Obsazeno' : 'Registrovat se emailem'}
+      </a>
     </motion.div>
   )
 }

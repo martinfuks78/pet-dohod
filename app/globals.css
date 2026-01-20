@@ -8,7 +8,15 @@ html {
 
 /* Zajistit viditelnost obsahu bez JavaScriptu pro SEO a boty */
 /* Pokud JS neběží (html má class "no-js"), zobrazit vše */
-.no-js * {
+.no-js body,
+.no-js main,
+.no-js section,
+.no-js div,
+.no-js p,
+.no-js h1, .no-js h2, .no-js h3, .no-js h4, .no-js h5, .no-js h6,
+.no-js img,
+.no-js button,
+.no-js a {
   opacity: 1 !important;
   transform: none !important;
   animation: none !important;
@@ -41,6 +49,24 @@ html {
 .no-js section img[src*="pata-dohoda"]:hover {
   filter: grayscale(0%) brightness(1) !important;
   opacity: 1 !important;
+}
+
+/* Utility třídy pro podmíněné zobrazení podle JS */
+.js .js\:block {
+  display: block;
+}
+.js .js\:flex {
+  display: flex;
+}
+.js .js\:hidden {
+  display: none;
+}
+
+.no-js .no-js\:block {
+  display: block;
+}
+.no-js .no-js\:hidden {
+  display: none;
 }
 
 /* Vlastní selection barvy */
