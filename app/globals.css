@@ -15,6 +15,26 @@ html {
   transition: none !important;
 }
 
+/* Specifické výjimky pro no-js režim */
+.no-js nav {
+  /* Navigation vždy s pozadím bez JS */
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(12px) !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+}
+
+/* Hero sekce mřížka - zachovat nízkou opacity */
+.no-js section .absolute.inset-0 {
+  opacity: 0.05 !important;
+}
+
+/* Knihy v hero sekci - aplikovat grayscale styling i bez JS */
+.no-js img[alt*="Čtyři dohody"],
+.no-js img[alt*="Pátá dohoda"] {
+  filter: grayscale(100%) brightness(1.25) !important;
+  opacity: 0.2 !important;
+}
+
 /* Vlastní selection barvy */
 ::selection {
   background-color: #f49d15;
