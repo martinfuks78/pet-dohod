@@ -6,6 +6,15 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Fix pro kopírování textu - zajistí normální tok textu */
+h1, h2, h3, h4, h5, h6, p {
+  display: block;
+  unicode-bidi: normal;
+  direction: ltr;
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+}
+
 /* Zajistit viditelnost obsahu bez JavaScriptu pro SEO a boty */
 /* Pokud JS neběží (html má class "no-js"), zobrazit vše */
 .no-js body,
