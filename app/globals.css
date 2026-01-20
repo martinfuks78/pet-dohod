@@ -16,7 +16,12 @@ html {
 }
 
 /* Specifické výjimky pro no-js režim */
-/* Navigation zůstane průhledná bez JS (nelze detekovat scroll) */
+/* Navigation s pozadím vždy (nelze detekovat scroll bez JS) */
+.no-js nav {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(12px) !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+}
 
 /* Hero sekce mřížka - zachovat nízkou opacity */
 .no-js section .absolute.inset-0 {
