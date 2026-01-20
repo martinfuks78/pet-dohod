@@ -10,6 +10,9 @@ export default function Navigation() {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
+    // Set initial state based on current scroll position
+    setScrolled(window.scrollY > 50)
+
     const handleScroll = () => {
       setScrolled(window.scrollY > 50)
     }
