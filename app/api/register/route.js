@@ -96,7 +96,36 @@ export async function POST(request) {
       )
     }
 
-    const data = await request.json()
+    // Detekovat, zda je to JSON (s JS) nebo form data (bez JS)
+    const contentType = request.headers.get('content-type')
+    let data
+
+    if (contentType?.includes('application/json')) {
+      // S JavaScriptem - JSON data
+      data = await request.json()
+    } else {
+      // Bez JavaScriptu - form data
+      const formData = await request.formData()
+      data = {
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        address: formData.get('address'),
+        city: formData.get('city'),
+        zip: formData.get('zip'),
+        registrationType: formData.get('registrationType') || 'single',
+        partnerFirstName: formData.get('partnerFirstName') || '',
+        partnerLastName: formData.get('partnerLastName') || '',
+        partnerEmail: formData.get('partnerEmail') || '',
+        notes: formData.get('notes') || '',
+        website: formData.get('website') || '',
+        workshopId: parseInt(formData.get('workshopId')),
+        workshopDate: formData.get('workshopDate'),
+        workshopLocation: formData.get('workshopLocation'),
+        price: parseInt(formData.get('price')),
+      }
+    }
 
     // HONEYPOT KONTROLA - pokud je pole "website" vyplněné, je to bot
     if (data.website && data.website.trim() !== '') {
@@ -123,6 +152,14 @@ export async function POST(request) {
 
     // Validace povinných polí
     if (!data.firstName || !data.lastName || !data.email || !data.phone) {
+      // Bez JS: redirect s error parametrem (303 See Other)
+      if (!contentType?.includes('application/json')) {
+        const redirectUrl = new URL('/', request.url)
+        redirectUrl.hash = 'workshopy'
+        redirectUrl.searchParams.set('registration', 'error')
+        redirectUrl.searchParams.set('message', 'Vyplň prosím všechna povinná pole')
+        return Response.redirect(redirectUrl.toString(), 303)
+      }
       return NextResponse.json(
         { error: 'Vyplň prosím všechna povinná pole' },
         { status: 400 }
@@ -132,6 +169,14 @@ export async function POST(request) {
     // Validace emailu
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(data.email)) {
+      // Bez JS: redirect s error parametrem (303 See Other)
+      if (!contentType?.includes('application/json')) {
+        const redirectUrl = new URL('/', request.url)
+        redirectUrl.hash = 'workshopy'
+        redirectUrl.searchParams.set('registration', 'error')
+        redirectUrl.searchParams.set('message', 'Zadej platný email')
+        return Response.redirect(redirectUrl.toString(), 303)
+      }
       return NextResponse.json(
         { error: 'Zadej platný email' },
         { status: 400 }
@@ -149,6 +194,14 @@ export async function POST(request) {
     `
 
     if (existingReg.rows.length > 0) {
+      // Bez JS: redirect s error parametrem (303 See Other)
+      if (!contentType?.includes('application/json')) {
+        const redirectUrl = new URL('/', request.url)
+        redirectUrl.hash = 'workshopy'
+        redirectUrl.searchParams.set('registration', 'error')
+        redirectUrl.searchParams.set('message', 'Už jsi zaregistrován/a na tento workshop')
+        return Response.redirect(redirectUrl.toString(), 303)
+      }
       return NextResponse.json(
         { error: 'Už jsi zaregistrován/a na tento workshop. Zkontroluj svůj email.' },
         { status: 400 }
@@ -166,6 +219,14 @@ export async function POST(request) {
     const workshop = workshopResult.rows.length > 0 ? workshopResult.rows[0] : null
 
     if (!workshop) {
+      // Bez JS: redirect s error parametrem (303 See Other)
+      if (!contentType?.includes('application/json')) {
+        const redirectUrl = new URL('/', request.url)
+        redirectUrl.hash = 'workshopy'
+        redirectUrl.searchParams.set('registration', 'error')
+        redirectUrl.searchParams.set('message', 'Workshop nebyl nalezen')
+        return Response.redirect(redirectUrl.toString(), 303)
+      }
       return NextResponse.json(
         { error: 'Workshop nebyl nalezen nebo již není aktivní' },
         { status: 404 }
@@ -279,6 +340,20 @@ export async function POST(request) {
       }
     }
 
+    // Bez JS: redirect s parametry (303 See Other)
+    if (!contentType?.includes('application/json')) {
+      const redirectUrl = new URL('/', request.url)
+      redirectUrl.hash = 'workshopy'
+      redirectUrl.searchParams.set('registration', 'success')
+      if (isWaitlist) {
+        redirectUrl.searchParams.set('waitlist', 'true')
+      }
+      redirectUrl.searchParams.set('vs', registration.variable_symbol)
+      redirectUrl.searchParams.set('price', data.price)
+      redirectUrl.searchParams.set('account', workshop.bank_account)
+      return Response.redirect(redirectUrl.toString(), 303)
+    }
+
     return NextResponse.json({
       success: true,
       message: isWaitlist ? 'Zaregistrován jako náhradník' : 'Registrace byla úspěšně odeslána',
@@ -291,6 +366,17 @@ export async function POST(request) {
     console.error('❌ Error name:', error.name)
     console.error('❌ Error message:', error.message)
     console.error('❌ Error stack:', error.stack)
+
+    // Bez JS: redirect s error parametrem (303 See Other)
+    const contentType = request.headers.get('content-type')
+    if (!contentType?.includes('application/json')) {
+      const redirectUrl = new URL('/', request.url)
+      redirectUrl.hash = 'workshopy'
+      redirectUrl.searchParams.set('registration', 'error')
+      redirectUrl.searchParams.set('message', 'Něco se pokazilo, zkus to znovu')
+      return Response.redirect(redirectUrl.toString(), 303)
+    }
+
     return NextResponse.json(
       { error: 'Něco se pokazilo. Zkus to prosím znovu.' },
       { status: 500 }

@@ -14,6 +14,35 @@ import NewsletterForm from '../components/NewsletterForm'
 export default function HomeClient({ workshops }) {
   const [selectedWorkshop, setSelectedWorkshop] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [registrationStatus, setRegistrationStatus] = useState(null) // 'success', 'error', or null
+  const [registrationMessage, setRegistrationMessage] = useState('')
+  const [registrationData, setRegistrationData] = useState(null) // VS, price, account
+
+  // Check URL for registration success/error status (for no-JS fallback)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const status = params.get('registration')
+
+      if (status === 'success') {
+        setRegistrationStatus('success')
+        const isWaitlist = params.get('waitlist') === 'true'
+        if (isWaitlist) {
+          setRegistrationMessage('Jste na náhradnické listině! Pokud se uvolní místo, ozveme se vám.')
+        } else {
+          const vs = params.get('vs')
+          const price = params.get('price')
+          const account = params.get('account')
+          setRegistrationData({ vs, price, account })
+          setRegistrationMessage('Registrace proběhla úspěšně! Níže najdete platební údaje.')
+        }
+      } else if (status === 'error') {
+        setRegistrationStatus('error')
+        const message = params.get('message')
+        setRegistrationMessage(message || 'Něco se pokazilo. Zkuste to prosím znovu.')
+      }
+    }
+  }, [])
 
   // Scroll position restoration (preserve scroll on refresh)
   useEffect(() => {
@@ -310,6 +339,113 @@ export default function HomeClient({ workshops }) {
               Vyberte si termín, který Vám vyhovuje. Každý workshop je dvoudenní a probíhá v malých skupinách.
             </p>
           </motion.div>
+
+          {/* Registration Success/Error Messages (no-JS fallback) */}
+          {registrationStatus === 'success' && (
+            <>
+              {/* S JS: motion.div s animací */}
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="js:block hidden max-w-4xl mx-auto mb-8 bg-green-50 border-2 border-green-200 rounded-xl p-6"
+              >
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      {registrationData ? '✅ Registrace proběhla úspěšně!' : '⏳ Jste na náhradnické listině!'}
+                    </h3>
+                    <p className="text-gray-700 mb-4">{registrationMessage}</p>
+
+                    {registrationData && (
+                      <div className="bg-white rounded-lg p-4 border-2 border-green-300">
+                        <h4 className="font-semibold text-gray-900 mb-3">💳 Platební údaje</h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Číslo účtu:</span>
+                            <strong className="text-gray-900">{registrationData.account}</strong>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Variabilní symbol:</span>
+                            <strong className="text-gray-900 text-lg">{registrationData.vs}</strong>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Částka:</span>
+                            <strong className="text-gray-900 text-lg">{parseInt(registrationData.price).toLocaleString('cs-CZ')} Kč</strong>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-3">Platba je splatná do 7 dnů.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Bez JS: normální div */}
+              <div className="no-js:block js:hidden max-w-4xl mx-auto mb-8 bg-green-50 border-2 border-green-200 rounded-xl p-6">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      {registrationData ? '✅ Registrace proběhla úspěšně!' : '⏳ Jste na náhradnické listině!'}
+                    </h3>
+                    <p className="text-gray-700 mb-4">{registrationMessage}</p>
+
+                    {registrationData && (
+                      <div className="bg-white rounded-lg p-4 border-2 border-green-300">
+                        <h4 className="font-semibold text-gray-900 mb-3">💳 Platební údaje</h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Číslo účtu:</span>
+                            <strong className="text-gray-900">{registrationData.account}</strong>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Variabilní symbol:</span>
+                            <strong className="text-gray-900 text-lg">{registrationData.vs}</strong>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Částka:</span>
+                            <strong className="text-gray-900 text-lg">{parseInt(registrationData.price).toLocaleString('cs-CZ')} Kč</strong>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-3">Platba je splatná do 7 dnů.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {registrationStatus === 'error' && (
+            <>
+              {/* S JS: motion.div s animací */}
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="js:block hidden max-w-4xl mx-auto mb-8 bg-red-50 border-2 border-red-200 rounded-xl p-6"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 text-red-600 flex-shrink-0 mt-1 text-2xl">⚠️</div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Chyba při registraci</h3>
+                    <p className="text-gray-700">{registrationMessage}</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Bez JS: normální div */}
+              <div className="no-js:block js:hidden max-w-4xl mx-auto mb-8 bg-red-50 border-2 border-red-200 rounded-xl p-6">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 text-red-600 flex-shrink-0 mt-1 text-2xl">⚠️</div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Chyba při registraci</h3>
+                    <p className="text-gray-700">{registrationMessage}</p>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {workshops.length === 0 ? (
@@ -1124,17 +1260,217 @@ function WorkshopCard({ workshop, index, onRegister }) {
         {isFull ? 'Obsazeno' : 'Registrovat se'}
       </button>
 
-      {/* Bez JS: mailto link */}
-      <a
-        href={`mailto:kouc@martinfuks.cz?subject=Registrace na workshop ${workshop.name} - ${workshop.date}&body=Dobrý den,%0D%0A%0D%0Aměl/a bych zájem o registraci na workshop:%0D%0A${workshop.name}%0D%0ATermín: ${workshop.date}%0D%0AMísto: ${workshop.location}%0D%0A%0D%0AJméno:%0D%0AEmail:%0D%0ATelefon:%0D%0A%0D%0AČeká na vyplnění...`}
-        className={`no-js:block js:hidden w-full px-6 py-3 rounded-lg font-semibold text-center transition-colors ${
+      {/* Bez JS: inline registrační formulář */}
+      <details className="no-js:block js:hidden border border-primary-300 rounded-lg">
+        <summary className={`flex items-center justify-between w-full px-6 py-3 rounded-lg font-semibold text-center cursor-pointer ${
           isFull
-            ? 'bg-gray-300 text-gray-500 pointer-events-none'
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
             : 'bg-primary-500 text-white hover:bg-primary-600'
-        }`}
-      >
-        {isFull ? 'Obsazeno' : 'Registrovat se emailem'}
-      </a>
+        }`}>
+          {isFull ? 'Obsazeno' : 'Registrovat se'}
+        </summary>
+
+        {!isFull && (
+          <div className="p-6 bg-gray-50">
+            <h3 className="text-xl font-serif font-bold text-gray-900 mb-4">
+              Registrace na workshop
+            </h3>
+            <p className="text-sm text-gray-600 mb-6">
+              {workshop.date} • {workshop.location}
+            </p>
+
+            <form action="/api/register" method="POST" className="space-y-4">
+              {/* Hidden fields */}
+              <input type="hidden" name="workshopId" value={workshop.id} />
+              <input type="hidden" name="workshopDate" value={workshop.date} />
+              <input type="hidden" name="workshopLocation" value={workshop.location} />
+              <input type="hidden" name="price" value={workshop.priceSingle} />
+
+              {/* Typ registrace */}
+              {workshop.priceCouple && (
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Počet účastníků *
+                  </label>
+                  <div className="space-y-2">
+                    <label className="flex items-center p-3 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-primary-500">
+                      <input
+                        type="radio"
+                        name="registrationType"
+                        value="single"
+                        defaultChecked
+                        className="mr-3"
+                      />
+                      <span className="flex-1">
+                        <span className="font-semibold">1 osoba</span>
+                        <span className="text-sm text-gray-600 ml-2">{workshop.price}</span>
+                      </span>
+                    </label>
+                    <label className="flex items-center p-3 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-primary-500">
+                      <input
+                        type="radio"
+                        name="registrationType"
+                        value="pair"
+                        className="mr-3"
+                      />
+                      <span className="flex-1">
+                        <span className="font-semibold">Pár (2 osoby)</span>
+                        <span className="text-sm text-gray-600 ml-2">
+                          {workshop.priceCouple?.toLocaleString('cs-CZ')} Kč
+                        </span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* Hlavní účastník */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor={`firstName-${workshop.id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                    Jméno *
+                  </label>
+                  <input
+                    type="text"
+                    id={`firstName-${workshop.id}`}
+                    name="firstName"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                  />
+                </div>
+                <div>
+                  <label htmlFor={`lastName-${workshop.id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                    Příjmení *
+                  </label>
+                  <input
+                    type="text"
+                    id={`lastName-${workshop.id}`}
+                    name="lastName"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor={`email-${workshop.id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                  Email *
+                </label>
+                <input
+                  type="email"
+                  id={`email-${workshop.id}`}
+                  name="email"
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor={`phone-${workshop.id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                  Telefon *
+                </label>
+                <input
+                  type="tel"
+                  id={`phone-${workshop.id}`}
+                  name="phone"
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor={`address-${workshop.id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                  Adresa *
+                </label>
+                <input
+                  type="text"
+                  id={`address-${workshop.id}`}
+                  name="address"
+                  required
+                  placeholder="Ulice a číslo popisné"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor={`city-${workshop.id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                    Město *
+                  </label>
+                  <input
+                    type="text"
+                    id={`city-${workshop.id}`}
+                    name="city"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                  />
+                </div>
+                <div>
+                  <label htmlFor={`zip-${workshop.id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                    PSČ *
+                  </label>
+                  <input
+                    type="text"
+                    id={`zip-${workshop.id}`}
+                    name="zip"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor={`notes-${workshop.id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                  Poznámka (nepovinné)
+                </label>
+                <textarea
+                  id={`notes-${workshop.id}`}
+                  name="notes"
+                  rows={2}
+                  placeholder="Máte nějaké speciální požadavky nebo otázky?"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                />
+              </div>
+
+              {/* Honeypot */}
+              <input
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                style={{
+                  position: 'absolute',
+                  left: '-9999px',
+                  width: '1px',
+                  height: '1px',
+                  opacity: 0,
+                }}
+                aria-hidden="true"
+              />
+
+              <div className="text-xs text-gray-600 bg-white p-3 rounded-lg border border-gray-200">
+                <p className="mb-1">
+                  <strong>Ochrana osobních údajů:</strong> Odesláním formuláře souhlasíte se zpracováním osobních údajů pro účely registrace na workshop.
+                </p>
+                <p>
+                  Provozovatel: Martin Fuks, IČ: 19755015
+                </p>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 font-semibold"
+              >
+                Dokončit registraci
+              </button>
+
+              <p className="text-xs text-gray-500 text-center">
+                Po odeslání ti přijde email s platebními údaji. Platba je splatná do 7 dnů.
+              </p>
+            </form>
+          </div>
+        )}
+      </details>
     </motion.div>
   )
 }
