@@ -140,24 +140,39 @@ export default function ContactForm() {
         </div>
 
         {submitStatus === 'success' && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800"
-          >
-            <CheckCircle2 className="w-5 h-5" />
-            <span className="font-medium">Zpráva byla úspěšně odeslána! Ozvu se ti co nejdříve.</span>
-          </motion.div>
+          <>
+            {/* S JS: motion.div s animací */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="js:flex hidden items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800"
+            >
+              <CheckCircle2 className="w-5 h-5" />
+              <span className="font-medium">Zpráva byla úspěšně odeslána! Ozvu se ti co nejdříve.</span>
+            </motion.div>
+            {/* Bez JS: normální div */}
+            <div className="no-js:flex js:hidden items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
+              <CheckCircle2 className="w-5 h-5" />
+              <span className="font-medium">Zpráva byla úspěšně odeslána! Ozvu se ti co nejdříve.</span>
+            </div>
+          </>
         )}
 
         {submitStatus === 'error' && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800"
-          >
-            <span className="font-medium">Něco se pokazilo. Zkus to prosím znovu nebo napiš přímo na kouc@martinfuks.cz</span>
-          </motion.div>
+          <>
+            {/* S JS: motion.div s animací */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="js:block hidden p-4 bg-red-50 border border-red-200 rounded-lg text-red-800"
+            >
+              <span className="font-medium">Něco se pokazilo. Zkus to prosím znovu nebo napiš přímo na kouc@martinfuks.cz</span>
+            </motion.div>
+            {/* Bez JS: normální div */}
+            <div className="no-js:block js:hidden p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
+              <span className="font-medium">Něco se pokazilo. Zkus to prosím znovu nebo napiš přímo na kouc@martinfuks.cz</span>
+            </div>
+          </>
         )}
 
         <button

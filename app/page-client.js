@@ -1260,12 +1260,13 @@ function VideoPlayer() {
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => setShowControls(false)}
       >
+          {/* S JS: custom video bez controls */}
           <video
             ref={videoRef}
             loop
             muted
             playsInline
-            className="w-full h-full object-cover cursor-pointer"
+            className="js:block hidden w-full h-full object-cover cursor-pointer"
             aria-label="Ukázka z firemního workshopu Čtyři dohody pro agenturu (ant)"
             onError={(e) => console.error('Video load error:', e)}
             onClick={togglePlayPause}
@@ -1274,9 +1275,22 @@ function VideoPlayer() {
             Váš prohlížeč nepodporuje přehrávání videa.
           </video>
 
-          {/* Custom Video Controls - YouTube style */}
+          {/* Bez JS: nativní video s controls */}
+          <video
+            controls
+            loop
+            muted
+            playsInline
+            className="no-js:block js:hidden w-full h-full object-cover"
+            aria-label="Ukázka z firemního workshopu Čtyři dohody pro agenturu (ant)"
+          >
+            <source src="https://www.martinfuks.cz/wp-content/uploads/2025/11/mf-only-logo.mp4" type="video/mp4" />
+            Váš prohlížeč nepodporuje přehrávání videa.
+          </video>
+
+          {/* Custom Video Controls - YouTube style (jen s JS) */}
           <div
-            className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4 transition-all duration-300 ${
+            className={`js:block hidden absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4 transition-all duration-300 ${
               showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
             }`}
           >
