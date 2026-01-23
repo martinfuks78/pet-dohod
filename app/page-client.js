@@ -151,15 +151,15 @@ export default function HomeClient({ workshops }) {
 
               {/* Neviditelný H1 pro SEO */}
               <h1 className="sr-only">
-                Pět dohod - Čtyři dohody a Pátá dohoda - Workshopy pro osobní svobodu
+                PĚT DOHOD - Čtyři dohody a Pátá dohoda - Přestaňte zbytečně trpět a začněte naplno žít
               </h1>
 
               <p className="text-lg sm:text-lg md:text-xl lg:text-2xl text-gray-700 font-semibold mb-3 max-w-3xl mx-auto leading-relaxed">
-                Praktické workshopy podle knih Čtyři dohody a Pátá dohoda.
+                Praktické workshopy podle knih Čtyři dohody a Pátá dohoda
               </p>
 
               <p className="text-lg sm:text-base md:text-lg lg:text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-                Přestaňte zbytečně trpět a začněte naplno žít.
+                Přestaňte zbytečně trpět a začněte naplno žít
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -240,7 +240,7 @@ export default function HomeClient({ workshops }) {
               Co je PĚT DOHOD?
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Pět jednoduchých principů, které mění život.
+              Pět jednoduchých principů ze dvou knih podle DON MIGUEL RUIZE
             </p>
           </motion.div>
 
@@ -258,7 +258,7 @@ export default function HomeClient({ workshops }) {
           >
             <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
               Každá dohoda je jednoduchá. Ale dát ji do praxe? To chce trénink a zkušenost.<br />
-              Přesně to získáte na našich workshopech.
+              Přesně to získáte na workshopech.
             </p>
           </motion.div>
         </div>
@@ -320,7 +320,7 @@ export default function HomeClient({ workshops }) {
               Nadcházející termíny
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Vyberte si termín, který Vám vyhovuje. Každý workshop je dvoudenní a probíhá v malých skupinách.
+              Vyberte si termín, který vám vyhovuje. Každý workshop je dvoudenní, o víkendu a probíhá v malých skupinách.
             </p>
           </motion.div>
 
@@ -354,7 +354,7 @@ export default function HomeClient({ workshops }) {
             className="mt-12 text-center"
           >
             <p className="text-gray-600 mb-4">
-              Žádný termín ti nevyhovuje? Ozvěte se a domluvíme individuální termín.
+              Žádný termín vám nevyhovuje? Ozvěte se a domluvíme individuální termín.
             </p>
             <a
               href="#kontakt"
@@ -383,10 +383,10 @@ export default function HomeClient({ workshops }) {
               <Building2 className="w-8 h-8 text-white" />
             </div>
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-700 mb-6">
-              Firemní workshop nebo teambuilding
+              Firemní školení
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Pět dohod pro zdravější a produktivnější pracovní prostředí? Vyzkoušejte netradiční teambuilding, kde se lidé baví osobním rozvojem.
+              Pět dohod pro zdravější a produktivnější pracovní prostředí. Vyzkoušejte netradiční teambuilding, kde se lidé baví osobním rozvojem.
             </p>
           </motion.div>
 
@@ -429,10 +429,10 @@ export default function HomeClient({ workshops }) {
                       <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
                         2
                       </div>
-                      <h4 className="font-semibold text-gray-700">Workshop nebo teambuilding</h4>
+                      <h4 className="font-semibold text-gray-700">Workshop</h4>
                     </div>
                     <p className="text-gray-600 ml-11">
-                      Akce Pět dohod plných intenzivní práce, praktických cvičení a AHA momentů.
+                      Intenzivní práce, praktická cvičení a AHA momenty.
                     </p>
                   </div>
                   <div>
@@ -496,16 +496,16 @@ export default function HomeClient({ workshops }) {
               </div>
               <div className="md:col-span-2 space-y-4 text-gray-700 leading-relaxed">
                 <p>
-                  Jsem <strong>Martin Fuks</strong> a práci s lidmi se věnuju přes 22 let. Začínal jsem jako manažer, prošel jsem hlubokou osobní krizí a změnil kompletně svůj život.
+                  Jsem <strong>Martin Fuks</strong> a práci s lidmi se věnuji přes 22 let. Začínal jsem jako manažer, prošel jsem hlubokou osobní krizí a změnil kompletně svůj život.
                 </p>
                 <p>
-                  Dnes se věnuju koučinku, mentoringui a vedení firemních akcí. Baví mě to. Pracuji se spoustou konkrétních příkladů z vlastní praxe - žádná omáčka, trapné scénky nebo suchá teorie.
+                  Dnes se věnuji koučinku, mentoringui a vedení firemních akcí. Baví mě to. Pracuji se spoustou konkrétních příkladů z vlastní praxe – žádná omáčka, trapné scénky nebo suchá teorie.
                 </p>
                 <p>
                   S Pěti dohody pracuji, protože fungují. Nejde o ezoteriku nebo nějakou nafouknutou filozofii. Jsou to jednoduché principy, které když začneš používat, změní ti život.
                 </p>
                 <p>
-                  Mým cílem je, aby při každé schůzce vznikly AHA momenty - ty okamžiky, kdy ti dojde, proč děláš to, co děláš. A jak to změnit.
+                  Mým cílem je, aby při každé schůzce vznikly AHA momenty – ty okamžiky, kdy ti dojde, proč děláš to, co děláš. A jak to změnit.
                 </p>
                 <div className="pt-4">
                   <Link
@@ -651,10 +651,10 @@ export default function HomeClient({ workshops }) {
                 <CheckCircle2 className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-3xl font-serif font-bold text-gray-700 mb-4">
-                100% Garance spokojenosti
+                100% Garance
               </h3>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                Pokud z jakéhokoliv důvodu nebudete s workshopem spokojeni, stačí mi to říct během prvního dne a vrátím vám celou částku. Bez otázek, bez problémů.
+                Pokud z jakéhokoliv důvodu nebudete s workshopem spokojeni, stačí mi to říct během prvního dne a vrátím vám celou částku. Žádné otázky, žádné problémy.
               </p>
               <p className="text-sm text-gray-500 mt-4">
                 Jsem si jistý, že workshop přinese hodnotu. Proto nabízím tuto záruku.
@@ -731,10 +731,10 @@ export default function HomeClient({ workshops }) {
             className="text-center mb-12"
           >
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-700 mb-6">
-              Máš otázku?
+              Máte otázku?
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Napiš mi a já ti odpovím co nejdříve.
+              Napište mi a já vám odpovím co nejdříve.
             </p>
           </motion.div>
 
@@ -843,8 +843,8 @@ const agreements = [
     description: 'Příběhy, které si tvoříte v hlavě, často nejsou pravdivé. Skončete s nimi.'
   },
   {
-    title: 'Dělejte vše, jak nejlépe dovedete',
-    description: 'Každý den je jiný. Vaše maximum taky. Dělejte vždy nejlépe - ale ne lépe.'
+    title: 'Vždycky dělejte, jak nejlépe dovedete',
+    description: 'Každý den je jiný. Vaše maximum taky. Dělejte vždy nejlépe, ale ne lépe.'
   },
   {
     title: 'Buďte skeptičtí, ale naslouchejte',
@@ -859,7 +859,7 @@ const reasons = [
   },
   {
     title: 'Dostanete konkrétní kroky',
-    description: 'Žádná teorie o ideálních situacích. Získáte jasný postup a co dělat hned druhý den po workshopu. Pracujeme s reálnými příklady z Vašeho života.'
+    description: 'Žádná teorie o ideálních situacích. Získáte jasný postup a co dělat hned druhý den po workshopu. Pracujeme s reálnými příklady z Vašich životů.'
   },
   {
     title: 'Změníte vztahy',
@@ -874,8 +874,8 @@ const reasons = [
 const companyBenefits = [
   'Lepší komunikaci v týmu bez konfliktů a nedorozumění',
   'Zdravější firemní kulturu postavenou na důvěře',
-  'Zvýšenou produktivitu, snížení stresu a vyhoření',
-  'Silnější týmová soudržnost a spolupráce',
+  'Zvýšenou produktivitu a snížení stresu',
+  'Silnější týmovou soudržnost a spolupráci',
 ]
 
 const testimonials = [
@@ -899,11 +899,11 @@ const testimonials = [
 const faqs = [
   {
     question: 'Musím znát knihy Čtyři/Pátá dohoda, abych se mohl zúčastnit?',
-    answer: 'Ne. Workshop je postavený tak, abyste se s dohody seznámili úplně od začátku. Pokud knihy znáte, o to lepší - půjdeme víc do hloubky.'
+    answer: 'Ne. Workshop je postavený tak, abyste se s dohody seznámili úplně od začátku. Pokud knihy znáte, o to lepší – půjdeme víc do hloubky.'
   },
   {
     question: 'Jak vypadá typický den na workshopu?',
-    answer: 'Pracujeme od 9 do 17 hodin s přestávkami. Každá dohoda dostane prostor - vysvětlím ji, probereme konkrétní příklady a pak prakticky cvičíme. Žádné PowerPointy nebo frontální výuka.'
+    answer: 'Pracujeme od 9 do 17 hodin s přestávkami. Každá dohoda dostane prostor – vysvětlím ji, probereme konkrétní příklady a pak prakticky cvičíme. Žádné PowerPointy nebo frontální výuka.'
   },
   {
     question: 'Co mám vzít s sebou?',
@@ -915,7 +915,7 @@ const faqs = [
   },
   {
     question: 'Co když mi termín nevyhovuje?',
-    answer: 'Napište mi a domluvíme individuální termín nebo Vás zařadím do dalšího kola.'
+    answer: 'Napište mi a domluvíme individuální termín nebo vás zařadím do dalšího kola.'
   },
   {
     question: 'Nabízíte online verzi?',
@@ -923,7 +923,7 @@ const faqs = [
   },
   {
     question: 'Jak probíhá platba?',
-    answer: 'Po registraci Vám přijde email s pokyny k platbě bankovním převodem. Platba je splatná do 7 dnů.'
+    answer: 'Po registraci vám přijde email s pokyny k platbě bankovním převodem. Platba je splatná do 7 dnů.'
   },
 ]
 
