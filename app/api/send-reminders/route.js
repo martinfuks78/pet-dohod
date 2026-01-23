@@ -1,8 +1,19 @@
 import { NextResponse } from 'next/server'
 import { sql } from '@vercel/postgres'
-import { Resend } from 'resend'
+import nodemailer from 'nodemailer'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Seznam.cz Email Profi SMTP transporter
+const transporter = nodemailer.createTransport({
+  host: 'smtp.seznam.cz',
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.SMTP_USER || 'web@petdohod.cz',
+    pass: process.env.SMTP_PASSWORD,
+  },
+})
+
+const EMAIL_FROM = process.env.EMAIL_FROM || 'web@petdohod.cz'
 
 // Helper funkce pro ověření autentizace (nebo cron secret)
 function checkAuth(request) {
@@ -113,19 +124,14 @@ async function sendReminderEmail(registration, workshop) {
   `
 
   try {
-    const { data, error } = await resend.emails.send({
-      from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
-      to: [registration.email],
+    const info = await transporter.sendMail({
+      from: EMAIL_FROM,
+      to: registration.email,
       subject: subject,
       html: html,
     })
 
-    if (error) {
-      console.error('Reminder email error:', error)
-      return { success: false, error }
-    }
-
-    return { success: true, data }
+    return { success: true, data: info }
   } catch (error) {
     console.error('Reminder email exception:', error)
     return { success: false, error: error.message }

@@ -1,8 +1,19 @@
 import { NextResponse } from 'next/server'
 import { sql } from '@vercel/postgres'
-import { Resend } from 'resend'
+import nodemailer from 'nodemailer'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Seznam.cz Email Profi SMTP transporter
+const transporter = nodemailer.createTransport({
+  host: 'smtp.seznam.cz',
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.SMTP_USER || 'web@petdohod.cz',
+    pass: process.env.SMTP_PASSWORD,
+  },
+})
+
+const EMAIL_FROM = process.env.EMAIL_FROM || 'web@petdohod.cz'
 
 function checkAuth(request) {
   const authHeader = request.headers.get('authorization')
@@ -83,18 +94,13 @@ export async function POST(request) {
       const html = replaceVariables(template.html_body, variables)
 
       try {
-        const { data, error } = await resend.emails.send({
-          from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
-          to: [registration.email],
+        await transporter.sendMail({
+          from: EMAIL_FROM,
+          to: registration.email,
           subject: subject,
           html: html,
         })
-
-        if (error) {
-          errors.push({ email: registration.email, error })
-        } else {
-          sentCount++
-        }
+        sentCount++
       } catch (error) {
         errors.push({ email: registration.email, error: error.message })
       }
@@ -107,18 +113,13 @@ export async function POST(request) {
         const html = template.html_body
 
         try {
-          const { data, error } = await resend.emails.send({
-            from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
-            to: [email],
+          await transporter.sendMail({
+            from: EMAIL_FROM,
+            to: email,
             subject: subject,
             html: html,
           })
-
-          if (error) {
-            errors.push({ email, error })
-          } else {
-            sentCount++
-          }
+          sentCount++
         } catch (error) {
           errors.push({ email, error: error.message })
         }

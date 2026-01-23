@@ -267,8 +267,8 @@ export async function POST(request) {
     const registration = await createRegistration(data, workshop.variable_symbol, initialStatus)
     console.log('✅ Registration created:', registration.id, 'VS:', registration.variable_symbol, 'Status:', initialStatus)
 
-    // Odeslání emailů (pokud je RESEND_API_KEY nastavený)
-    if (process.env.RESEND_API_KEY) {
+    // Odeslání emailů (pokud je SMTP nastavený)
+    if (process.env.SMTP_PASSWORD) {
       // Email sending v samostatném try-catch aby neovlivnilo registraci
       setImmediate(async () => {
         try {
@@ -315,7 +315,7 @@ export async function POST(request) {
         }
       })
     } else {
-      console.log('⚠️  RESEND_API_KEY not set, skipping email send')
+      console.log('⚠️  SMTP_PASSWORD not set, skipping email send')
     }
 
     // Pro waitlist neposíláme platební údaje
@@ -457,7 +457,7 @@ export async function PUT(request) {
     await updateRegistrationStatus(id, status)
 
     // Pokud je status "confirmed", pošli potvrzovací email
-    if (status === 'confirmed' && process.env.RESEND_API_KEY) {
+    if (status === 'confirmed' && process.env.SMTP_PASSWORD) {
       try {
         // Načíst plnou registraci pro email
         const fullReg = await sql`

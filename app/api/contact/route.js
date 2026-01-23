@@ -50,8 +50,8 @@ export async function POST(request) {
       )
     }
 
-    // Odeslání emailu (pokud je RESEND_API_KEY nastavený)
-    if (process.env.RESEND_API_KEY) {
+    // Odeslání emailu (pokud je SMTP nastavený)
+    if (process.env.SMTP_PASSWORD) {
       const emailResult = await sendContactEmail(data)
 
       if (!emailResult.success) {
@@ -70,7 +70,7 @@ export async function POST(request) {
 
       console.log('Contact email sent successfully')
     } else {
-      console.warn('⚠️  RESEND_API_KEY not set, skipping contact email send')
+      console.warn('⚠️  SMTP_PASSWORD not set, skipping contact email send')
     }
 
     // Úspěch!
